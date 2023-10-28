@@ -8,21 +8,21 @@ void Mesh::load(const std::vector<float>& vertices, const std::vector<unsigned i
     // Load data into buffers
     numVertices = vertices.size();
     numIndices = indices.size();
-    vbo.load(GL_ARRAY_BUFFER, numVertices * sizeof(float), vertices.data());
-    ebo.load(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices.data());
+    vbo.load(Buffer::Type::ARRAY_BUFFER, vertices);
+    ebo.load(Buffer::Type::INDEX_BUFFER, indices);
 
     // Bind buffers to VAO
     // TODO: Use DSA instead (but only OpenGL 4.5+, so not on macOS)
-    bind();
-    vbo.bind(GL_ARRAY_BUFFER);
-    ebo.bind(GL_ELEMENT_ARRAY_BUFFER);
+    vao.bind();
+    vbo.bind(Buffer::Type::ARRAY_BUFFER);
+    ebo.bind(Buffer::Type::INDEX_BUFFER);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    unbind();
+    vao.unbind();
 }
 
 void Mesh::draw() {
-    bind();
+    vao.bind();
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
-    unbind();
+    vao.unbind();
 }

@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
+#include <imgui_internal.h>
 
 #include <vector>
 
@@ -33,11 +34,10 @@ const std::vector<unsigned int> indices = {
     3, 2, 6, 6, 7, 3,  // Top
 };
 
-MainApp::MainApp() : App(800, 600), cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f) {
+MainApp::MainApp() : App(800, 600), cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f), ubo(0, Uniforms{normalize(vec3(0.4f, 0.3f, 0.5f)), resolution.x / resolution.y, vec3(0.1f, 0.3f, 0.6f), 4.0f / tan(45.0f), mat4(cam.calcRotation())}) {
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
     backgroundShader.load("screen.vert", "background.frag");
-    lRes = backgroundShader.uniform("uRes");
-    lT = backgroundShader.uniform("uT");
+    backgroundShader.bindUBO("Uniforms", 0);
 
     mesh.load(vertices, indices);
     meshShader.load("projection.vert", "lighting.frag");
@@ -51,17 +51,21 @@ void MainApp::init() {
 }
 
 void MainApp::render() {
-    glClear(GL_DEPTH_BUFFER_BIT);
-    // Render color pattern in the background
-    glDepthMask(GL_FALSE);
-    backgroundShader.bind();
-    backgroundShader.set(lRes, resolution);
-    backgroundShader.set(lT, time);
-    fullscreenTriangle.draw();
     // Render the mesh in the foreground
     mat4 projMat = perspective(45.0f, resolution.x / resolution.y, 0.1f, 100.0f);
     mat4 viewMat = cam.calcView();
-    mat4 modelMat = rotate(mat4(1.0f), time, vec3(0.0f, 1.0f, 0.0f));
+    mat4 modelMat = rotate(mat4(1.0f), 0.0f, vec3(0.0f, 1.0f, 0.0f));
+
+    ubo.uniforms.aspectRatio = resolution.x / resolution.y;
+    ubo.uniforms.cameraRotation = mat4(cam.calcRotation());
+    ubo.upload();
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glDepthMask(GL_FALSE);
+    backgroundShader.bind();
+    fullscreenTriangle.draw();
+
     glDepthMask(GL_TRUE);
     meshShader.bind();
     meshShader.set(lMVP, projMat * viewMat * modelMat);
@@ -80,6 +84,24 @@ void MainApp::moveCallback(const vec2& movement, bool leftButton, bool rightButt
     if (rightButton) cam.rotate(movement * 0.01f);
 }
 
+bool sphericalSlider(const char* label, vec3& cart) {
+    vec2 sph = vec2(asin(cart.y), atan(cart.x, cart.z));
+    ImGui::PushID(label);
+    bool changed = false;
+    ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+    ImGui::PushID(0);
+    changed |= ImGui::SliderAngle("", &sph.x, -89.0f, 89.0f);
+    ImGui::PopItemWidth(); ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+    ImGui::PopID(); ImGui::PushID(1);
+    changed |= ImGui::SliderAngle("", &sph.y);
+    ImGui::PopItemWidth(); ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+    ImGui::PopID();
+    ImGui::TextUnformatted(label);
+    ImGui::PopID();
+    if (changed) cart = vec3(cos(sph.x) * sin(sph.y), sin(sph.x), cos(sph.x) * cos(sph.y));
+    return changed;
+}
+
 void MainApp::buildImGui() {
     // Stat window
     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -87,5 +109,10 @@ void MainApp::buildImGui() {
     ImGui::Begin("Statistics", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings);
     ImGui::Text("%2.1ffps avg: %2.1ffps %.0fx%.0f", 1.f / delta, ImGui::GetIO().Framerate, resolution.x, resolution.y);
     ImGui::PopStyleColor();
+    ImGui::End();
+
+    ImGui::Begin("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::ColorEdit3("Sky Color", value_ptr(ubo.uniforms.skyColor));
+    sphericalSlider("Light Direction", ubo.uniforms.lightDir);
     ImGui::End();
 }

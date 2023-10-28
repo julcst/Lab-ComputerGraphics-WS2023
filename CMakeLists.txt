@@ -86,6 +86,7 @@ set(SHADERS
     shaders/lighting.frag
     shaders/projection.vert
     shaders/screen.vert
+    shaders/uniforms.glsl
 )
 set(ICON
     icons/AppIcon.icns

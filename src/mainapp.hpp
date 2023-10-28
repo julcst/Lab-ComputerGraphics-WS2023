@@ -4,9 +4,17 @@
 #include "framework/camera.hpp"
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
+#include "framework/gl/uniformbuffer.hpp"
 
 class MainApp : public App {
    public:
+    struct Uniforms {
+        vec3 lightDir;
+        float aspectRatio;
+        vec3 skyColor;
+        float focalLength;
+        mat4 cameraRotation;
+    };
     MainApp();
 
    protected:
@@ -19,10 +27,9 @@ class MainApp : public App {
 
    private:
     Camera cam;
+    UniformBuffer<Uniforms> ubo;
     Mesh fullscreenTriangle;
     Program backgroundShader;
-    GLuint lRes;
-    GLuint lT;
     Mesh mesh;
     Program meshShader;
     GLuint lMVP;

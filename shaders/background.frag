@@ -1,10 +1,13 @@
 #version 330 core
-out vec4 fragColor;
 
-uniform vec2 uRes;
-uniform float uT;
+in vec3 viewDir;
+out vec3 fragColor;
+
+#include "uniforms.glsl"
 
 void main() {
-    vec2 uv = gl_FragCoord.xy / uRes;
-    fragColor = vec4(uv, 0.0, 1.0);
+    vec3 rayDir = normalize(viewDir);
+    vec3 sky = exp(-abs(rayDir.y) / uSkyColor);
+    float sun = pow(max(0.0, dot(rayDir, uLightDir)), 1000);
+    fragColor = sky + sun * vec3(1.0);
 }

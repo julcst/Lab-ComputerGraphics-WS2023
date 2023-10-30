@@ -39,7 +39,7 @@ MainApp::MainApp() : App(800, 600), cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f), ubo(0, U
     backgroundShader.load("screen.vert", "background.frag");
     backgroundShader.bindUBO("Uniforms", 0);
 
-    mesh.load(vertices, indices);
+    mesh.load("sphere.obj");
     meshShader.load("projection.vert", "lighting.frag");
     lMVP = meshShader.uniform("uMVP");
 }

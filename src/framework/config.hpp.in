@@ -1,3 +1,4 @@
 #pragma once
 
 #define SHADER_DIR "shaders/"
+#define MODEL_DIR "models/"

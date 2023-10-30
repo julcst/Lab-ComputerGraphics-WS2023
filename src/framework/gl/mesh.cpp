@@ -1,7 +1,12 @@
 #include "mesh.hpp"
+#include "config.hpp"
+
+#include "objgl.h"
 
 #include <glad/glad.h>
 
+#include <fstream>
+#include <string>
 #include <vector>
 
 void Mesh::load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
@@ -19,6 +24,65 @@ void Mesh::load(const std::vector<float>& vertices, const std::vector<unsigned i
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     vao.unbind();
+}
+
+void Mesh::load(const std::string& filename) {
+    //read file
+    std::string filepath = MODEL_DIR + filename;
+    std::ifstream in(filepath.c_str());
+    std::string rawobj((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+
+    //parse
+    ObjGLData model = objgl_loadObj(rawobj.c_str());
+
+    numVertices = model.numVertices;
+    numIndices = model.numIndices;
+
+    //load buffers
+    vbo._load(Buffer::Type::ARRAY_BUFFER, numVertices * model.vertSize, model.data);
+    ebo._load(Buffer::Type::INDEX_BUFFER, numIndices * sizeof(uint_least32_t), model.indices);
+
+    vao.bind();
+    vbo.bind(Buffer::Type::ARRAY_BUFFER);
+    ebo.bind(Buffer::Type::INDEX_BUFFER);
+
+    //vertex atributes
+    //location 0 position
+    //location 1 texture coordinates
+    //location 2 normals
+    if(model.hasNormals && !model.hasTexCoords){
+        //positions and normals
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(2);
+    } 
+    else if(!model.hasNormals && model.hasTexCoords) {
+        //positions and texture coordinates
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+    }
+    else if(model.hasNormals && model.hasTexCoords) {
+        //positons, normals and texture coordinates
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5*sizeof(float)));
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+    } 
+    else {
+        //only positions
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+    }
+    
+    vao.unbind();
+
+    //cleanup
+    objgl_delete(&model);
 }
 
 void Mesh::draw() {

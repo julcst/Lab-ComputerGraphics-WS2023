@@ -9,7 +9,7 @@ elseif(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 endif()
 
-project(Lab-ComputerGraphics-WS2023 VERSION 1.0 LANGUAGES CXX)
+project(Lab-ComputerGraphics-WS2023 VERSION 1.0 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -76,6 +76,7 @@ set(SRC
     src/framework/gl/program.cpp
     src/framework/gl/shader.cpp
     src/framework/gl/vertexarray.cpp
+    src/framework/gl/objgl.c
 )
 set(INCLUDE
     src/

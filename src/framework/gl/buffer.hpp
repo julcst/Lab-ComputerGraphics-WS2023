@@ -27,6 +27,7 @@ class Buffer {
     ~Buffer();
     void bind(Type type);
     void bindUBO(GLuint index);
+    void _load(Type type, GLsizeiptr size, const GLvoid* data, Usage usage = Usage::STATIC_DRAW);
     template <typename T>
     void load(Type type, const std::vector<T>& data, Usage usage = Usage::STATIC_DRAW);
     template <typename T>
@@ -39,7 +40,6 @@ class Buffer {
    private:
     GLuint handle;
     void release();
-    void _load(Type type, GLsizeiptr size, const GLvoid* data, Usage usage);
     void _set(Type type, GLsizeiptr size, const GLvoid* data, GLintptr offset);
 };
 

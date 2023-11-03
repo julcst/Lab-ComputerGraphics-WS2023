@@ -64,47 +64,80 @@ add_library(imgui_glfw STATIC
 target_include_directories(imgui_glfw PUBLIC ${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
 target_link_libraries(imgui_glfw glfw)
 
+# objgl
+FetchContent_Declare(
+    objgl
+    GIT_REPOSITORY https://github.com/karolek471/objgl.git
+    GIT_TAG "origin/main"
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+)
+FetchContent_MakeAvailable(objgl)
+add_library(objgl STATIC
+    ${objgl_SOURCE_DIR}/source/objgl.c
+)
+target_include_directories(objgl PUBLIC ${objgl_SOURCE_DIR}/source)
+
 ####################################################################
-# List files
+# Source files
 set(SRC
     src/main.cpp
     src/mainapp.cpp
+    src/util.cpp
     src/framework/app.cpp
     src/framework/camera.cpp
+    src/framework/common.cpp
     src/framework/gl/buffer.cpp
     src/framework/gl/mesh.cpp
     src/framework/gl/program.cpp
     src/framework/gl/shader.cpp
     src/framework/gl/vertexarray.cpp
-    src/framework/gl/objgl.c
 )
 set(INCLUDE
     src/
     src/framework/
 )
+
+####################################################################
+# Resource files
 set(SHADERS
     shaders/background.frag
-    shaders/lighting.frag
+    shaders/debug.frag
+    shaders/lambert.frag
     shaders/projection.vert
     shaders/screen.vert
     shaders/uniforms.glsl
 )
+set(MODELS
+    models/bunny.obj
+    models/icosphere.obj
+    models/polysphere.obj
+    models/suzanne.obj
+    models/uvsphere.obj
+)
 set(ICON
     icons/AppIcon.icns
 )
+set(RES "${SHADERS};${MODELS};${ICON}")
+set_source_files_properties(${RES} PROPERTIES HEADER_FILE_ONLY True)
 
 ####################################################################
 # Add executable
 add_executable(${PROJECT_NAME}
     ${SRC}
     ${SHADERS}
+    ${MODELS}
     ${ICON}
 )
-target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE})
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE})
 
-target_link_libraries(${PROJECT_NAME} glad glfw glm imgui_glfw)
-configure_file("src/framework/config.hpp.in" "src/framework/config.hpp")
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_BINARY_DIR}/src/framework)
+target_link_libraries(${PROJECT_NAME} glad glfw glm imgui_glfw objgl)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/src/)
+
+foreach(model ${MODELS})
+    set(MODEL_FILES "${MODEL_FILES}\"${model}\",")
+endforeach()
+configure_file("src/config.hpp.in" "src/config.hpp")
 
 ####################################################################
 if(APPLE)
@@ -124,6 +157,10 @@ if(APPLE)
     set_source_files_properties(${SHADERS}
         PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources/shaders"
+    )
+    set_source_files_properties(${MODELS}
+        PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/models"
     )
 
     # Packaging macOS installer

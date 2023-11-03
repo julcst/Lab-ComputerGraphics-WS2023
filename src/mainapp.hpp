@@ -8,12 +8,18 @@
 
 class MainApp : public App {
    public:
-    struct Uniforms {
-        vec3 lightDir;
-        float aspectRatio;
-        vec3 skyColor;
-        float focalLength;
-        mat4 cameraRotation;
+    struct UB0 {
+        vec3 lightDir = vec3(0.0f);
+        float aspectRatio = 1.0f;
+        vec3 skyColor = vec3(0.0f);
+        float focalLength = 1.0f;
+        mat4 cameraRotation = mat4(1.0f);
+    };
+    struct UB1 {
+        vec3 albedo = vec3(0.0f);
+        float roughness = 0.0f;
+        mat4 MVP = mat4(1.0f);
+        mat4 model = mat4(1.0f);
     };
     MainApp();
 
@@ -27,10 +33,15 @@ class MainApp : public App {
 
    private:
     Camera cam;
-    UniformBuffer<Uniforms> ubo;
+    UniformBuffer<UB0> ub0;
+    UniformBuffer<UB1> ub1;
     Mesh fullscreenTriangle;
     Program backgroundShader;
-    Mesh mesh;
-    Program meshShader;
-    GLuint lMVP;
+    std::vector<Mesh> meshes;
+    std::string meshOptions;
+    int meshIdx = 0;
+    std::vector<Program> shaders;
+    std::string shaderOptions;
+    int shaderIdx = 0;
+    bool rotation = false;
 };

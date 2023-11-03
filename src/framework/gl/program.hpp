@@ -8,7 +8,7 @@
 #include "buffer.hpp"
 #include "shader.hpp"
 
-/*
+/**
  * RAII wrapper for OpenGL program
  */
 class Program {

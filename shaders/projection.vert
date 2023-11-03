@@ -7,11 +7,14 @@ out vec3 pos;
 out vec2 uv;
 out vec3 n;
 
-uniform mat4 uMVP;
+#include "uniforms.glsl"
 
+/**
+ * Applies the model, view, and projection matrices to a mesh
+ */
 void main() {
     gl_Position = uMVP * vec4(position, 1.0);
     pos = position;
     uv = texCoord;
-    n = normal;
+    n = uModel * normal;
 }

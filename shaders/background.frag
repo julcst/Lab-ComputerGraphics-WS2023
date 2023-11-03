@@ -5,6 +5,9 @@ out vec3 fragColor;
 
 #include "uniforms.glsl"
 
+/**
+ * Renders a simple procedural sky and sun
+ */
 void main() {
     vec3 rayDir = normalize(viewDir);
     vec3 sky = exp(-abs(rayDir.y) / uSkyColor);

@@ -1,0 +1,14 @@
+#pragma once
+
+#include <string>
+#include <vector>
+
+namespace Config {
+
+const std::string SHADER_DIR = "shaders/";
+const std::string MODEL_DIR = "models/";
+
+const std::vector<std::string> MODEL_FILES = {@MODEL_FILES@};
+const std::vector<std::string> SHADER_FILES = {"debug.frag", "lambert.frag"};
+
+}

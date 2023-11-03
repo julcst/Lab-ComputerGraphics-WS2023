@@ -19,7 +19,7 @@ const std::vector<unsigned int> FULLSCREEN_INDICES = {
 class Mesh {
    public:
     void load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
-    void load(const std::string& filename);
+    void load(const std::string& filepath);
     void draw();
 
    private:

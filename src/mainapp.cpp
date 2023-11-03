@@ -5,43 +5,44 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
-#include <imgui_internal.h>
 
 #include <vector>
 
+#include "config.hpp"
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
+#include "util.hpp"
 
 using namespace glm;
 
-// Cube mesh
-const std::vector<float> vertices = {
-    -1.0f, -1.0f,  1.0f, // 0
-     1.0f, -1.0f,  1.0f, // 1
-     1.0f,  1.0f,  1.0f, // 2
-    -1.0f,  1.0f,  1.0f, // 3
-    -1.0f, -1.0f, -1.0f, // 4
-     1.0f, -1.0f, -1.0f, // 5
-     1.0f,  1.0f, -1.0f, // 6
-    -1.0f,  1.0f, -1.0f, // 7
-};
-const std::vector<unsigned int> indices = {
-    0, 1, 2, 2, 3, 0,  // Front
-    1, 5, 6, 6, 2, 1,  // Right
-    7, 6, 5, 5, 4, 7,  // Back
-    4, 0, 3, 3, 7, 4,  // Left
-    4, 5, 1, 1, 0, 4,  // Bottom
-    3, 2, 6, 6, 7, 3,  // Top
-};
-
-MainApp::MainApp() : App(800, 600), cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f), ubo(0, Uniforms{normalize(vec3(0.4f, 0.3f, 0.5f)), resolution.x / resolution.y, vec3(0.1f, 0.3f, 0.6f), 4.0f / tan(45.0f), mat4(cam.calcRotation())}) {
+MainApp::MainApp() :
+    App(800, 600),
+    cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f),
+    ub0(0, UB0{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = 4.0f / tan(45.0f)}),
+    ub1(1, UB1{.albedo = vec3(0.8f)}) {
+    
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
     backgroundShader.load("screen.vert", "background.frag");
-    backgroundShader.bindUBO("Uniforms", 0);
+    backgroundShader.bindUBO("UB0", 0);
+    backgroundShader.bindUBO("UB1", 1);
 
-    mesh.load("sphere.obj");
-    meshShader.load("projection.vert", "lighting.frag");
-    lMVP = meshShader.uniform("uMVP");
+    meshes.reserve(Config::MODEL_FILES.size());
+    for (const std::string& file : Config::MODEL_FILES) {
+        Mesh mesh;
+        mesh.load(file);
+        meshes.push_back(std::move(mesh));
+        meshOptions.append(file + '\0');
+    }
+
+    shaders.reserve(Config::SHADER_FILES.size());
+    for (const std::string& file : Config::SHADER_FILES) {
+        Program program;
+        program.load("projection.vert", file);
+        program.bindUBO("UB0", 0);
+        program.bindUBO("UB1", 1);
+        shaders.push_back(std::move(program));
+        shaderOptions.append(file + '\0');
+    }
 }
 
 void MainApp::init() {
@@ -51,14 +52,17 @@ void MainApp::init() {
 }
 
 void MainApp::render() {
-    // Render the mesh in the foreground
     mat4 projMat = perspective(45.0f, resolution.x / resolution.y, 0.1f, 100.0f);
     mat4 viewMat = cam.calcView();
-    mat4 modelMat = rotate(mat4(1.0f), 0.0f, vec3(0.0f, 1.0f, 0.0f));
+    mat4 modelMat = rotation ? rotate(mat4(1.0f), time, vec3(0.0f, 1.0f, 0.0f)) : mat4(1.0f);
 
-    ubo.uniforms.aspectRatio = resolution.x / resolution.y;
-    ubo.uniforms.cameraRotation = mat4(cam.calcRotation());
-    ubo.upload();
+    ub0.uniforms.aspectRatio = resolution.x / resolution.y;
+    ub0.uniforms.cameraRotation = mat4(cam.calcRotation());
+    ub0.upload();
+
+    ub1.uniforms.model = modelMat;
+    ub1.uniforms.MVP = projMat * viewMat * modelMat;
+    ub1.upload();
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -67,9 +71,8 @@ void MainApp::render() {
     fullscreenTriangle.draw();
 
     glDepthMask(GL_TRUE);
-    meshShader.bind();
-    meshShader.set(lMVP, projMat * viewMat * modelMat);
-    mesh.draw();
+    shaders[shaderIdx].bind();
+    meshes[meshIdx].draw();
 }
 
 void MainApp::keyCallback(Key key, Action action) {
@@ -84,35 +87,14 @@ void MainApp::moveCallback(const vec2& movement, bool leftButton, bool rightButt
     if (rightButton) cam.rotate(movement * 0.01f);
 }
 
-bool sphericalSlider(const char* label, vec3& cart) {
-    vec2 sph = vec2(asin(cart.y), atan(cart.x, cart.z));
-    ImGui::PushID(label);
-    bool changed = false;
-    ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
-    ImGui::PushID(0);
-    changed |= ImGui::SliderAngle("", &sph.x, -89.0f, 89.0f);
-    ImGui::PopItemWidth(); ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-    ImGui::PopID(); ImGui::PushID(1);
-    changed |= ImGui::SliderAngle("", &sph.y);
-    ImGui::PopItemWidth(); ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-    ImGui::PopID();
-    ImGui::TextUnformatted(label);
-    ImGui::PopID();
-    if (changed) cart = vec3(cos(sph.x) * sin(sph.y), sin(sph.x), cos(sph.x) * cos(sph.y));
-    return changed;
-}
-
 void MainApp::buildImGui() {
-    // Stat window
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.5f));
-    ImGui::Begin("Statistics", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings);
-    ImGui::Text("%2.1ffps avg: %2.1ffps %.0fx%.0f", 1.f / delta, ImGui::GetIO().Framerate, resolution.x, resolution.y);
-    ImGui::PopStyleColor();
-    ImGui::End();
+    Util::FPSWindow(delta, resolution);
 
     ImGui::Begin("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::ColorEdit3("Sky Color", value_ptr(ubo.uniforms.skyColor));
-    sphericalSlider("Light Direction", ubo.uniforms.lightDir);
+    ImGui::ColorEdit3("Sky Color", value_ptr(ub0.uniforms.skyColor));
+    Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
+    ImGui::Checkbox("Rotate Mesh", &rotation);
+    ImGui::Combo("Shader", &shaderIdx, shaderOptions.c_str());
+    ImGui::Combo("Mesh", &meshIdx, meshOptions.c_str());
     ImGui::End();
 }

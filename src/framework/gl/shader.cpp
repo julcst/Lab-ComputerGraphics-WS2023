@@ -3,13 +3,12 @@
 #include <glad/glad.h>
 
 #include <cassert>
-#include <fstream>
 #include <regex>
 #include <set>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 
+#include "common.hpp"
 #include "config.hpp"
 
 /////////////////////// RAII behavior ///////////////////////
@@ -42,16 +41,8 @@ void Shader::release() {
 
 const std::regex includeRegex("#include \"([^\"]+)\"");
 
-std::string readFile(std::string path) {
-    std::ifstream stream(path);
-    if (!stream.is_open()) throw std::runtime_error("Could not open file: " + path);
-    std::stringstream buffer;
-    buffer << stream.rdbuf();
-    return buffer.str();
-}
-
 std::string readShader(const std::string& filename, std::set<std::string>& included) {
-    std::string source = readFile(SHADER_DIR + filename);
+    std::string source = Common::readFile(Config::SHADER_DIR + filename);
     std::smatch match;
     while (std::regex_search(source, match, includeRegex)) {
         if (included.find(match[1].str()) == included.end()) {

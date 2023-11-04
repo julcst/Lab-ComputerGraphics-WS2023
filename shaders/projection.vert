@@ -6,6 +6,7 @@ layout (location = 2) in vec3 normal;
 out vec3 pos;
 out vec2 uv;
 out vec3 n;
+out vec3 worldPos;
 
 #include "uniforms.glsl"
 
@@ -17,4 +18,5 @@ void main() {
     pos = position;
     uv = texCoord;
     n = uModel * normal;
+    worldPos = position;
 }

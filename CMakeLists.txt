@@ -103,6 +103,8 @@ set(INCLUDE
 set(SHADERS
     shaders/background.frag
     shaders/debug.frag
+    shaders/ggx.frag
+    shaders/ggx.glsl
     shaders/lambert.frag
     shaders/projection.vert
     shaders/screen.vert

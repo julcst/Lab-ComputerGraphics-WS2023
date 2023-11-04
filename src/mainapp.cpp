@@ -15,10 +15,17 @@
 
 using namespace glm;
 
+const unsigned int WIDTH = 800;
+const unsigned int HEIGHT = 600;
+const float NEAR = 0.1f;
+const float FAR = 100.0f;
+const float FOV = 45.0f;
+const float FOCAL_LENGTH = 4.0f / tan(FOV);
+
 MainApp::MainApp() :
-    App(800, 600),
+    App(WIDTH, HEIGHT),
     cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f),
-    ub0(0, UB0{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = 4.0f / tan(45.0f)}),
+    ub0(0, UB0{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = FOCAL_LENGTH}),
     ub1(1, UB1{.albedo = vec3(0.8f)}) {
     
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
@@ -52,12 +59,13 @@ void MainApp::init() {
 }
 
 void MainApp::render() {
-    mat4 projMat = perspective(45.0f, resolution.x / resolution.y, 0.1f, 100.0f);
+    mat4 projMat = perspective(FOV, resolution.x / resolution.y, NEAR, FAR);
     mat4 viewMat = cam.calcView();
     mat4 modelMat = rotation ? rotate(mat4(1.0f), time, vec3(0.0f, 1.0f, 0.0f)) : mat4(1.0f);
 
     ub0.uniforms.aspectRatio = resolution.x / resolution.y;
     ub0.uniforms.cameraRotation = mat4(cam.calcRotation());
+    ub0.uniforms.cameraPosition = cam.getPosition();
     ub0.upload();
 
     ub1.uniforms.model = modelMat;
@@ -91,10 +99,15 @@ void MainApp::buildImGui() {
     Util::FPSWindow(delta, resolution);
 
     ImGui::Begin("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::ColorEdit3("Sky Color", value_ptr(ub0.uniforms.skyColor));
+    ImGui::ColorEdit3("Sky Color", value_ptr(ub0.uniforms.skyColor), ImGuiColorEditFlags_Float);
+    ImGui::SliderFloat("Fake Ambient Strength", &ub0.uniforms.ambientStrength, 0.0f, 1.0f);
+    ImGui::ColorEdit3("Light Color", value_ptr(ub0.uniforms.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
     Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
     ImGui::Checkbox("Rotate Mesh", &rotation);
     ImGui::Combo("Shader", &shaderIdx, shaderOptions.c_str());
     ImGui::Combo("Mesh", &meshIdx, meshOptions.c_str());
+    ImGui::ColorEdit3("Albedo", value_ptr(ub1.uniforms.albedo), ImGuiColorEditFlags_Float);
+    ImGui::SliderFloat("Roughness", &ub1.uniforms.roughness, 0.0f, 1.0f);
+    ImGui::SliderFloat("Metallic", &ub1.uniforms.metallic, 0.0f, 1.0f);
     ImGui::End();
 }

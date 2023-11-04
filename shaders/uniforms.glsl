@@ -6,6 +6,9 @@ layout(std140) uniform UB0 {
     float uAspectRatio;
     vec3 uSkyColor;
     float uFocalLength;
+    vec3 uLightColor;
+    float uAmbientStrength;
+    vec3 uCameraPosition;
     mat3 uCameraRotation;
 };
 
@@ -15,6 +18,8 @@ layout(std140) uniform UB0 {
  */
 layout(std140) uniform UB1 {
     vec3 uAlbedo;
+    float uRoughness;
+    float uMetallic;
     mat4 uMVP;
     mat3 uModel;
 };

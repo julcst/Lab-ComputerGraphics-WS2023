@@ -13,11 +13,17 @@ class MainApp : public App {
         float aspectRatio = 1.0f;
         vec3 skyColor = vec3(0.0f);
         float focalLength = 1.0f;
+        vec3 lightColor = vec3(1.0f);
+        float ambientStrength = 0.08f;
+        vec3 cameraPosition = vec3(0.0f);
+        float padding = 0.0f;
         mat4 cameraRotation = mat4(1.0f);
     };
     struct UB1 {
-        vec3 albedo = vec3(0.0f);
-        float roughness = 0.0f;
+        vec3 albedo = vec3(1.0f);
+        float roughness = 1.0f;
+        float metallic = 0.0f;
+        vec3 padding = vec3(0.0f);
         mat4 MVP = mat4(1.0f);
         mat4 model = mat4(1.0f);
     };

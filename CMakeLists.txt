@@ -112,6 +112,7 @@ set(SHADERS
 )
 set(MODELS
     models/bunny.obj
+    models/car.obj
     models/icosphere.obj
     models/polysphere.obj
     models/suzanne.obj

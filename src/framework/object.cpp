@@ -1,6 +1,5 @@
 #include "object.hpp"
 #include "common.hpp"
-#include <json.hpp>
 
 #include <filesystem>
 #include <string>
@@ -10,7 +9,6 @@
 #include <imgui.h>
 
 using namespace glm;
-using json = nlohmann::json;
 
 Object::Object(std::vector<Mesh>& meshes, int mesh, int shader, int id) {
     meshIdx = mesh;

@@ -61,16 +61,11 @@ void MainApp::init() {
 void MainApp::render() {
     mat4 projMat = perspective(FOV, resolution.x / resolution.y, NEAR, FAR);
     mat4 viewMat = cam.calcView();
-    mat4 modelMat = rotation ? rotate(mat4(1.0f), time, vec3(0.0f, 1.0f, 0.0f)) : mat4(1.0f);
 
     ub0.uniforms.aspectRatio = resolution.x / resolution.y;
     ub0.uniforms.cameraRotation = mat4(cam.calcRotation());
     ub0.uniforms.cameraPosition = cam.getPosition();
     ub0.upload();
-
-    ub1.uniforms.model = modelMat;
-    ub1.uniforms.MVP = projMat * viewMat * modelMat;
-    ub1.upload();
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -79,8 +74,10 @@ void MainApp::render() {
     fullscreenTriangle.draw();
 
     glDepthMask(GL_TRUE);
-    shaders[shaderIdx].bind();
-    meshes[meshIdx].draw();
+
+    for (int i = 0; i < objects.size(); i++){
+        objects[i]->render(meshes, shaders, ub1, projMat, viewMat, time);
+    }
 }
 
 void MainApp::keyCallback(Key key, Action action) {
@@ -103,11 +100,23 @@ void MainApp::buildImGui() {
     ImGui::SliderFloat("Fake Ambient Strength", &ub0.uniforms.ambientStrength, 0.0f, 1.0f);
     ImGui::ColorEdit3("Light Color", value_ptr(ub0.uniforms.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
     Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
-    ImGui::Checkbox("Rotate Mesh", &rotation);
     ImGui::Combo("Shader", &shaderIdx, shaderOptions.c_str());
     ImGui::Combo("Mesh", &meshIdx, meshOptions.c_str());
-    ImGui::ColorEdit3("Albedo", value_ptr(ub1.uniforms.albedo), ImGuiColorEditFlags_Float);
-    ImGui::SliderFloat("Roughness", &ub1.uniforms.roughness, 0.0f, 1.0f);
-    ImGui::SliderFloat("Metallic", &ub1.uniforms.metallic, 0.0f, 1.0f);
+    if(ImGui::Button("Add Mesh to Scene")) {
+        Object* newObject = new Object(meshes, meshIdx, shaderIdx, objects.size());
+        objects.push_back(newObject);
+    }
     ImGui::End();
+
+    //Object GUIs
+    for (int i = 0; i < objects.size(); i++){
+        objects[i]->buildImGui();
+    }
+}
+
+void MainApp::close() {
+    for (int i = 0; i < objects.size(); i++){
+        delete objects[i];
+    }
+    App::close();
 }

@@ -5,6 +5,8 @@
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
 #include "framework/gl/uniformbuffer.hpp"
+#include "framework/object.hpp"
+#include "framework/material.hpp"
 
 class MainApp : public App {
    public:
@@ -19,15 +21,8 @@ class MainApp : public App {
         float padding = 0.0f;
         mat4 cameraRotation = mat4(1.0f);
     };
-    struct UB1 {
-        vec3 albedo = vec3(1.0f);
-        float roughness = 1.0f;
-        float metallic = 0.0f;
-        vec3 padding = vec3(0.0f);
-        mat4 MVP = mat4(1.0f);
-        mat4 model = mat4(1.0f);
-    };
     MainApp();
+    void close();
 
    protected:
     void init() override;
@@ -43,11 +38,11 @@ class MainApp : public App {
     UniformBuffer<UB1> ub1;
     Mesh fullscreenTriangle;
     Program backgroundShader;
+    std::vector<Object*> objects;
     std::vector<Mesh> meshes;
     std::string meshOptions;
     int meshIdx = 0;
     std::vector<Program> shaders;
     std::string shaderOptions;
     int shaderIdx = 0;
-    bool rotation = false;
 };

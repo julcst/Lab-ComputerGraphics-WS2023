@@ -87,6 +87,7 @@ set(SRC
     src/framework/app.cpp
     src/framework/camera.cpp
     src/framework/common.cpp
+    src/framework/object.cpp
     src/framework/gl/buffer.cpp
     src/framework/gl/mesh.cpp
     src/framework/gl/program.cpp

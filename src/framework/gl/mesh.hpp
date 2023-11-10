@@ -21,10 +21,12 @@ class Mesh {
     void load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
     void load(const std::string& filepath);
     void draw();
+    std::string getFilepath();
 
    private:
     unsigned int numVertices, numIndices = 0;
     VertexArray vao;
     Buffer vbo;
     Buffer ebo;
+    std::string path;
 };

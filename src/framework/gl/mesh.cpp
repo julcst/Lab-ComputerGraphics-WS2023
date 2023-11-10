@@ -30,6 +30,7 @@ void Mesh::load(const std::vector<float>& vertices, const std::vector<unsigned i
 void Mesh::load(const std::string& filepath) {
     // read file
     std::string rawobj = Common::readFile(filepath);
+    path = filepath;
 
     // parse
     ObjGLData model = objgl_loadObj(rawobj.c_str());
@@ -85,4 +86,8 @@ void Mesh::draw() {
     vao.bind();
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
     vao.unbind();
+}
+
+std::string Mesh::getFilepath() {
+    return path;
 }

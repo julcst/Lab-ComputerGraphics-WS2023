@@ -27,7 +27,7 @@ MainApp::MainApp() :
     cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f),
     ub0(0, UB0{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = FOCAL_LENGTH}),
     ub1(1, UB1{.albedo = vec3(0.8f)}) {
-    
+
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
     backgroundShader.load("screen.vert", "background.frag");
     backgroundShader.bindUBO("UB0", 0);
@@ -95,7 +95,8 @@ void MainApp::moveCallback(const vec2& movement, bool leftButton, bool rightButt
 void MainApp::buildImGui() {
     Util::FPSWindow(delta, resolution);
 
-    ImGui::Begin("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SetNextWindowPos(ImVec2(0, 50), ImGuiCond_Once);
+    ImGui::Begin("Scene", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::ColorEdit3("Sky Color", value_ptr(ub0.uniforms.skyColor), ImGuiColorEditFlags_Float);
     ImGui::SliderFloat("Fake Ambient Strength", &ub0.uniforms.ambientStrength, 0.0f, 1.0f);
     ImGui::ColorEdit3("Light Color", value_ptr(ub0.uniforms.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);

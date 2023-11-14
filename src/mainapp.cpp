@@ -26,7 +26,7 @@ MainApp::MainApp() :
     App(WIDTH, HEIGHT),
     cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f),
     ub0(0, UB0{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = FOCAL_LENGTH}),
-    ub1(1, UB1{.albedo = vec3(0.8f)}) {
+    ub1(1, GGX_UB{.albedo = vec3(0.8f)}) {
 
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
     backgroundShader.load("screen.vert", "background.frag");
@@ -39,6 +39,10 @@ MainApp::MainApp() :
         mesh.load(file);
         meshes.push_back(std::move(mesh));
         meshOptions.append(file + '\0');
+    }
+
+    for (const std::string& file : Config::MATERIAL_FILES) {
+        materialOptions.append(file + '\0');
     }
 
     shaders.reserve(Config::SHADER_FILES.size());
@@ -101,10 +105,10 @@ void MainApp::buildImGui() {
     ImGui::SliderFloat("Fake Ambient Strength", &ub0.uniforms.ambientStrength, 0.0f, 1.0f);
     ImGui::ColorEdit3("Light Color", value_ptr(ub0.uniforms.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
     Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
-    ImGui::Combo("Shader", &shaderIdx, shaderOptions.c_str());
+    ImGui::Combo("Material", &materialIdx, materialOptions.c_str());
     ImGui::Combo("Mesh", &meshIdx, meshOptions.c_str());
     if(ImGui::Button("Add Mesh to Scene")) {
-        Object* newObject = new Object(meshes, meshIdx, shaderIdx, objects.size());
+        Object* newObject = new Object(meshes, meshIdx, materialIdx, objects.size());
         objects.push_back(newObject);
     }
     ImGui::End();

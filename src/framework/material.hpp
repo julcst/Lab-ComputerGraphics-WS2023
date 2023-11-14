@@ -4,7 +4,13 @@
 
 using namespace glm;
 
-struct UB1 {
+const int DEBUG_SHADER = 0;
+const int LAMBERT_SHADER = 1;
+const int GGX_SHADER = 2;
+const int GLINT_SHADER = 3;
+const int LAYER_SHADER = 4;
+
+struct GGX_UB {
         vec3 albedo = vec3(1.0f);
         float roughness = 1.0f;
         float metallic = 0.0f;

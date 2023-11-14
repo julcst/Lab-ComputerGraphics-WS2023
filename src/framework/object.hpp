@@ -11,8 +11,8 @@
 
 class Object {
    public:
-    Object(std::vector<Mesh>& meshes, int mesh, int shader, int id);
-    void render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, UniformBuffer<UB1>& ub1, mat4 projMat, mat4 viewMat, float time);
+    Object(std::vector<Mesh>& meshes, int mesh, int material, int id);
+    void render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, UniformBuffer<GGX_UB>& ub1, mat4 projMat, mat4 viewMat, float time);
     void buildImGui();
 
    private:
@@ -20,7 +20,9 @@ class Object {
     std::string name;
     int meshIdx;
     int shaderIdx;
-    UB1 ub1_data;
-    bool rotation = false;
+    GGX_UB ub1_data;
+    bool auto_rotation = false;
     vec3 translation;
+    vec3 rotation;
+    float scaleFactor;
 };

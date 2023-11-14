@@ -78,6 +78,14 @@ add_library(objgl STATIC
 )
 target_include_directories(objgl PUBLIC ${objgl_SOURCE_DIR}/source)
 
+#json
+FetchContent_Declare(
+    json
+    URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
+
 ####################################################################
 # Source files
 set(SRC
@@ -119,10 +127,16 @@ set(MODELS
     models/suzanne.obj
     models/uvsphere.obj
 )
+set(MATERIALS
+    materials/debug.material
+    materials/lambert.material
+    materials/bunny.material
+    materials/blue_metal.material
+)
 set(ICON
     icons/AppIcon.icns
 )
-set(RES "${SHADERS};${MODELS};${ICON}")
+set(RES "${SHADERS};${MODELS};${MATERIALS};${ICON}")
 set_source_files_properties(${RES} PROPERTIES HEADER_FILE_ONLY True)
 
 ####################################################################
@@ -131,15 +145,19 @@ add_executable(${PROJECT_NAME}
     ${SRC}
     ${SHADERS}
     ${MODELS}
+    ${MATERIALS}
     ${ICON}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE})
 
-target_link_libraries(${PROJECT_NAME} glad glfw glm imgui_glfw objgl)
+target_link_libraries(${PROJECT_NAME} glad glfw glm imgui_glfw objgl nlohmann_json::nlohmann_json)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/src/)
 
 foreach(model ${MODELS})
     set(MODEL_FILES "${MODEL_FILES}\"${model}\",")
+endforeach()
+foreach(material ${MATERIALS})
+    set(MATERIAL_FILES "${MATERIAL_FILES}\"${material}\",")
 endforeach()
 configure_file("src/config.hpp.in" "src/config.hpp")
 
@@ -165,6 +183,10 @@ if(APPLE)
     set_source_files_properties(${MODELS}
         PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources/models"
+    )
+    set_source_files_properties(${MATERIALS}
+        PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/materials"
     )
 
     # Packaging macOS installer

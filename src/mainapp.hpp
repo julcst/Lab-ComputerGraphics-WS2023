@@ -35,7 +35,7 @@ class MainApp : public App {
    private:
     Camera cam;
     UniformBuffer<UB0> ub0;
-    UniformBuffer<UB1> ub1;
+    UniformBuffer<GGX_UB> ub1;
     Mesh fullscreenTriangle;
     Program backgroundShader;
     std::vector<Object*> objects;
@@ -45,4 +45,6 @@ class MainApp : public App {
     std::vector<Program> shaders;
     std::string shaderOptions;
     int shaderIdx = 0;
+    std::string materialOptions;
+    int materialIdx = 0;
 };

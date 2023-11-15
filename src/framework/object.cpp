@@ -13,7 +13,8 @@
 using namespace glm;
 using json = nlohmann::json;
 
-Object::Object(std::vector<Mesh>& meshes, int mesh, int material, int id) {
+Object::Object(std::vector<Mesh>& meshes, int mesh, int material, int _id) {
+    id = _id;
     meshIdx = mesh;
     translation = vec3(0.0f,0.0f,0.0f);
     rotation = vec3(0.0f,0.0f,0.0f);
@@ -54,6 +55,18 @@ Object::Object(std::vector<Mesh>& meshes, int mesh, int material, int id) {
     }
 }
 
+Object::Object(int _id, std::string _name, int _meshIdx, int _shaderIdx, GGX_UB _ub1_data, bool _auto_rotation, vec3 _translation, vec3 _rotation, float _scaleFactor) {
+    id = _id;
+    name = _name;
+    meshIdx = _meshIdx;
+    shaderIdx = _shaderIdx;
+    ub1_data = _ub1_data;
+    auto_rotation = _auto_rotation;
+    translation = _translation;
+    rotation = _rotation;
+    scaleFactor = _scaleFactor;
+}
+
 void Object::render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, UniformBuffer<GGX_UB>& ub1, mat4 projMat, mat4 viewMat, float time) {
     mat4 modelMat(1.0f);
     modelMat = translate(modelMat, translation);
@@ -88,4 +101,26 @@ void Object::buildImGui() {
         ImGui::SliderFloat("Metallic", &ub1_data.metallic, 0.0f, 1.0f);
     }
     ImGui::End();
+}
+
+json Object::toJson() {
+    json j;
+    j["id"] = id;
+    j["name"] = name;
+    j["meshIdx"] = meshIdx;
+    j["shaderIdx"] = shaderIdx;
+    j["auto_rotation"] = auto_rotation;
+    j["translation"][0] = translation[0];
+    j["translation"][1] = translation[1];
+    j["translation"][2] = translation[2];
+    j["rotation"][0] = rotation[0];
+    j["rotation"][1] = rotation[1];
+    j["rotation"][2] = rotation[2];
+    j["scaleFactor"] = scaleFactor;
+    j["ub1_data"]["albedo"][0] = ub1_data.albedo[0];
+    j["ub1_data"]["albedo"][1] = ub1_data.albedo[1];
+    j["ub1_data"]["albedo"][2] = ub1_data.albedo[2];
+    j["ub1_data"]["roughness"] = ub1_data.roughness;
+    j["ub1_data"]["metallic"] = ub1_data.metallic;
+    return j;
 }

@@ -11,3 +11,9 @@ std::string Common::readFile(const std::string& path) {
     buffer << stream.rdbuf();
     return buffer.str();
 }
+
+void Common::writeToFile(const std::string& content ,const std::string& path) {
+    std::ofstream out(path);
+    out << content;
+    out.close();
+}

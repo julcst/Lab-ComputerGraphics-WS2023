@@ -47,4 +47,7 @@ class MainApp : public App {
     int shaderIdx = 0;
     std::string materialOptions;
     int materialIdx = 0;
+    char scenePath[512] = {"testscene.scene"};
+    void saveScene(std::string path);
+    void loadScene(std::string path);
 };

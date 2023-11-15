@@ -5,15 +5,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
+#include <nlohmann/json.hpp>
 
 #include <vector>
 
 #include "config.hpp"
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
+#include "framework/common.hpp"
 #include "util.hpp"
 
 using namespace glm;
+using json = nlohmann::json;
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
@@ -105,6 +108,15 @@ void MainApp::buildImGui() {
     ImGui::SliderFloat("Fake Ambient Strength", &ub0.uniforms.ambientStrength, 0.0f, 1.0f);
     ImGui::ColorEdit3("Light Color", value_ptr(ub0.uniforms.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
     Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
+    ImGui::Separator();
+    ImGui::InputText("Scene Path", scenePath, IM_ARRAYSIZE(scenePath));
+    if(ImGui::Button("Load Scene")) {
+        loadScene(std::string(scenePath));
+    }
+    if(ImGui::Button("Save Scene")) {
+        saveScene(std::string(scenePath));
+    }
+    ImGui::Separator();
     ImGui::Combo("Material", &materialIdx, materialOptions.c_str());
     ImGui::Combo("Mesh", &meshIdx, meshOptions.c_str());
     if(ImGui::Button("Add Mesh to Scene")) {
@@ -124,4 +136,44 @@ void MainApp::close() {
         delete objects[i];
     }
     App::close();
+}
+
+void MainApp::saveScene(std::string path) {
+    json jScene;
+    jScene["num_objects"] = objects.size();
+    for (int i = 0; i < objects.size(); i++){
+        jScene["objects"][i] = objects[i]->toJson();
+    }
+    Common::writeToFile(jScene.dump(), path);
+}
+
+void MainApp::loadScene(std::string path) {
+    std::string rawscenejson = Common::readFile(path);
+    json scenedata = json::parse(rawscenejson);
+
+    int n = 0;
+    if(scenedata.contains("num_objects")) {
+        n = scenedata.value("num_objects", 0);
+    }
+    if(scenedata.contains("objects")) {
+        for(int i = 0; i < n; i++) {
+            
+            Object* newObject = new Object(scenedata["objects"][i]["id"],
+                scenedata["objects"][i]["name"],
+                scenedata["objects"][i]["meshIdx"],
+                scenedata["objects"][i]["shaderIdx"],
+                GGX_UB{.albedo = vec3(scenedata["objects"][i]["ub1_data"]["albedo"][0],
+                scenedata["objects"][i]["ub1_data"]["albedo"][1],
+                scenedata["objects"][i]["ub1_data"]["albedo"][2]), 
+                .roughness = scenedata["objects"][i]["ub1_data"]["roughness"],
+                .metallic = scenedata["objects"][i]["ub1_data"]["metallic"]},
+                scenedata["objects"][i]["auto_rotation"],
+                vec3(scenedata["objects"][i]["translation"][0],scenedata["objects"][i]["translation"][1],scenedata["objects"][i]["translation"][2]),
+                vec3(scenedata["objects"][i]["rotation"][0],scenedata["objects"][i]["rotation"][1],scenedata["objects"][i]["rotation"][2]),
+                scenedata["objects"][i]["scaleFactor"]
+                );
+
+            objects.push_back(newObject);
+        }
+    }
 }

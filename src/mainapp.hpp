@@ -22,7 +22,6 @@ class MainApp : public App {
         mat4 cameraRotation = mat4(1.0f);
     };
     MainApp();
-    void close();
 
    protected:
     void init() override;
@@ -35,10 +34,10 @@ class MainApp : public App {
    private:
     Camera cam;
     UniformBuffer<UB0> ub0;
-    UniformBuffer<GGX_UB> ub1;
+    UniformBuffer<UB1> ub1;
     Mesh fullscreenTriangle;
     Program backgroundShader;
-    std::vector<Object*> objects;
+    std::vector<Object> objects;
     std::vector<Mesh> meshes;
     std::string meshOptions;
     int meshIdx = 0;

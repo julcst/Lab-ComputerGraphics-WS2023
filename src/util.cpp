@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace glm;
 
@@ -33,5 +34,12 @@ bool Util::sphericalSlider(const char* label, vec3& cart) {
     ImGui::TextUnformatted(label);
     ImGui::PopID();
     if (changed) cart = vec3(cos(sph.x) * sin(sph.y), sin(sph.x), cos(sph.x) * cos(sph.y));
+    return changed;
+}
+
+bool Util::angleSlider3(const char* label, vec3& angles) {
+    vec3 anglesDeg = degrees(angles);
+    bool changed = ImGui::SliderFloat3(label, value_ptr(anglesDeg), -360.0f, 360.0f, "%.0f deg");
+    if (changed) angles = radians(anglesDeg);
     return changed;
 }

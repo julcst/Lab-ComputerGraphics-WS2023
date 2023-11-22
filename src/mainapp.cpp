@@ -29,7 +29,7 @@ MainApp::MainApp() :
     App(WIDTH, HEIGHT),
     cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f),
     ub0(0, UB0{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = FOCAL_LENGTH}),
-    ub1(1, GGX_UB{.albedo = vec3(0.8f)}) {
+    ub1(1, UB1{.albedo = vec3(0.8f)}) {
 
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
     backgroundShader.load("screen.vert", "background.frag");
@@ -82,8 +82,8 @@ void MainApp::render() {
 
     glDepthMask(GL_TRUE);
 
-    for (int i = 0; i < objects.size(); i++){
-        objects[i]->render(meshes, shaders, ub1, projMat, viewMat, time);
+    for (Object& obj : objects) {
+        obj.render(meshes, shaders, ub1, projMat, viewMat, time);
     }
 }
 
@@ -110,70 +110,40 @@ void MainApp::buildImGui() {
     Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
     ImGui::Separator();
     ImGui::InputText("Scene Path", scenePath, IM_ARRAYSIZE(scenePath));
-    if(ImGui::Button("Load Scene")) {
-        loadScene(std::string(scenePath));
-    }
-    if(ImGui::Button("Save Scene")) {
-        saveScene(std::string(scenePath));
-    }
+    if (ImGui::Button("Load Scene")) loadScene(std::string(scenePath));
+    if (ImGui::Button("Save Scene")) saveScene(std::string(scenePath));
     ImGui::Separator();
-    ImGui::Combo("Material", &materialIdx, materialOptions.c_str());
+    ImGui::Combo("Preset", &materialIdx, materialOptions.c_str());
     ImGui::Combo("Mesh", &meshIdx, meshOptions.c_str());
-    if(ImGui::Button("Add Mesh to Scene")) {
-        Object* newObject = new Object(meshes, meshIdx, materialIdx, objects.size());
-        objects.push_back(newObject);
+    if (ImGui::Button("Add Mesh to Scene")) {
+        Object newObject(meshes, meshIdx, materialIdx, objects.size());
+        objects.push_back(std::move(newObject));
     }
     ImGui::End();
 
-    //Object GUIs
-    for (int i = 0; i < objects.size(); i++){
-        objects[i]->buildImGui();
+    // Draw Object GUIs
+    for (Object& obj : objects) {
+        obj.buildImGui();
     }
-}
-
-void MainApp::close() {
-    for (int i = 0; i < objects.size(); i++){
-        delete objects[i];
-    }
-    App::close();
 }
 
 void MainApp::saveScene(std::string path) {
     json jScene;
-    jScene["num_objects"] = objects.size();
-    for (int i = 0; i < objects.size(); i++){
-        jScene["objects"][i] = objects[i]->toJson();
+    for (const Object& obj : objects) {
+        jScene["objects"].push_back(obj);
     }
-    Common::writeToFile(jScene.dump(), path);
+    Common::writeToFile(jScene.dump(4), path);
 }
 
 void MainApp::loadScene(std::string path) {
     std::string rawscenejson = Common::readFile(path);
     json scenedata = json::parse(rawscenejson);
 
-    int n = 0;
-    if(scenedata.contains("num_objects")) {
-        n = scenedata.value("num_objects", 0);
-    }
-    if(scenedata.contains("objects")) {
-        for(int i = 0; i < n; i++) {
-            
-            Object* newObject = new Object(scenedata["objects"][i]["id"],
-                scenedata["objects"][i]["name"],
-                scenedata["objects"][i]["meshIdx"],
-                scenedata["objects"][i]["shaderIdx"],
-                GGX_UB{.albedo = vec3(scenedata["objects"][i]["ub1_data"]["albedo"][0],
-                scenedata["objects"][i]["ub1_data"]["albedo"][1],
-                scenedata["objects"][i]["ub1_data"]["albedo"][2]), 
-                .roughness = scenedata["objects"][i]["ub1_data"]["roughness"],
-                .metallic = scenedata["objects"][i]["ub1_data"]["metallic"]},
-                scenedata["objects"][i]["auto_rotation"],
-                vec3(scenedata["objects"][i]["translation"][0],scenedata["objects"][i]["translation"][1],scenedata["objects"][i]["translation"][2]),
-                vec3(scenedata["objects"][i]["rotation"][0],scenedata["objects"][i]["rotation"][1],scenedata["objects"][i]["rotation"][2]),
-                scenedata["objects"][i]["scaleFactor"]
-                );
-
-            objects.push_back(newObject);
+    objects.clear();
+    if (scenedata.contains("objects")) {
+        for (const auto& objdata : scenedata["objects"]) {
+            Object obj = objdata.template get<Object>();
+            objects.push_back(std::move(obj));
         }
     }
 }

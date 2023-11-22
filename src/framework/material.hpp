@@ -1,20 +1,17 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <nlohmann/json.hpp>
 
-using namespace glm;
+#include "framework/glmjson.hpp"
 
-const int DEBUG_SHADER = 0;
-const int LAMBERT_SHADER = 1;
-const int GGX_SHADER = 2;
-const int GLINT_SHADER = 3;
-const int LAYER_SHADER = 4;
+struct UB1 {
+    glm::vec3 albedo = glm::vec3(1.0f);
+    float roughness = 1.0f;
+    float metallic = 0.0f;
+    glm::vec3 padding = glm::vec3(0.0f);
+    glm::mat4 MVP = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
 
-struct GGX_UB {
-        vec3 albedo = vec3(1.0f);
-        float roughness = 1.0f;
-        float metallic = 0.0f;
-        vec3 padding = vec3(0.0f);
-        mat4 MVP = mat4(1.0f);
-        mat4 model = mat4(1.0f);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic);
 };

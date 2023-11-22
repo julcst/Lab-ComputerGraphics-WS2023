@@ -12,7 +12,7 @@ std::string Common::readFile(const std::string& path) {
     return buffer.str();
 }
 
-void Common::writeToFile(const std::string& content ,const std::string& path) {
+void Common::writeToFile(const std::string& content, const std::string& path) {
     std::ofstream out(path);
     out << content;
     out.close();

@@ -5,6 +5,6 @@
 namespace Common {
 
 std::string readFile(const std::string& filename);
-void writeToFile(const std::string& content ,const std::string& path);
+void writeToFile(const std::string& content, const std::string& path);
 
 }

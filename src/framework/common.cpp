@@ -14,6 +14,7 @@ std::string Common::readFile(const std::string& path) {
 
 void Common::writeToFile(const std::string& content, const std::string& path) {
     std::ofstream out(path);
+    if (!out.is_open()) throw std::runtime_error("Could not open file: " + path);
     out << content;
     out.close();
 }

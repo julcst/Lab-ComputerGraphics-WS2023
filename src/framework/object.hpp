@@ -14,21 +14,19 @@
 
 class Object {
    public:
-    Object() = default;
-    Object(std::vector<Mesh>& meshes, int mesh, int material, int id);
-    void render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, UniformBuffer<UB1>& ub1, const glm::mat4& projMat, const glm::mat4& viewMat, float time);
-    void buildImGui();
+    Object();
+    void loadPreset(nlohmann::json preset);
+    void render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, UniformBuffer<UB1>& ub1, const glm::mat4& projViewMat, float time);
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Object, id, name, meshIdx, shaderIdx, material, rotate, translation, rotation, scale);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Object, name, meshIdx, shaderIdx, material, rotate, translation, rotation, scale);
 
-   private:
-    int id;
-    std::string name;
-    int meshIdx;
-    Config::ShaderType shaderIdx;
+    unsigned int id;
+    std::string name = "Object";
+    int meshIdx = 0;
+    Config::ShaderType shaderIdx = Config::ShaderType::DEBUG;
     UB1 material;
     bool rotate = false;
-    glm::vec3 translation;
-    glm::vec3 rotation;
-    float scale;
+    glm::vec3 translation = glm::vec3(0.0f);
+    glm::vec3 rotation = glm::vec3(0.0f);
+    float scale = 1.0f;
 };

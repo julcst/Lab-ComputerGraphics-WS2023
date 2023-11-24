@@ -39,12 +39,9 @@ class MainApp : public App {
     Program backgroundShader;
     std::vector<Object> objects;
     std::vector<Mesh> meshes;
-    std::string meshOptions;
     int meshIdx = 0;
     std::vector<Program> shaders;
-    std::string shaderOptions;
     int shaderIdx = 0;
-    std::string materialOptions;
     int materialIdx = 0;
     char scenePath[512] = {"testscene.scene"};
     void saveScene(std::string path);

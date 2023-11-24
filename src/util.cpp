@@ -2,8 +2,11 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
+#include <vector>
 
 using namespace glm;
 
@@ -42,4 +45,16 @@ bool Util::angleSlider3(const char* label, vec3& angles) {
     bool changed = ImGui::SliderFloat3(label, value_ptr(anglesDeg), -360.0f, 360.0f, "%.0f deg");
     if (changed) angles = radians(anglesDeg);
     return changed;
+}
+
+bool Util::combo(const char* label, int* curr, const std::vector<std::string>& items) {
+    return ImGui::Combo(
+        label, curr,
+        [](void* data, int idx, const char** out_text) {
+            auto items = reinterpret_cast<const std::vector<std::string>*>(data);
+            if (idx < 0 || idx >= items->size()) return false;
+            *out_text = items->at(idx).c_str();
+            return true;
+        },
+        const_cast<void*>(reinterpret_cast<const void*>(&items)), items.size());
 }

@@ -5,8 +5,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
 #include <nlohmann/json.hpp>
 
+#include <iterator>
+#include <string>
 #include <vector>
 
 #include "config.hpp"
@@ -41,11 +44,6 @@ MainApp::MainApp() :
         Mesh mesh;
         mesh.load(file);
         meshes.push_back(std::move(mesh));
-        meshOptions.append(file + '\0');
-    }
-
-    for (const std::string& file : Config::MATERIAL_FILES) {
-        materialOptions.append(file + '\0');
     }
 
     shaders.reserve(Config::SHADER_FILES.size());
@@ -55,7 +53,6 @@ MainApp::MainApp() :
         program.bindUBO("UB0", 0);
         program.bindUBO("UB1", 1);
         shaders.push_back(std::move(program));
-        shaderOptions.append(file + '\0');
     }
 }
 
@@ -68,6 +65,7 @@ void MainApp::init() {
 void MainApp::render() {
     mat4 projMat = perspective(FOV, resolution.x / resolution.y, NEAR, FAR);
     mat4 viewMat = cam.calcView();
+    mat4 projViewMat = projMat * viewMat;
 
     ub0.uniforms.aspectRatio = resolution.x / resolution.y;
     ub0.uniforms.cameraRotation = mat4(cam.calcRotation());
@@ -83,7 +81,7 @@ void MainApp::render() {
     glDepthMask(GL_TRUE);
 
     for (Object& obj : objects) {
-        obj.render(meshes, shaders, ub1, projMat, viewMat, time);
+        obj.render(meshes, shaders, ub1, projViewMat, time);
     }
 }
 
@@ -111,19 +109,52 @@ void MainApp::buildImGui() {
     ImGui::Separator();
     ImGui::InputText("Scene Path", scenePath, IM_ARRAYSIZE(scenePath));
     if (ImGui::Button("Load Scene")) loadScene(std::string(scenePath));
+    ImGui::SameLine();
     if (ImGui::Button("Save Scene")) saveScene(std::string(scenePath));
+    ImGui::SameLine();
+    if (ImGui::Button("Clear")) objects.clear();
     ImGui::Separator();
-    ImGui::Combo("Preset", &materialIdx, materialOptions.c_str());
-    ImGui::Combo("Mesh", &meshIdx, meshOptions.c_str());
-    if (ImGui::Button("Add Mesh to Scene")) {
-        Object newObject(meshes, meshIdx, materialIdx, objects.size());
+    if (ImGui::Button("Add Object")) {
+        Object newObject;
         objects.push_back(std::move(newObject));
     }
     ImGui::End();
 
     // Draw Object GUIs
-    for (Object& obj : objects) {
-        obj.buildImGui();
+    for (auto it = objects.rbegin(); it != objects.rend(); ++it) {
+        Object& obj = *it;
+
+        std::string windowName = obj.name + "###" + std::to_string(obj.id);
+        ImGui::Begin(windowName.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::InputText("Name", &obj.name);
+        int presetID = -1;
+        if (Util::combo("Preset", &presetID, Config::MATERIAL_FILES)) {
+            std::string path = Config::MATERIAL_FILES[presetID];
+            std::string raw = Common::readFile(path);
+            json preset = json::parse(raw);
+            obj.loadPreset(preset);
+        }
+        Util::combo("Shader", reinterpret_cast<int*>(&obj.shaderIdx), Config::SHADER_FILES);
+        Util::combo("Mesh", &obj.meshIdx, Config::MODEL_FILES);
+        ImGui::Separator();
+        ImGui::Checkbox("Auto Rotate Mesh", &obj.rotate);
+        Util::angleSlider3("Rotation", obj.rotation);
+        ImGui::DragFloat3("Translation", value_ptr(obj.translation), 0.1f);
+        ImGui::SliderFloat("Scale", &obj.scale, 0.1f, 10.0f);
+        ImGui::Separator();
+        if (obj.shaderIdx == Config::ShaderType::LAMBERT) {
+            ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
+        } else if (obj.shaderIdx == Config::ShaderType::GGX) {
+            ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
+            ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.0f, 1.0f);
+            ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
+        }
+        ImGui::Separator();
+        if (ImGui::Button("Destroy")) {
+            objects.erase(std::next(it).base());
+        }
+        ImGui::End();
+
     }
 }
 

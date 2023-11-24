@@ -1,6 +1,0 @@
-{
-    "shader": 2,
-    "albedo": [0.0,0.0,1.0],
-    "roughness": 0.6,
-    "metallic": 0.4
-}

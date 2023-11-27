@@ -17,9 +17,27 @@ layout(std140) uniform UB0 {
  * and is uploaded once per object
  */
 layout(std140) uniform UB1 {
+
+//////////// GGX parameters ///////////
     vec3 uAlbedo;
     float uRoughness;
     float uMetallic;
+
+////////// Glints parameters //////////
+    float uScreenSpaceScale;
+    float uLogMicrofacetDensity;
+    /** 
+     * From the paper:
+     *    "R defines another probability of microfacets being reflecting or
+     * non-reflecting for any half-vector. This parameter is ad-hoc and we
+     * cannot completely link it to a physical quantity. However, in prac-
+     * tice, it behaves close to a microfacet roughness parameter: low R
+     * will reduce the amount of glints and increase their intensity"
+     */
+    float uMicrofacetRoughness;
+    float uDensityRandomization;
+
+/////// Transformation matrices ///////
     mat4 uMVP;
     mat3 uModel;
 };

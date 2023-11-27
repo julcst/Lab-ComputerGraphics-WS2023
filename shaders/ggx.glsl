@@ -12,6 +12,15 @@ vec3 F_schlick(float cosTheta, vec3 F0) {
 }
 
 /**
+ * Schlick approximation of Fresnel term with physically plausible F0
+ */
+vec3 F_schlick(float cosTheta, vec3 albedo, float metallic) {
+    vec3 F0 = vec3(0.04); // Physically plausible default value for dielectrics
+    F0 = mix(F0, albedo, metallic); // Tint the Fresnel base reflectivity for metallic surfaces
+    return F_schlick(cosTheta, F0);
+}
+
+/**
  * Trowbridge-Reitz GGX approximation of normal distribution function
  */
 float D_ggx(float NdotH, float a) {
@@ -51,6 +60,22 @@ float k_direct(float a) {
 }
 
 /**
+ * Approximates the diffuse component of the BRDF with a Lambert BRDF
+ */
+vec3 diffuse(vec3 F, vec3 albedo, float metallic) {
+    vec3 kD = vec3(1.0) - F;
+    kD *= 1.0 - metallic;
+    return kD * albedo / PI;
+}
+
+/**
+ * The Lambert BRDF
+ */
+vec3 BRDF_lambert(vec3 albedo) {
+    return albedo / PI;
+}
+
+/**
  * The GGX Cook-Torrance BRDF
  * @param N Surface normal in world space
  * @param L Light direction in world space
@@ -70,10 +95,7 @@ vec3 BRDF_ggx(vec3 N, vec3 L, vec3 V, vec3 albedo, float metallic, float roughne
     float a = roughness * roughness;
     float k = k_direct(a);
 
-    // Tint the Fresnel base reflectivity for metallic surfaces
-    vec3 F0 = vec3(0.04); // Physically plausible default value for dielectrics
-    F0 = mix(F0, albedo, metallic);
-    vec3 F = F_schlick(HdotV, F0);
+    vec3 F = F_schlick(HdotV, albedo, metallic);
 
     // Calculate the specular component with Cook-Torrance GGX
     vec3 FGD = F * G_smith_ggx(NdotV, NdotL, k) * D_ggx(NdotH, a);
@@ -81,13 +103,7 @@ vec3 BRDF_ggx(vec3 N, vec3 L, vec3 V, vec3 albedo, float metallic, float roughne
     vec3 specular = FGD / denom;
 
     // Calculate the diffuse component with Lambert
-    vec3 kD = vec3(1.0) - F;
-    kD *= 1.0 - metallic;
-    vec3 diffuse = kD * albedo / PI;
+    vec3 diffuse = diffuse(F, albedo, metallic);
 
     return specular + diffuse;
-}
-
-vec3 BRDF_lambert(vec3 albedo) {
-    return albedo / PI;
 }

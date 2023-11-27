@@ -10,7 +10,7 @@
 #define MAX_UINT 0xffffffffU
 #define MAX_INT  0x7fffffff
 
-///////////// Mapping uint -> float /////////////
+///////////// Mapping uint -> float (range 0-1) /////////////
 float mapf(uint v) { return float(v) / float(MAX_UINT); }
 vec2 mapf(uvec2 v) { return vec2(v) / float(MAX_UINT); }
 vec3 mapf(uvec3 v) { return vec3(v) / float(MAX_UINT); }
@@ -112,4 +112,4 @@ uvec4 hash4u(uvec4 v) {
 }
 uvec4 hash4u(vec4 v) { return hash4u(mapu(v)); }
 vec4 hash4f(uvec4 v) { return mapf(hash4u(v)); }
-vec4 hash3f(vec4 v) { return mapf(hash4u(mapu(v))); }
+vec4 hash4f(vec4 v) { return mapf(hash4u(mapu(v))); }

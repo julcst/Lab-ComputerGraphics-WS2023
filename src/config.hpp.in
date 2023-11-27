@@ -10,8 +10,8 @@ const std::string MODEL_DIR = "models/";
 const std::string MATERIAL_DIR = "materials/";
 
 const std::vector<std::string> MODEL_FILES = {@MODEL_FILES@};
-const std::vector<std::string> SHADER_FILES = {"debug.frag", "lambert.frag", "ggx.frag"};
-enum class ShaderType : int { DEBUG, LAMBERT, GGX, GLINT, LAYER};
+const std::vector<std::string> SHADER_FILES = {"debug.frag", "lambert.frag", "ggx.frag", "glints/glints.frag"};
+enum class ShaderType : int { DEBUG, LAMBERT, GGX, GLINTS, LAYER};
 const std::vector<std::string> MATERIAL_FILES = {@MATERIAL_FILES@};
 
 }

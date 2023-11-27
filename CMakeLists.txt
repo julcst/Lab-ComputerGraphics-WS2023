@@ -115,6 +115,10 @@ set(SHADERS
     shaders/debug.frag
     shaders/ggx.frag
     shaders/ggx.glsl
+    shaders/glints/binom.glsl
+    shaders/glints/glints.frag
+    shaders/glints/glints.glsl
+    shaders/glints/random.glsl
     shaders/lambert.frag
     shaders/projection.vert
     shaders/screen.vert
@@ -173,22 +177,15 @@ if(APPLE)
         MACOSX_BUNDLE_ICON_FILE AppIcon
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION}
     )
-    set_source_files_properties(${ICON}
-        PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources"
-    )
-    set_source_files_properties(${SHADERS}
-        PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources/shaders"
-    )
-    set_source_files_properties(${MODELS}
-        PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources/models"
-    )
-    set_source_files_properties(${MATERIALS}
-        PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources/materials"
-    )
+
+    # Copy resource files into bundle
+    foreach(RES_FILE IN LISTS RES)
+        cmake_path(GET RES_FILE PARENT_PATH LOC)
+        set_source_files_properties(${RES_FILE}
+            PROPERTIES
+            MACOSX_PACKAGE_LOCATION "Resources/${LOC}"
+        )
+    endforeach()
 
     # Packaging macOS installer
     install(TARGETS ${PROJECT_NAME} BUNDLE DESTINATION .)

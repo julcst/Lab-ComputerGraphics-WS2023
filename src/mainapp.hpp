@@ -43,7 +43,7 @@ class MainApp : public App {
     std::vector<Program> shaders;
     int shaderIdx = 0;
     int materialIdx = 0;
-    char scenePath[512] = {"testscene.scene"};
+    std::string scenePath = "testscene.scene";
     void saveScene(std::string path);
     void loadScene(std::string path);
 };

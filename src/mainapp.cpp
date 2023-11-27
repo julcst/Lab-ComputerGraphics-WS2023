@@ -108,10 +108,10 @@ void MainApp::buildImGui() {
     ImGui::ColorEdit3("Light Color", value_ptr(ub0.uniforms.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
     Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
     ImGui::Separator();
-    ImGui::InputText("Scene Path", scenePath, IM_ARRAYSIZE(scenePath));
-    if (ImGui::Button("Load Scene")) loadScene(std::string(scenePath));
+    ImGui::InputText("Scene Path", &scenePath);
+    if (ImGui::Button("Load Scene")) loadScene(scenePath);
     ImGui::SameLine();
-    if (ImGui::Button("Save Scene")) saveScene(std::string(scenePath));
+    if (ImGui::Button("Save Scene")) saveScene(scenePath);
     ImGui::SameLine();
     if (ImGui::Button("Clear")) objects.clear();
     ImGui::Separator();

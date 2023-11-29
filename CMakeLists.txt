@@ -69,7 +69,7 @@ target_link_libraries(imgui_glfw glfw)
 FetchContent_Declare(
     objgl
     GIT_REPOSITORY https://github.com/karolek471/objgl.git
-    GIT_TAG "origin/main"
+    GIT_TAG a038f0eb432f2167ae186f7c74cb4c07eb5df343
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
 )

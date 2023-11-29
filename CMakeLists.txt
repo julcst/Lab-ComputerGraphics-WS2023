@@ -116,6 +116,7 @@ set(SHADERS
     shaders/ggx.frag
     shaders/ggx.glsl
     shaders/glints/binom.glsl
+    shaders/glints/footprint.glsl
     shaders/glints/glints.frag
     shaders/glints/glints.glsl
     shaders/glints/random.glsl

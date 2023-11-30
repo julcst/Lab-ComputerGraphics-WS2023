@@ -128,7 +128,11 @@ set(SHADERS
 set(MODELS
     models/bunny.obj
     models/car.obj
+    models/cube.obj
+    models/cylinder.obj
+    models/donut.obj
     models/icosphere.obj
+    models/plane.obj
     models/polysphere.obj
     models/suzanne.obj
     models/uvsphere.obj

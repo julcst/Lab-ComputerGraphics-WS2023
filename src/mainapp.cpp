@@ -109,10 +109,18 @@ void MainApp::buildImGui() {
     Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
     ImGui::Separator();
     ImGui::InputText("Scene Path", &scenePath);
-    if (ImGui::Button("Load Scene")) loadScene(scenePath);
+    if (ImGui::Button("Load Scene")) {
+        if (!loadScene(Config::SCENE_DIR + scenePath)) ImGui::OpenPopup("Invalid File");
+    }
     ImGui::SameLine();
-    if (ImGui::Button("Save Scene")) saveScene(scenePath);
+    if (ImGui::Button("Save Scene")) {
+        if (!saveScene(Config::SCENE_DIR + scenePath)) ImGui::OpenPopup("Invalid File");
+    }
     ImGui::SameLine();
+    if (ImGui::BeginPopup("Invalid File")) {
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Invalid File");
+        ImGui::EndPopup();
+    }
     if (ImGui::Button("Clear")) objects.clear();
     ImGui::Separator();
     if (ImGui::Button("Add Object")) {
@@ -122,6 +130,7 @@ void MainApp::buildImGui() {
     ImGui::End();
 
     // Draw Object GUIs
+    // Reverse iterate to be able to remove objects during iteration
     for (auto it = objects.rbegin(); it != objects.rend(); ++it) {
         Object& obj = *it;
 
@@ -135,7 +144,7 @@ void MainApp::buildImGui() {
             json preset = json::parse(raw);
             obj.loadPreset(preset);
         }
-        Util::combo("Shader", reinterpret_cast<int*>(&obj.shaderIdx), Config::SHADER_FILES);
+        Util::combo("Shader", reinterpret_cast<unsigned int*>(&obj.shaderIdx), Config::SHADER_FILES);
         Util::combo("Mesh", &obj.meshIdx, Config::MODEL_FILES);
         ImGui::Separator();
         ImGui::Checkbox("Auto Rotate Mesh", &obj.rotate);
@@ -153,10 +162,11 @@ void MainApp::buildImGui() {
             ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
             ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.0f, 1.0f);
             ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
-            ImGui::SliderFloat("Screen Space Scale", &obj.material.screenSpaceScale, 1.0f, 100000.0f);
-            ImGui::SliderFloat("Log Microfacet Density", &obj.material.logMicrofacetDensity, -10.0f, 10.0f);
+            ImGui::SliderFloat("Screen Space Scale", &obj.material.screenSpaceScale, 1.0f, 1000.0f);
+            ImGui::SliderFloat("Log Microfacet Density", &obj.material.logMicrofacetDensity, -10.0f, 50.0f);
             ImGui::SliderFloat("Density Randomization", &obj.material.densityRandomization, 0.0f, 10.0f);
             ImGui::SliderFloat("Microfacet Roughness", &obj.material.microfacetRoughness, 0.001f, 1.0f);
+            Util::combo("Debug mode", &obj.material.debug, Config::GLINTS_DEBUG_MODES);
         }
         ImGui::Separator();
         if (ImGui::Button("Destroy")) {
@@ -167,23 +177,33 @@ void MainApp::buildImGui() {
     }
 }
 
-void MainApp::saveScene(std::string path) {
+bool MainApp::saveScene(std::string path) {
     json jScene;
     for (const Object& obj : objects) {
         jScene["objects"].push_back(obj);
     }
-    Common::writeToFile(jScene.dump(4), path);
+    try {
+        Common::writeToFile(jScene.dump(4), path);
+        return true;
+    } catch (std::exception& e) {
+        return false;
+    }
 }
 
-void MainApp::loadScene(std::string path) {
-    std::string rawscenejson = Common::readFile(path);
-    json scenedata = json::parse(rawscenejson);
+bool MainApp::loadScene(std::string path) {
+    try {
+        std::string rawscenejson = Common::readFile(path);
+        json scenedata = json::parse(rawscenejson);
 
-    objects.clear();
-    if (scenedata.contains("objects")) {
-        for (const auto& objdata : scenedata["objects"]) {
-            Object obj = objdata.template get<Object>();
-            objects.push_back(std::move(obj));
+        objects.clear();
+        if (scenedata.contains("objects")) {
+            for (const auto& objdata : scenedata["objects"]) {
+                Object obj = objdata.template get<Object>();
+                objects.push_back(std::move(obj));
+            }
         }
+        return true;
+    } catch (std::exception& e) {
+        return false;
     }
 }

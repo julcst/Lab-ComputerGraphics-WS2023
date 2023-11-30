@@ -66,6 +66,23 @@ void main() {
     // Fake ambient lighting
     lighting += uSkyColor * uAlbedo * uAmbientStrength;
 
-    // Draw color to screen
-    fragColor = lighting;
+    switch(uDebug) {
+        default:
+            // Render color color to screen
+            fragColor = lighting;
+            break;
+        // Debug modes
+        case 1:
+            fragColor = vec3(calcNaivePixelFootprint(uv, uScreenSpaceScale).area * 40000.0);
+            break;
+        case 2:
+            fragColor = vec3(D);
+            break;
+        case 3:
+            fragColor = vec3(Dmax);
+            break;
+        case 4:
+            fragColor = vec3(DP);
+            break;
+    }
 }

@@ -22,7 +22,7 @@ class Object {
 
     unsigned int id;
     std::string name = "Object";
-    int meshIdx = 0;
+    unsigned int meshIdx = 0;
     Config::ShaderType shaderIdx = Config::ShaderType::DEBUG;
     UB1 material;
     bool rotate = false;

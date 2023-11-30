@@ -33,6 +33,7 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
 
     // Randomize the logarithmic microfacet density
     // ? Wouldn't it be more intuitive to randomize the linear microfacet density instead?
+    // ? Why is this normal distributed and not binomial distributed
     float logDensityRand = clamp(sampleNormal(logMicrofacetDensity, densityRandomization, rand.x), 0.0, 50.0);
     // NP is the number of discrete microfacets in the pixel footprint
     float NP = footprint.area * exp(logDensityRand);

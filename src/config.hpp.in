@@ -8,10 +8,13 @@ namespace Config {
 const std::string SHADER_DIR = "shaders/";
 const std::string MODEL_DIR = "models/";
 const std::string MATERIAL_DIR = "materials/";
+const std::string SCENE_DIR = "scenes/";
 
 const std::vector<std::string> MODEL_FILES = {@MODEL_FILES@};
 const std::vector<std::string> SHADER_FILES = {"debug.frag", "lambert.frag", "ggx.frag", "glints/glints.frag"};
-enum class ShaderType : int { DEBUG, LAMBERT, GGX, GLINTS, LAYER};
+enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GLINTS, LAYER};
 const std::vector<std::string> MATERIAL_FILES = {@MATERIAL_FILES@};
+
+const std::vector<std::string> GLINTS_DEBUG_MODES = {"off", "naiveFootprint", "D", "Dmax", "DP"};
 
 }

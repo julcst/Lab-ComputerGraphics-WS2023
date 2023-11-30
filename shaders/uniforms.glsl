@@ -36,6 +36,7 @@ layout(std140) uniform UB1 {
      */
     float uMicrofacetRoughness;
     float uDensityRandomization;
+    uint uDebug;
 
 /////// Transformation matrices ///////
     mat4 uMVP;

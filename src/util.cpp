@@ -52,9 +52,13 @@ bool Util::combo(const char* label, int* curr, const std::vector<std::string>& i
         label, curr,
         [](void* data, int idx, const char** out_text) {
             auto items = reinterpret_cast<const std::vector<std::string>*>(data);
-            if (idx < 0 || idx >= items->size()) return false;
+            // if (idx < 0 || idx >= items->size()) return false; // unnecessary
             *out_text = items->at(idx).c_str();
             return true;
         },
         const_cast<void*>(reinterpret_cast<const void*>(&items)), items.size());
+}
+
+bool Util::combo(const char* label, unsigned int* curr, const std::vector<std::string>& items) {
+    return Util::combo(label, reinterpret_cast<int*>(curr), items);
 }

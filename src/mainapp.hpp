@@ -39,11 +39,8 @@ class MainApp : public App {
     Program backgroundShader;
     std::vector<Object> objects;
     std::vector<Mesh> meshes;
-    int meshIdx = 0;
     std::vector<Program> shaders;
-    int shaderIdx = 0;
-    int materialIdx = 0;
-    std::string scenePath = "testscene.scene";
-    void saveScene(std::string path);
-    void loadScene(std::string path);
+    std::string scenePath = "";
+    bool saveScene(std::string path);
+    bool loadScene(std::string path);
 };

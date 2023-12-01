@@ -1,5 +1,6 @@
 #include "common.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -12,9 +13,11 @@ std::string Common::readFile(const std::string& path) {
     return buffer.str();
 }
 
-void Common::writeToFile(const std::string& content, const std::string& path) {
+void Common::writeToFile(const std::string& content, const std::string& pathString) {
+    std::filesystem::path path(pathString);
+    std::filesystem::create_directories(path.parent_path());
     std::ofstream out(path);
-    if (!out.is_open()) throw std::runtime_error("Could not open file: " + path);
+    if (!out.is_open()) throw std::runtime_error("Could not open file: " + pathString);
     out << content;
     out.close();
 }

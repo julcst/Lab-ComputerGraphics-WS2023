@@ -15,6 +15,6 @@ const std::vector<std::string> SHADER_FILES = {"debug.frag", "lambert.frag", "gg
 enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GLINTS, LAYER};
 const std::vector<std::string> MATERIAL_FILES = {@MATERIAL_FILES@};
 
-const std::vector<std::string> GLINTS_DEBUG_MODES = {"off", "naiveFootprint", "D", "Dmax", "DP"};
+const std::vector<std::string> GLINTS_DEBUG_MODES = {"off", "D", "Dmax", "DP", "naiveFootprint", "footprint", "footprintDiff", "angle", "ratio", "major"};
 
 }

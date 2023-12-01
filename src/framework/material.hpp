@@ -13,7 +13,7 @@ struct UB1 {
 
 // Location 1
     float metallic = 0.0f;
-    float screenSpaceScale = 1.0f;
+    float screenSpaceScale = 1.5f;
     float logMicrofacetDensity = 0.0f;
     /** 
      * From the paper:
@@ -23,7 +23,7 @@ struct UB1 {
      * tice, it behaves close to a microfacet roughness parameter: low R
      * will reduce the amount of glints and increase their intensity"
      */
-    float microfacetRoughness = 0.5f;
+    float microfacetRoughness = 1.0f;
 
 // Location 2
     float densityRandomization = 0.0f;

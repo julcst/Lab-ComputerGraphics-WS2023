@@ -23,7 +23,7 @@
  */
 float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float microfacetRoughness, float logMicrofacetDensity, float densityRandomization) {
     // Calculate the pixel footprint
-    Footprint footprint = calcNaivePixelFootprint(uv, screenSpaceScale);
+    Footprint footprint = calcPixelFootprint(uv, screenSpaceScale);
     
     // Generate incoherent random numbers based on the uv coordinates
     vec3 rand = hash3f(vec3(uv.xy, uv.x * uv.y));

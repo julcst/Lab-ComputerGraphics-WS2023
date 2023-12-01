@@ -5,6 +5,11 @@
 struct Footprint {
     /** The area of the pixel footprint. */
     float area;
+    vec2 major;
+    vec2 minor;
+    float minorLength;
+    float angle;
+    float ratio;
 };
 
 /**
@@ -16,11 +21,10 @@ Footprint calcNaivePixelFootprint(vec2 uv, float scale) {
     vec2 duvdy = scale * dFdy(uv);
     Footprint footprint;
     // Measured as the area of the parallelogram spanned by the two partial derivatives of the uv coordinates
-    footprint.area = 0.5 * length(cross(vec3(duvdx, 0.0), vec3(duvdy, 0.0)));
+    footprint.area = length(cross(vec3(duvdx, 0.0), vec3(duvdy, 0.0)));
     return footprint;
 }
 
-// TODO implement footprint ellipse calculation
 /**
  * Calculates the footprint of a pixel by constructing a footprint ellipse, which major and minor axis
  * are calculated as the Eigenvectors of the matrix J that deforms the unit circle into the footprint.
@@ -31,3 +35,52 @@ Footprint calcNaivePixelFootprint(vec2 uv, float scale) {
  * Then the Eigenvectors of J are the major and minor axis of the ellipse that best represents
  * the local behavior of the transformation and therefore the footprint of the pixel.
  */
+Footprint calcPixelFootprint(vec2 uv, float scale) {
+    vec2 duvdx = scale * dFdx(uv);
+    vec2 duvdy = scale * dFdy(uv);
+
+    // Build the jacobian matrix J from the two partial derivatives
+    mat2 J = mat2(duvdx, duvdy);
+
+    // TODO understand this part
+    mat2 Jinv = inverse(J);
+    // Make J symmetric
+    // M = (J^{-1})^T J^{-1}
+    mat2 M = transpose(Jinv) * Jinv;
+
+    // Extract entries
+    float a = M[0][0];
+	float b = M[0][1];
+	float c = M[1][0];
+	float d = M[1][1];
+
+    // Find the eigenvalues and eigenvectors of M
+    // (https://people.math.harvard.edu/~knill/teaching/math21b2004/exhibits/2dmatrices/index.html)
+    float trace = a + d;
+    float det = determinant(M);
+    // Find roots with pq
+    float mid = trace / 2;
+    float dist = sqrt(trace * trace / 3.999 - det);
+    float L1 = mid + dist;
+    float L2 = mid - dist;
+
+    // Eigenvectors
+    vec2 ev1 = normalize(vec2(L1 - det, c));
+    vec2 ev2 = normalize(vec2(L2 - det, c));
+
+    // Eigenvalues
+    float ew1 = 1.0 / sqrt(L1);
+	float ew2 = 1.0 / sqrt(L2);
+
+    Footprint footprint;
+    footprint.area = ew1 * ew2;
+    footprint.major = ev1 * ew1;
+    footprint.minor = ev2 * ew2;
+    footprint.minorLength = ew2;
+    //vec2 v1 = vec2(0.0, 1.0);
+    //footprint.angle = atan(v1.x * ev1.y - v1.y * ev1.x, v1.x * ev1.x + v1.y * ev1.y);
+    // ? Why is the angle always the same
+    footprint.angle = atan(ev1.y, ev1.x);
+    footprint.ratio = ew1 / ew2;
+    return footprint;
+}

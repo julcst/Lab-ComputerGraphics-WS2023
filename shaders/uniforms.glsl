@@ -24,17 +24,30 @@ layout(std140) uniform UB1 {
     float uMetallic;
 
 ////////// Glints parameters //////////
+    /**
+     * From the paper: "the minimal allowed size of a glint in pixels. Due to
+     * Shannon's sampling theorem, using 1 here results in aliasing.
+     * We recommend using 1.5"
+     */
     float uScreenSpaceScale;
+    /**
+     * From the paper: "the (log) amount of microfacets per unit surface
+     * texture space area"
+     */
     float uLogMicrofacetDensity;
     /** 
      * From the paper:
-     *    "R defines another probability of microfacets being reflecting or
+     *   "R defines another probability of microfacets being reflecting or
      * non-reflecting for any half-vector. This parameter is ad-hoc and we
      * cannot completely link it to a physical quantity. However, in prac-
      * tice, it behaves close to a microfacet roughness parameter: low R
      * will reduce the amount of glints and increase their intensity"
      */
     float uMicrofacetRoughness;
+    /**
+     * From the paper: the amount of randomization of glint densities
+     * across the surface
+     */
     float uDensityRandomization;
     uint uDebug;
 

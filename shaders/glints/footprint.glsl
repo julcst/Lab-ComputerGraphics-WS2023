@@ -9,6 +9,7 @@ struct Footprint {
     vec2 minor;
     float minorLength;
     float angle;
+    /** major length / minor length */
     float ratio;
 };
 

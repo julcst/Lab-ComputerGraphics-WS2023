@@ -96,7 +96,7 @@ void main() {
             fragColor = vec3(abs(calcPixelFootprint(uv, uScreenSpaceScale).area - calcNaivePixelFootprint(uv, uScreenSpaceScale).area) * 40000.0);
             break;
         case 7:
-            fragColor = vec3(angleToRGB(calcPixelFootprint(uv, uScreenSpaceScale).angle));
+            fragColor = vec3(calcPixelFootprint(uv, uScreenSpaceScale).angle / 6.283 + 0.5);
             break;
         case 8:
             fragColor = vec3(calcPixelFootprint(uv, uScreenSpaceScale).ratio);

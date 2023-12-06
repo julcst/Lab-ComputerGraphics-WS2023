@@ -53,5 +53,5 @@ layout(std140) uniform UB1 {
 
 /////// Transformation matrices ///////
     mat4 uMVP;
-    mat3 uModel;
+    mat4 uModel;
 };

@@ -41,7 +41,7 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     vec2 duvdy = scale * dFdy(uv);
 
     // Build the jacobian matrix J from the two partial derivatives
-    mat2 J = mat2(duvdx, duvdy);
+    mat2 J = transpose(mat2(duvdx, duvdy));
 
     // TODO understand this part
     mat2 Jinv = inverse(J);
@@ -49,10 +49,10 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     // M = (J^{-1})^T J^{-1}
     mat2 M = transpose(Jinv) * Jinv;
 
-    // Extract entries
+    // Extract entries (GLSL is [column][row])
     float a = M[0][0];
-	float b = M[0][1];
-	float c = M[1][0];
+	float b = M[1][0];
+	float c = M[0][1];
 	float d = M[1][1];
 
     // Find the eigenvalues and eigenvectors of M
@@ -60,7 +60,7 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     float trace = a + d;
     float det = determinant(M);
     // Find roots with pq
-    float mid = trace / 2;
+    float mid = trace / 2.0;
     float dist = sqrt(trace * trace / 3.999 - det);
     float L1 = mid + dist;
     float L2 = mid - dist;
@@ -78,9 +78,9 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     footprint.major = ev1 * ew1;
     footprint.minor = ev2 * ew2;
     footprint.minorLength = ew2;
+    // ? Why is the angle always the same?
     //vec2 v1 = vec2(0.0, 1.0);
     //footprint.angle = atan(v1.x * ev1.y - v1.y * ev1.x, v1.x * ev1.x + v1.y * ev1.y);
-    // ? Why is the angle always the same
     footprint.angle = atan(ev1.y, ev1.x);
     footprint.ratio = ew1 / ew2;
     return footprint;

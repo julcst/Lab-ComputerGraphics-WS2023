@@ -17,51 +17,56 @@ float map01(float x, float x0, float x1) {
     return (x - x0) / (x1 - x0);
 }
 
-struct HexaFootprint {
-    // Dimension 1: Logarithmic area
+struct HeptaFootprint {
+    // Dimension 1: Area
     float lod0;
     float lod1;
     float lodWeight;
-    // Dimension 2: Anisotropy
+    // Dimension 2: Ratio
     float aniso0;
     float aniso1;
     float anisoWeight;
     // Dimension 3: Orientation
+    // Here we also need to store the half angle because
+    // the ground shape of our heptaeder is a pentagon
+    // on the ratio-orientation plane
     float theta0;
     float thetaH;
     float theta1;
     float thetaWeight;
 };
 
-HexaFootprint hexifyFootprint(Footprint foot) {
-    HexaFootprint hexaFoot;
+HeptaFootprint heptifyFootprint(Footprint foot) {
+    HeptaFootprint hepta;
 
     // Discretize LOD with logarithmic scale
     float lod = log2(foot.minorLength);
-    hexaFoot.lod0 = exp2(floor(lod));
-    hexaFoot.lod1 = hexaFoot.lod0 * 2.0;
-    hexaFoot.lodWeight = map01(foot.minorLength, hexaFoot.lod0, hexaFoot.lod1);
+    hepta.lod0 = exp2(floor(lod));
+    hepta.lod1 = hepta.lod0 * 2.0;
+    hepta.lodWeight = map01(foot.minorLength, hepta.lod0, hepta.lod1);
 
     // Discretize anisotropy with logarithmic scale
     float aniso = log2(foot.ratio);
-    hexaFoot.aniso0 = exp2(floor(aniso));
-    hexaFoot.aniso1 = hexaFoot.aniso0 * 2.0;
-    hexaFoot.anisoWeight = map01(foot.ratio, hexaFoot.aniso0, hexaFoot.aniso1);
+    hepta.aniso0 = exp2(floor(aniso));
+    hepta.aniso1 = hepta.aniso0 * 2.0;
+    hepta.anisoWeight = map01(foot.ratio, hepta.aniso0, hepta.aniso1);
 
     // Discretize orientation with adaptive grid
     float theta = foot.angle;
-    float thetaGrid = DEG90 / max(hexaFoot.aniso0, 2.0);
+    float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
     float thetaBin = floor(theta / thetaGrid) * thetaGrid;
-    hexaFoot.theta0 = theta < thetaBin ? thetaBin : thetaBin + thetaGrid / 2.0;
-	hexaFoot.thetaH = hexaFoot.theta0 + thetaGrid / 4.0;
-	hexaFoot.theta1 = hexaFoot.theta0 + thetaGrid / 2.0;
-    hexaFoot.thetaWeight = map01(theta, hexaFoot.theta0, hexaFoot.theta1);
-    hexaFoot.theta0 = hexaFoot.theta0 <= 0.0 ? hexaFoot.theta0 + DEG180 : hexaFoot.theta0;
+    hepta.theta0 = theta < thetaBin ? thetaBin : thetaBin + thetaGrid / 2.0;
+	hepta.thetaH = hepta.theta0 + thetaGrid / 4.0;
+	hepta.theta1 = hepta.theta0 + thetaGrid / 2.0;
+    hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);
+    hepta.theta0 = hepta.theta0 <= 0.0 ? hepta.theta0 + DEG180 : hepta.theta0;
 
-DEBUG(10, vec3(hexaFoot.lod0 * 1000.0, hexaFoot.aniso0, hexaFoot.theta0 / DEG360 + 0.5));
-DEBUG(11, vec3(hexaFoot.lodWeight, hexaFoot.anisoWeight, hexaFoot.thetaWeight));
+DEBUG(10, vec3(hepta.lod0 * 1000.0, hepta.aniso0, hepta.theta0 / DEG360 + 0.5));
+DEBUG(11, vec3(hepta.lodWeight));
+DEBUG(12, vec3(hepta.anisoWeight));
+DEBUG(13, vec3(hepta.thetaWeight));
 
-    return hexaFoot;
+    return hepta;
 }
 
 /**
@@ -84,10 +89,10 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
 
     // The footprint can now be parametrized into three dimensions which are
     // logarithmic area (or LOD) + major/minor ratio (or anisotropy) + orientation
-    // We define a grid in each on these dimensions to obtain a 3D Hexaeder that contains the footprint
-    HexaFootprint hexaFoot = hexifyFootprint(foot);
+    // We define a grid on each of these dimensions to obtain a 3D Heptaeder that contains the footprint
+    HeptaFootprint hepta = heptifyFootprint(foot);
 
-    // TODO TetraFootprint tetraFoot = tetrifyFootprint(hexaFoot);
+    // TODO TetraFootprint tetraFoot = tetrifyFootprint(hepta);
     
     // Generate incoherent random numbers based on the uv coordinates
     vec3 rand = hash3f(vec3(uv.xy, uv.x * uv.y));

@@ -10,6 +10,9 @@ out vec3 fragColor;
 #include "ggx.glsl"
 #include "glints/glints.glsl"
 
+#define RENDER_VIEW(c) case 0: fragColor = c; break
+#define DEBUG_VIEW(i, v) case uint(i): fragColor = v; break
+
 vec3 angleToRGB(float angle) {
     float angle01 = angle / 6.283 + 0.5;
     return clamp(abs(mod(angle01 * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
@@ -71,37 +74,16 @@ void main() {
     // Fake ambient lighting
     lighting += uSkyColor * uAlbedo * uAmbientStrength;
 
-    switch(uDebug) {
-        case 0:
-            // Render color color to screen
-            fragColor = lighting;
-            break;
-        // Debug modes
-        case 1:
-            fragColor = vec3(D);
-            break;
-        case 2:
-            fragColor = vec3(Dmax);
-            break;
-        case 3:
-            fragColor = vec3(DP);
-            break;
-        case 4:
-            fragColor = vec3(calcNaivePixelFootprint(uv, uScreenSpaceScale).area * 40000.0);
-            break;
-        case 5:
-            fragColor = vec3(calcPixelFootprint(uv, uScreenSpaceScale).area * 40000.0);
-            break;
-        case 6:
-            fragColor = vec3(abs(calcPixelFootprint(uv, uScreenSpaceScale).area - calcNaivePixelFootprint(uv, uScreenSpaceScale).area) * 40000.0);
-            break;
-        case 7:
-            fragColor = vec3(calcPixelFootprint(uv, uScreenSpaceScale).angle / 6.283 + 0.5);
-            break;
-        case 8:
-            fragColor = vec3(calcPixelFootprint(uv, uScreenSpaceScale).ratio);
-            break;
-        case 9:
-            fragColor = vec3(calcPixelFootprint(uv, uScreenSpaceScale).major, 0.0);
-    }
+switch(uDebug) {
+RENDER_VIEW(lighting);
+DEBUG_VIEW(1, vec3(D));
+DEBUG_VIEW(2, vec3(Dmax));
+DEBUG_VIEW(3, vec3(DP));
+DEBUG_VIEW(4, vec3(calcNaivePixelFootprint(uv, uScreenSpaceScale).area * 40000.0));
+DEBUG_VIEW(5, vec3(calcPixelFootprint(uv, uScreenSpaceScale).area * 40000.0));
+DEBUG_VIEW(6, vec3(abs(calcPixelFootprint(uv, uScreenSpaceScale).area - calcNaivePixelFootprint(uv, uScreenSpaceScale).area) * 40000.0));
+DEBUG_VIEW(7, vec3(calcPixelFootprint(uv, uScreenSpaceScale).angle / 6.283 + 0.5));
+DEBUG_VIEW(8, vec3(calcPixelFootprint(uv, uScreenSpaceScale).ratio));
+DEBUG_VIEW(9, vec3(calcPixelFootprint(uv, uScreenSpaceScale).major, 0.0));
+}
 }

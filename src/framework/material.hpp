@@ -41,8 +41,8 @@ struct UB1 {
     glm::vec3 padding2 = glm::vec3(0.0f);
 
 // Location 12-...
-    glm::vec3 layerEta[Config::MAX_LAYERS];
-    glm::vec3 layerKappa[Config::MAX_LAYERS];
+    glm::vec4 layerEta[Config::MAX_LAYERS];
+    glm::vec4 layerKappa[Config::MAX_LAYERS];
     float layerAlpha[Config::MAX_LAYERS];
     float layerDepth[Config::MAX_LAYERS];
     float layerSigmaA[Config::MAX_LAYERS];

@@ -59,11 +59,11 @@ layout(std140) uniform UB1 {
 
 ////////// Layered parameters //////////
     uint uLayerCount;
-    vec3 uLayerEta[MAX_LAYERS];
-    vec3 uLayerKappa[MAX_LAYERS];
-    float uLayerAlpha[MAX_LAYERS];
-    float uLayerDepth[MAX_LAYERS];
-    float uLayerSigmaA[MAX_LAYERS];
-    float uLayerSigmaS[MAX_LAYERS];
-    float uLayerG[MAX_LAYERS];
+    vec4 uLayerEta[MAX_LAYERS];
+    vec4 uLayerKappa[MAX_LAYERS];
+    vec4 uLayerAlpha[MAX_LAYERS/4];
+    vec4 uLayerDepth[MAX_LAYERS/4];
+    vec4 uLayerSigmaA[MAX_LAYERS/4];
+    vec4 uLayerSigmaS[MAX_LAYERS/4];
+    vec4 uLayerG[MAX_LAYERS/4];
 };

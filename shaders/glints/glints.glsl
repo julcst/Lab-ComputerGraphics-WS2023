@@ -4,10 +4,9 @@
  * in GLSL
  */
 #include "glints/binom.glsl"
+#include "glints/debug.glsl"
 #include "glints/footprint.glsl"
 #include "glints/random.glsl"
-
-#define DEBUG(i, v) if (uDebug == uint(i)) fragColor = v
 
 #define DEG360 6.28319
 #define DEG180 3.14159
@@ -61,11 +60,6 @@ HeptaFootprint heptifyFootprint(Footprint foot) {
     hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);
     hepta.theta0 = hepta.theta0 <= 0.0 ? hepta.theta0 + DEG180 : hepta.theta0;
 
-DEBUG(10, vec3(hepta.lod0 * 1000.0, hepta.aniso0, hepta.theta0 / DEG360 + 0.5));
-DEBUG(11, vec3(hepta.lodWeight));
-DEBUG(12, vec3(hepta.anisoWeight));
-DEBUG(13, vec3(hepta.thetaWeight));
-
     return hepta;
 }
 
@@ -87,10 +81,19 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Calculate the pixel footprint
     Footprint foot = calcPixelFootprint(uv, screenSpaceScale);
 
+    DEBUG_VIEW(7, angleToRGB(foot.angle));
+    DEBUG_VIEW(8, vec3(1.0 / foot.ratio));
+    DEBUG_VIEW(9, normalToRGB(normalize(foot.major)));
+
     // The footprint can now be parametrized into three dimensions which are
     // logarithmic area (or LOD) + major/minor ratio (or anisotropy) + orientation
     // We define a grid on each of these dimensions to obtain a 3D Heptaeder that contains the footprint
     HeptaFootprint hepta = heptifyFootprint(foot);
+
+    DEBUG_VIEW(10, vec3(hepta.lod0 * 1000.0, hepta.aniso0, hepta.theta0 / DEG360 + 0.5));
+    DEBUG_VIEW(11, vec3(hepta.lodWeight));
+    DEBUG_VIEW(12, vec3(hepta.anisoWeight));
+    DEBUG_VIEW(13, vec3(hepta.thetaWeight));
 
     // TODO TetraFootprint tetraFoot = tetrifyFootprint(hepta);
     

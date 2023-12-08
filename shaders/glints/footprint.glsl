@@ -43,7 +43,6 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     // Build the jacobian matrix J from the two partial derivatives
     mat2 J = transpose(mat2(duvdx, duvdy));
 
-    // TODO understand this part
     mat2 Jinv = inverse(J);
     // Make J symmetric
     // M = (J^{-1})^T J^{-1}
@@ -58,12 +57,12 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     // Find the eigenvalues and eigenvectors of M
     // (https://people.math.harvard.edu/~knill/teaching/math21b2004/exhibits/2dmatrices/index.html)
     float trace = a + d;
-    float det = determinant(M);
+    float det = a * d - b * c;
     // Find roots with pq
     float mid = trace / 2.0;
     float dist = sqrt(trace * trace / 3.999 - det);
-    float L1 = mid + dist;
-    float L2 = mid - dist;
+    float L1 = mid - dist;
+    float L2 = mid + dist;
 
     // Eigenvectors
     vec2 ev1 = normalize(vec2(L1 - det, c));
@@ -80,7 +79,7 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     footprint.minorLength = ew2;
     // ? Why is the angle always the same?
     //vec2 v1 = vec2(0.0, 1.0);
-    //footprint.angle = atan(v1.x * ev1.y - v1.y * ev1.x, v1.x * ev1.x + v1.y * ev1.y);
+    //footprint.angle = atan(-ev1.x, v1.x * ev1.x + v1.y * ev1.y);
     footprint.angle = atan(ev1.y, ev1.x);
     footprint.ratio = ew1 / ew2;
     return footprint;

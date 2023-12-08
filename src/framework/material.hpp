@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 
-#include "framework/glmjson.hpp"
+#include "glmjson.hpp"
 
 struct UB1 {
 
@@ -36,5 +36,5 @@ struct UB1 {
 // Location 7-10
     glm::mat4 model = glm::mat4(1.0f);
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, debug);
 };

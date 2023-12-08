@@ -13,9 +13,15 @@
 #include <vector>
 
 #include "config.hpp"
+#include "framework/app.hpp"
+#include "framework/camera.hpp"
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
+#include "framework/gl/uniformbuffer.hpp"
 #include "framework/common.hpp"
+#include "framework/object.hpp"
+#include "framework/ub0.hpp"
+#include "framework/material.hpp"
 #include "util.hpp"
 
 using namespace glm;
@@ -31,8 +37,8 @@ const float FOCAL_LENGTH = 4.0f / tan(FOV);
 MainApp::MainApp() :
     App(WIDTH, HEIGHT),
     cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f),
-    ub0(0, UB0{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = FOCAL_LENGTH}),
-    ub1(1, UB1{.albedo = vec3(0.8f)}) {
+    scene{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = FOCAL_LENGTH},
+    ub0(0, scene), ub1(1) {
 
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
     backgroundShader.load("screen.vert", "background.frag");
@@ -68,10 +74,10 @@ void MainApp::render() {
     mat4 viewMat = cam.calcView();
     mat4 projViewMat = projMat * viewMat;
 
-    ub0.uniforms.aspectRatio = resolution.x / resolution.y;
-    ub0.uniforms.cameraRotation = mat4(cam.calcRotation());
-    ub0.uniforms.cameraPosition = cam.getPosition();
-    ub0.upload();
+    scene.aspectRatio = resolution.x / resolution.y;
+    scene.cameraRotation = mat4(cam.calcRotation());
+    scene.cameraPosition = cam.getPosition();
+    ub0.upload(scene);
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -103,10 +109,10 @@ void MainApp::buildImGui() {
 
     ImGui::SetNextWindowPos(ImVec2(0, 50), ImGuiCond_Once);
     ImGui::Begin("Scene", NULL, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::ColorEdit3("Sky Color", value_ptr(ub0.uniforms.skyColor), ImGuiColorEditFlags_Float);
-    ImGui::SliderFloat("Fake Ambient Strength", &ub0.uniforms.ambientStrength, 0.0f, 1.0f);
-    ImGui::ColorEdit3("Light Color", value_ptr(ub0.uniforms.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
-    Util::sphericalSlider("Light Direction", ub0.uniforms.lightDir);
+    ImGui::ColorEdit3("Sky Color", value_ptr(scene.skyColor), ImGuiColorEditFlags_Float);
+    ImGui::SliderFloat("Fake Ambient Strength", &scene.ambientStrength, 0.0f, 1.0f);
+    ImGui::ColorEdit3("Light Color", value_ptr(scene.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
+    Util::sphericalSlider("Light Direction", scene.lightDir);
     ImGui::Separator();
     ImGui::InputText("Scene Path", &scenePath);
     if (ImGui::Button("Load Scene")) {
@@ -179,9 +185,8 @@ void MainApp::buildImGui() {
 
 bool MainApp::saveScene(std::string path) {
     json jScene;
-    for (const Object& obj : objects) {
-        jScene["objects"].push_back(obj);
-    }
+    jScene["settings"] = scene;
+    jScene["objects"] = objects;
     try {
         Common::writeToFile(jScene.dump(4), path);
         return true;
@@ -195,13 +200,11 @@ bool MainApp::loadScene(std::string path) {
         std::string rawscenejson = Common::readFile(path);
         json scenedata = json::parse(rawscenejson);
 
-        objects.clear();
-        if (scenedata.contains("objects")) {
-            for (const auto& objdata : scenedata["objects"]) {
-                Object obj = objdata.template get<Object>();
-                objects.push_back(std::move(obj));
-            }
-        }
+        auto jSettings = scenedata["settings"].template get<UB0>();
+        auto jObjects = scenedata["objects"].template get<std::vector<Object>>();
+
+        scene = std::move(jSettings);
+        objects = std::move(jObjects);
         return true;
     } catch (std::exception& e) {
         return false;

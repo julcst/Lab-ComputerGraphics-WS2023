@@ -7,10 +7,10 @@
 #include <vector>
 
 #include "config.hpp"
-#include "gl/mesh.hpp"
-#include "gl/program.hpp"
-#include "gl/uniformbuffer.hpp"
-#include "material.hpp"
+#include "framework/gl/mesh.hpp"
+#include "framework/gl/program.hpp"
+#include "framework/gl/uniformbuffer.hpp"
+#include "framework/material.hpp"
 
 class Object {
    public:

@@ -10,6 +10,11 @@ const std::string MODEL_DIR = "models/";
 const std::string MATERIAL_DIR = "materials/";
 const std::string SCENE_DIR = "scenes/";
 
+#ifndef NDEBUG
+#define COMPOSE_SHADERS
+#endif
+const std::string COMPOSED_SHADER_DIR = "@CMAKE_SOURCE_DIR@/composed/";
+
 const std::vector<std::string> MODEL_FILES = {@MODEL_FILES@};
 const std::vector<std::string> SHADER_FILES = {"debug.frag", "lambert.frag", "ggx.frag", "glints/glints.frag", "layered/layered.frag"};
 enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GLINTS, LAYER};

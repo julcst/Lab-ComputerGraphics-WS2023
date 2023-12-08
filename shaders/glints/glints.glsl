@@ -16,7 +16,7 @@ float map01(float x, float x0, float x1) {
     return (x - x0) / (x1 - x0);
 }
 
-struct HeptaFootprint {
+struct Heptahedron {
     // Dimension 1: Area
     float lod0;
     float lod1;
@@ -27,7 +27,7 @@ struct HeptaFootprint {
     float anisoWeight;
     // Dimension 3: Orientation
     // Here we also need to store the half angle because
-    // the ground shape of our heptaeder is a pentagon
+    // the ground shape of our heptahedron is a pentagon
     // on the ratio-orientation plane
     float theta0;
     float thetaH;
@@ -35,8 +35,8 @@ struct HeptaFootprint {
     float thetaWeight;
 };
 
-HeptaFootprint heptifyFootprint(Footprint foot) {
-    HeptaFootprint hepta;
+Heptahedron heptifyFootprint(Footprint foot) {
+    Heptahedron hepta;
 
     // Discretize LOD with logarithmic scale
     float lod = log2(foot.minorLength);
@@ -64,6 +64,20 @@ HeptaFootprint heptifyFootprint(Footprint foot) {
 }
 
 /**
+ * Conatins the four vertices of a tetrahedron in the (area, ratio, orientation) space
+ * and the barycentric weights of the current pixel footprint inside the tetrahedron
+ */
+struct Tetrahedron {
+    vec3 p0, p1, p2, p3;
+    vec4 weights;
+};
+
+Tetrahedron tetrifyFootprint(Heptahedron hepta) {
+    Tetrahedron tetra;
+    return tetra;
+}
+
+/**
  * Extenda a given distribution term D with a stochastic microfacet counting process to account
  * for the mesoscopic microfacet distribution inside the pixel footprint and simulate glinty appearance
  *
@@ -81,21 +95,27 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Calculate the pixel footprint
     Footprint foot = calcPixelFootprint(uv, screenSpaceScale);
 
-    DEBUG_VIEW(7, angleToRGB(foot.angle));
-    DEBUG_VIEW(8, vec3(1.0 / foot.ratio));
-    DEBUG_VIEW(9, normalToRGB(normalize(foot.major)));
+    DEBUG_VIEW(4, vec3(foot.area) * 4000.0);
+    DEBUG_VIEW(5, angleToRGB(foot.angle));
+    DEBUG_VIEW(6, vec3(1.0 / foot.ratio));
+    DEBUG_VIEW(7, normalToRGB(normalize(foot.major)));
 
     // The footprint can now be parametrized into three dimensions which are
     // logarithmic area (or LOD) + major/minor ratio (or anisotropy) + orientation
-    // We define a grid on each of these dimensions to obtain a 3D Heptaeder that contains the footprint
-    HeptaFootprint hepta = heptifyFootprint(foot);
+    // We define a grid on each of these dimensions to obtain a 3D Heptahedron that contains the footprint
+    Heptahedron hepta = heptifyFootprint(foot);
 
-    DEBUG_VIEW(10, vec3(hepta.lod0 * 1000.0, hepta.aniso0, hepta.theta0 / DEG360 + 0.5));
-    DEBUG_VIEW(11, vec3(hepta.lodWeight));
-    DEBUG_VIEW(12, vec3(hepta.anisoWeight));
-    DEBUG_VIEW(13, vec3(hepta.thetaWeight));
+    // The center case is the case without anisotropy
+    // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
+    bool centerCase = (hepta.aniso0 == 1.0);
 
-    // TODO TetraFootprint tetraFoot = tetrifyFootprint(hepta);
+    DEBUG_VIEW(8, vec3(hepta.lod0 * 1000.0, hepta.aniso0, hepta.theta0 / DEG90));
+    DEBUG_VIEW(9, vec3(hepta.lodWeight));
+    DEBUG_VIEW(10, vec3(hepta.anisoWeight));
+    DEBUG_VIEW(11, vec3(hepta.thetaWeight));
+    DEBUG_VIEW(12, boolToRGB(centerCase));
+
+    Tetrahedron tetra = tetrifyFootprint(hepta);
     
     // Generate incoherent random numbers based on the uv coordinates
     vec3 rand = hash3f(vec3(uv.xy, uv.x * uv.y));

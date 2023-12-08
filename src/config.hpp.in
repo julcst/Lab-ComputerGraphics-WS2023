@@ -20,7 +20,21 @@ const std::vector<std::string> SHADER_FILES = {"debug.frag", "lambert.frag", "gg
 enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GLINTS, LAYER};
 const std::vector<std::string> MATERIAL_FILES = {@MATERIAL_FILES@};
 
-const std::vector<std::string> GLINTS_DEBUG_MODES = {"off", "D", "Dmax", "DP", "naiveFootprint", "footprint", "footprintDiff", "theta", "ratio", "major", "lod", "lodWeight", "anisoWeight", "thetaWeight"};
+const std::vector<std::string> GLINTS_DEBUG_MODES = {
+    "off",              // 0
+    "D",                // 1
+    "Dmax",             // 2
+    "DP",               // 3
+    "foot.area",        // 4
+    "foot.theta",       // 5
+    "foot.aniso",       // 6
+    "foot.major",       // 7
+    "grid",             // 8
+    "lodWeight",        // 9
+    "anisoWeight",      // 10
+    "thetaWeight",      // 11
+    "centerCase",       // 12
+};
 
 const unsigned int MAX_LAYERS = 4;
 }

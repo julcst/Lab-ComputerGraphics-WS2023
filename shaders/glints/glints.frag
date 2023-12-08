@@ -71,7 +71,4 @@ void main() {
     DEBUG_VIEW(1, vec3(D));
     DEBUG_VIEW(2, vec3(Dmax));
     DEBUG_VIEW(3, vec3(DP));
-    DEBUG_VIEW(4, vec3(calcNaivePixelFootprint(uv, uScreenSpaceScale).area * 40000.0));
-    DEBUG_VIEW(5, vec3(calcPixelFootprint(uv, uScreenSpaceScale).area * 40000.0));
-    DEBUG_VIEW(6, vec3(abs(calcPixelFootprint(uv, uScreenSpaceScale).area - calcNaivePixelFootprint(uv, uScreenSpaceScale).area) * 40000.0));
 }

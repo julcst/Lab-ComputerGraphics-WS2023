@@ -116,6 +116,7 @@ set(SHADERS
     shaders/ggx.frag
     shaders/ggx.glsl
     shaders/glints/binom.glsl
+    shaders/glints/debug.glsl
     shaders/glints/footprint.glsl
     shaders/glints/glints.frag
     shaders/glints/glints.glsl
@@ -132,6 +133,7 @@ set(MODELS
     models/cube.obj
     models/cylinder.obj
     models/donut.obj
+    models/highpolysphere.obj
     models/icosphere.obj
     models/plane.obj
     models/polysphere.obj

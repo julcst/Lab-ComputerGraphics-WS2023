@@ -42,9 +42,9 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
 
     // Build the jacobian matrix J from the two partial derivatives
     // The constructor syntax is mat2(column1, column2)
-    mat2 J = transpose(mat2(duvdx, duvdy));
+    mat2 J = transpose(mat2(duvdx, duvdy)); // ? This may not be necessary
 
-    mat2 Jinv = inverse(J);
+    mat2 Jinv = inverse(J); // ? This may not be necessary
     // Make J symmetric
     // M = (J^{-1})^T J^{-1}
     mat2 M = transpose(Jinv) * Jinv;
@@ -61,7 +61,7 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     float det = a * d - b * c;
     // Find roots with pq
     float mid = trace / 2.0;
-    float dist = sqrt(trace * trace / 4.0 - det);
+    float dist = sqrt(trace * trace / 3.999999 - det);
     float L1 = mid - dist;
     float L2 = mid + dist;
 
@@ -78,8 +78,8 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     footprint.major = ev1 * ew1;
     footprint.minor = ev2 * ew2;
     footprint.minorLength = ew2;
-    //footprint.angle = atan(-ev1.x, ev1.y);
-    footprint.angle = atan(ev1.y, ev1.x);
+    footprint.angle = atan(-ev1.x, ev1.y);
+    //footprint.angle = atan(ev1.y, ev1.x);
     footprint.ratio = ew1 / ew2;
     return footprint;
 }

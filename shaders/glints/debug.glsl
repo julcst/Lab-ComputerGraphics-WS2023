@@ -21,3 +21,7 @@ vec3 normalToRGB(vec3 normal) {
 vec3 normalToRGB(vec2 normal) {
     return vec3(normal * 0.5 + 0.5, 0.0);
 }
+
+vec3 boolToRGB(bool b) {
+    return b ? vec3(1.0) : vec3(0.0);
+}

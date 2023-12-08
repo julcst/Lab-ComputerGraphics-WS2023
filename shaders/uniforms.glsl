@@ -1,3 +1,5 @@
+#define MAX_LAYERS 4
+
 /**
  * UB0 binds at index 0 and stores information about the scene that is only uploaded once per frame
  */
@@ -54,4 +56,14 @@ layout(std140) uniform UB1 {
 /////// Transformation matrices ///////
     mat4 uMVP;
     mat4 uModel;
+
+////////// Layered parameters //////////
+    uint uLayerCount;
+    vec4 uLayerEta[MAX_LAYERS];
+    vec4 uLayerKappa[MAX_LAYERS];
+    vec4 uLayerAlpha[MAX_LAYERS/4];
+    vec4 uLayerDepth[MAX_LAYERS/4];
+    vec4 uLayerSigmaA[MAX_LAYERS/4];
+    vec4 uLayerSigmaS[MAX_LAYERS/4];
+    vec4 uLayerG[MAX_LAYERS/4];
 };

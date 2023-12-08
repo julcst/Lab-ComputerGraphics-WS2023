@@ -173,6 +173,31 @@ void MainApp::buildImGui() {
             ImGui::SliderFloat("Density Randomization", &obj.material.densityRandomization, 0.0f, 10.0f);
             ImGui::SliderFloat("Microfacet Roughness", &obj.material.microfacetRoughness, 0.001f, 1.0f);
             Util::combo("Debug mode", &obj.material.debug, Config::GLINTS_DEBUG_MODES);
+        } else if (obj.shaderIdx == Config::ShaderType::LAYER) {
+            for(unsigned int l = 0; l < obj.material.layerCount; l++) {
+                ImGui::PushID(l);
+                ImGui::Separator();
+                ImGui::Text("Layer %d", l);
+                ImGui::ColorEdit3("Eta##", value_ptr(obj.material.layerEta[l]), ImGuiColorEditFlags_Float);
+                ImGui::ColorEdit3("Kappa##", value_ptr(obj.material.layerKappa[l]), ImGuiColorEditFlags_Float);
+                ImGui::SliderFloat("Alpha##", &obj.material.layerAlpha[l], 0.0f, 1.0f);
+                ImGui::SliderFloat("Depth##", &obj.material.layerDepth[l], 0.0f, 1.0f);
+                ImGui::SliderFloat("Sigma A##", &obj.material.layerSigmaA[l], 0.0f, 1.0f);
+                ImGui::SliderFloat("Sigma S##", &obj.material.layerSigmaS[l], 0.0f, 1.0f);
+                ImGui::SliderFloat("G##", &obj.material.layerG[l], 0.0f, 1.0f);
+                ImGui::PopID();
+            }
+            if(ImGui::Button("Add Layer")) {
+                if(obj.material.layerCount < Config::MAX_LAYERS){
+                    obj.material.layerCount++;
+                } else {
+                    ImGui::OpenPopup("Max Layer Count reached");
+                }
+            }
+            if (ImGui::BeginPopup("Max Layer Count reached")) {
+                ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Max Layer Count reached");
+                ImGui::EndPopup();
+            }
         }
         ImGui::Separator();
         if (ImGui::Button("Destroy")) {

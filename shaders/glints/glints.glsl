@@ -39,6 +39,7 @@ Heptahedron heptifyFootprint(Footprint foot) {
     Heptahedron hepta;
 
     // Discretize LOD with logarithmic scale
+    // ? Why use the minor length instead of the area
     float lod = log2(foot.minorLength);
     hepta.lod0 = exp2(floor(lod));
     hepta.lod1 = hepta.lod0 * 2.0;

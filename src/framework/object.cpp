@@ -1,17 +1,18 @@
 #include "object.hpp"
 
 #include <imgui.h>
-
-#include <filesystem>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <nlohmann/json.hpp>
+
 #include <string>
 
-#include "common.hpp"
 #include "config.hpp"
-#include "util.hpp"
+#include "framework/common.hpp"
+#include "framework/gl/mesh.hpp"
+#include "framework/gl/program.hpp"
+#include "framework/gl/uniformbuffer.hpp"
+#include "framework/material.hpp"
 
 using json = nlohmann::json;
 
@@ -43,8 +44,7 @@ void Object::render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, Un
 
     material.model = modelMat;
     material.MVP = projViewMat * modelMat;
-    ub1.uniforms = material;
-    ub1.upload();
+    ub1.upload(material);
 
     shaders[static_cast<int>(shaderIdx)].bind();
     meshes[meshIdx].draw();

@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 
-#include "framework/glmjson.hpp"
+#include "glmjson.hpp"
 
 struct UB1 {
 
@@ -49,5 +49,5 @@ struct UB1 {
     float layerSigmaS[Config::MAX_LAYERS];
     float layerG[Config::MAX_LAYERS];
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, debug);
 };

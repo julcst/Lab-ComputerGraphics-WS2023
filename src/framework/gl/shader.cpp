@@ -59,6 +59,9 @@ std::string readShader(const std::string& filename, std::set<std::string>& inclu
 void Shader::load(const std::string& filename) {
     std::set<std::string> included;
     std::string source = readShader(filename, included);
+#ifdef COMPOSE_SHADERS
+    Common::writeToFile(source, Config::COMPOSED_SHADER_DIR + filename);
+#endif
     const char* sourcePtr = source.c_str();
     glShaderSource(handle, 1, &sourcePtr, NULL);
     compile();

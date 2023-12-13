@@ -1,3 +1,4 @@
+#line 2 2
 /**
  * Functions to generate normal/binomial distributed random numbers.
  *

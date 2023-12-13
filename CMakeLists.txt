@@ -115,6 +115,7 @@ set(SHADERS
     shaders/debug.frag
     shaders/ggx.frag
     shaders/ggx.glsl
+    shaders/glints/barycentric.glsl
     shaders/glints/binom.glsl
     shaders/glints/debug.glsl
     shaders/glints/footprint.glsl

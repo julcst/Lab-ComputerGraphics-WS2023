@@ -1,3 +1,4 @@
+#line 2 4
 /**
  * Functions to estimate a pixel's footprint on the surface of the rendered object.
  */

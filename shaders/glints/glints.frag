@@ -11,6 +11,8 @@ out vec3 fragColor;
 #include "glints/debug.glsl"
 #include "glints/glints.glsl"
 
+#line 15 5
+
 void main() {
 
     // N is the surface normal in world space

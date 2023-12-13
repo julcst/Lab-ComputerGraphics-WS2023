@@ -8,6 +8,7 @@
 #include "glints/footprint.glsl"
 #include "glints/random.glsl"
 
+#line 12 6
 #define DEG360 6.28319
 #define DEG180 3.14159
 #define DEG90 1.5708
@@ -37,7 +38,6 @@ struct Heptahedron {
 
 Heptahedron heptifyFootprint(Footprint foot) {
     Heptahedron hepta;
-
     // Discretize LOD with logarithmic scale
     // ? Why use the minor length instead of the area
     float lod = log2(foot.minorLength);
@@ -73,8 +73,17 @@ struct Tetrahedron {
     vec4 weights;
 };
 
-Tetrahedron tetrifyFootprint(Heptahedron hepta) {
+/**
+ * Splits the heptahedron into six tetrahedra by first splitting it into three prisms along the ground pentagon shape
+ * and then splitting each prism into two tetrahedra along the diagonal
+ */
+Tetrahedron getTetrahedron(Heptahedron hepta) {
     Tetrahedron tetra;
+    return tetra;
+}
+
+Tetrahedron tetrifyFootprint(Heptahedron hepta) {
+    Tetrahedron tetra = getTetrahedron(hepta);
     return tetra;
 }
 
@@ -110,7 +119,7 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
 
-    DEBUG_VIEW(8, vec3(hepta.lod0 * 1000.0, hepta.aniso0, hepta.theta0 / DEG90));
+    DEBUG_VIEW(8, vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
     DEBUG_VIEW(9, vec3(hepta.lodWeight));
     DEBUG_VIEW(10, vec3(hepta.anisoWeight));
     DEBUG_VIEW(11, vec3(hepta.thetaWeight));
@@ -125,11 +134,12 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     float p = microfacetRoughness * D / Dmax;
 
     // Randomize the logarithmic microfacet density
-    // ? Wouldn't it be more intuitive to randomize the linear microfacet density instead?
-    // ? Why is this normal distributed and not binomial distributed
+    // ? Wouldn't it be more intuitive to randomize the linear microfacet density instead? ()
+    // ? Why is this normal distributed and not binomial distributed? (better controllability)
     float logDensityRand = clamp(sampleNormal(logMicrofacetDensity, densityRandomization, rand.x), 0.0, 50.0);
+    float density = exp(logDensityRand);
     // NP is the number of discrete microfacets in the pixel footprint
-    float NP = foot.area * exp(logDensityRand);
+    float NP = foot.area * density;
     // c is the number of reflecting microfacets in the pixel footprint
     float c = (Dmax / uMicrofacetRoughness) * sampleBinom(NP, p, rand.yz); // Equation (4)
     // DP is the microfacet distribution term over the pixel footprint

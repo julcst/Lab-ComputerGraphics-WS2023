@@ -51,6 +51,7 @@ void main() {
 
     // Extend the distribution term with a stochastic microfacet counting process to account
     // for the microfacet distribution inside the pixel footprint
+    // NOTE: Instead of the local half vector we pass the world space H
     float DP = SampleGlints2023NDF(H, D, Dmax, uv, dFdx(uv), dFdy(uv));
 
 /////////// Evaluating the rendering equation ///////////

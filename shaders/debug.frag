@@ -10,10 +10,14 @@ float checkerboard(vec2 uv, float steps) {
     return mod(p.x + p.y, 2.0);
 }
 
+vec3 normalToRGB(vec3 N) {
+    return (N + 1.0) * 0.5;
+}
+
 /**
  * Renders the normals and a checkerboard pattern onto the mesh
  */
 void main() {
     vec3 N = normalize(n);
-    fragColor = abs(N) * (checkerboard(uv, 100.0) * 0.5 + 0.5);
+    fragColor = normalToRGB(N) * (checkerboard(uv, 100.0) * 0.5 + 0.5);
 }

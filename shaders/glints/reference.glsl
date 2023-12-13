@@ -141,21 +141,24 @@ float HashWithoutSine13(vec3 p3)
 	return fract((p3.x + p3.y) * p3.z);
 }
 
+/* NOTE: Not translated
 mat2 Inverse(mat2 A)
 {
 	return mat2(A[1][1], -A[0][1], -A[1][0], A[0][0]) / determinant(A);
 }
+*/
 
 void GetGradientEllipse(vec2 duvdx, vec2 duvdy, out vec2 ellipseMajor, out vec2 ellipseMinor)
 {
-	mat2 J = mat2(duvdx, duvdy);
-	J = Inverse(J);
+	// Transposed because HLSL->GLSL
+	mat2 J = transpose(mat2(duvdx, duvdy));
+	J = inverse(J); // inverse is a GLSL function
 	J = mul(J, transpose(J));
 
-	// TODO: HLSL is [row][column] and GLSL [column][row]
+	// Indices swapped because HLSL->GLSL
 	float a = J[0][0];
-	float b = J[0][1];
-	float c = J[1][0];
+	float b = J[1][0];
+	float c = J[0][1];
 	float d = J[1][1];
 
 	float T = a + d;

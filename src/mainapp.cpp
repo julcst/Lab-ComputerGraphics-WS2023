@@ -166,9 +166,9 @@ void MainApp::buildImGui() {
             ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
         } else if (obj.shaderIdx == Config::ShaderType::GLINTS || obj.shaderIdx == Config::ShaderType::GLINTS_REF) {
             ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
-            ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.0f, 1.0f);
+            ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.001f, 1.0f);
             ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
-            ImGui::SliderFloat("Screen Space Scale", &obj.material.screenSpaceScale, 1.0f, 1000.0f);
+            ImGui::SliderFloat("Screen Space Scale", &obj.material.screenSpaceScale, 1.0f, 10.0f);
             ImGui::SliderFloat("Log Microfacet Density", &obj.material.logMicrofacetDensity, -10.0f, 50.0f);
             ImGui::SliderFloat("Density Randomization", &obj.material.densityRandomization, 0.0f, 10.0f);
             ImGui::SliderFloat("Microfacet Roughness", &obj.material.microfacetRoughness, 0.001f, 1.0f);

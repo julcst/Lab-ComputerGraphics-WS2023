@@ -11,7 +11,7 @@ float checkerboard(vec2 uv, float steps) {
 }
 
 vec3 normalToRGB(vec3 N) {
-    return (N + 1.0) * 0.5;
+    return N * 0.5 + 0.5;
 }
 
 /**

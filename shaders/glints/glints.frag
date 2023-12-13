@@ -56,7 +56,7 @@ void main() {
 /////////// Evaluating the rendering equation ///////////
 
     // Calculate the specular component with Cook-Torrance model
-    vec3 specular = (F * G * DP) / (4.0 * NdotL * NdotV + 0.0001); // Equation (2)
+    vec3 specular = (F * G * D) / (4.0 * NdotL * NdotV + 0.0001); // Equation (2)
 
     // Calculate the diffuse component with Lambertian model
     vec3 diffuse = (vec3(1.0) - F) * (1.0 - uMetallic) * uAlbedo / 3.14159265359;

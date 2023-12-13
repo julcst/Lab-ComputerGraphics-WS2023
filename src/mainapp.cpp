@@ -178,8 +178,8 @@ void MainApp::buildImGui() {
                 ImGui::PushID(l);
                 ImGui::Separator();
                 ImGui::Text("Layer %d", l);
-                ImGui::ColorEdit3("Eta##", value_ptr(obj.material.layerEta[l]), ImGuiColorEditFlags_Float);
-                ImGui::ColorEdit3("Kappa##", value_ptr(obj.material.layerKappa[l]), ImGuiColorEditFlags_Float);
+                ImGui::DragFloat3("Eta##", value_ptr(obj.material.layerEta[l]), 0.001f);
+                ImGui::DragFloat3("Kappa##", value_ptr(obj.material.layerKappa[l]), 0.001f);
                 ImGui::SliderFloat("Alpha##", &obj.material.layerAlpha[l], 0.0f, 1.0f);
                 ImGui::SliderFloat("Depth##", &obj.material.layerDepth[l], 0.0f, 1.0f);
                 ImGui::SliderFloat("Sigma A##", &obj.material.layerSigmaA[l], 0.0f, 1.0f);

@@ -122,6 +122,8 @@ set(SHADERS
     shaders/glints/glints.frag
     shaders/glints/glints.glsl
     shaders/glints/random.glsl
+    shaders/glints/reference.frag
+    shaders/glints/reference.glsl
     shaders/layered/layered.frag
     shaders/lambert.frag
     shaders/projection.vert

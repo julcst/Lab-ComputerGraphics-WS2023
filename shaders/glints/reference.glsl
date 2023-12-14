@@ -7,8 +7,9 @@
  */
 
 #include "glints/debug.glsl"
+#include "shared/uniforms.glsl"
 
-#line 12 9
+#line 13 209
 
 #define mupi 3.141592
 #define muiupi 0.318309
@@ -24,7 +25,6 @@ float uLogMicrofacetDensity;
 float uMicrofacetRoughness;
 float uDensityRandomization;
 */
-#include "uniforms.glsl"
 
 // HLSL to GLSL
 #define saturate(x) clamp(x, 0.0, 1.0)

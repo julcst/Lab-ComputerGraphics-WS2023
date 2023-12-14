@@ -6,8 +6,9 @@ in vec3 n;
 in vec3 worldPos;
 out vec3 fragColor;
 
-#include "uniforms.glsl"
-#include "ggx.glsl"
+#include "shared/uniforms.glsl"
+#include "shared/ggx.glsl"
+#line 12 104
 
 void main() {
     // Renormalize because of interpolation

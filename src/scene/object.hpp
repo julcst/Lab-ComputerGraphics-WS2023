@@ -10,7 +10,7 @@
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
 #include "framework/gl/uniformbuffer.hpp"
-#include "framework/material.hpp"
+#include "scene/ub1.hpp"
 
 class Object {
    public:

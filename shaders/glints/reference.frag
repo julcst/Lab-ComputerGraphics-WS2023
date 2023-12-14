@@ -6,12 +6,12 @@ in vec3 n;
 in vec3 worldPos;
 out vec3 fragColor;
 
-#include "uniforms.glsl"
-#include "ggx.glsl"
+#include "shared/uniforms.glsl"
+#include "shared/ggx.glsl"
 #include "glints/debug.glsl"
 #include "glints/reference.glsl"
 
-#line 15 8
+#line 15 208
 
 void main() {
 

@@ -1,4 +1,4 @@
-#line 2 2
+#line 2 103
 #if 1 // Enable or disable debug macros
 #define RENDER_VIEW(c) if (uDebug == 0U) fragColor = c
 #define DEBUG_VIEW(i, v) if (uDebug == uint(i)) fragColor = v

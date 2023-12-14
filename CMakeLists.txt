@@ -93,10 +93,10 @@ set(SRC
     src/main.cpp
     src/mainapp.cpp
     src/util.cpp
+    src/scene/object.cpp
     src/framework/app.cpp
     src/framework/camera.cpp
     src/framework/common.cpp
-    src/framework/object.cpp
     src/framework/gl/buffer.cpp
     src/framework/gl/mesh.cpp
     src/framework/gl/program.cpp
@@ -111,13 +111,8 @@ set(INCLUDE
 ####################################################################
 # Resource files
 set(SHADERS
-    shaders/background.frag
-    shaders/debug.frag
-    shaders/ggx.frag
-    shaders/ggx.glsl
     shaders/glints/barycentric.glsl
     shaders/glints/binom.glsl
-    shaders/glints/debug.glsl
     shaders/glints/footprint.glsl
     shaders/glints/glints.frag
     shaders/glints/glints.glsl
@@ -125,10 +120,15 @@ set(SHADERS
     shaders/glints/reference.frag
     shaders/glints/reference.glsl
     shaders/layered/layered.frag
-    shaders/lambert.frag
-    shaders/projection.vert
-    shaders/screen.vert
-    shaders/uniforms.glsl
+    shaders/shared/background.frag
+    shaders/shared/debug.frag
+    shaders/shared/debug.glsl
+    shaders/shared/ggx.frag
+    shaders/shared/ggx.glsl
+    shaders/shared/lambert.frag
+    shaders/shared/projection.vert
+    shaders/shared/screen.vert
+    shaders/shared/uniforms.glsl
 )
 set(MODELS
     models/bunny.obj

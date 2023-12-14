@@ -8,7 +8,7 @@
 #include "glints/footprint.glsl"
 #include "glints/random.glsl"
 
-#line 12 6
+#line 12 206
 #define DEG360 6.28319
 #define DEG180 3.14159
 #define DEG90 1.5708

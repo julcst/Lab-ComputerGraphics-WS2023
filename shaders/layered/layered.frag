@@ -9,8 +9,8 @@ out vec3 fragColor;
 #define MAX_LAYERS 4
 #define LAYER_ARRAY_SIZE 5
 
-#include "uniforms.glsl"
-#include "ggx.glsl"
+#include "shared/uniforms.glsl"
+#include "shared/ggx.glsl"
 
 /*
 * Implementation of

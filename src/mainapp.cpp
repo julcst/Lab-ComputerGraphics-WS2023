@@ -19,9 +19,9 @@
 #include "framework/gl/program.hpp"
 #include "framework/gl/uniformbuffer.hpp"
 #include "framework/common.hpp"
-#include "framework/object.hpp"
-#include "framework/ub0.hpp"
-#include "framework/material.hpp"
+#include "scene/object.hpp"
+#include "scene/ub0.hpp"
+#include "scene/ub1.hpp"
 #include "util.hpp"
 
 using namespace glm;
@@ -41,7 +41,7 @@ MainApp::MainApp() :
     ub0(0, scene), ub1(1) {
 
     fullscreenTriangle.load(FULLSCREEN_VERTICES, FULLSCREEN_INDICES);
-    backgroundShader.load("screen.vert", "background.frag");
+    backgroundShader.load("shared/screen.vert", "shared/background.frag");
     backgroundShader.bindUBO("UB0", 0);
     backgroundShader.bindUBO("UB1", 1);
 
@@ -55,7 +55,7 @@ MainApp::MainApp() :
     shaders.reserve(Config::SHADER_FILES.size());
     for (const std::string& file : Config::SHADER_FILES) {
         Program program;
-        program.load("projection.vert", file);
+        program.load("shared/projection.vert", file);
         program.bindUBO("UB0", 0);
         program.bindUBO("UB1", 1);
         shaders.push_back(std::move(program));

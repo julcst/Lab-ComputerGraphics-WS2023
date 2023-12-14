@@ -1,4 +1,4 @@
-#line 2 1
+#line 2 201
 /**
  * Returns the length of the cross product of two vectors when we add a imaginative z-component of 0.
  * The result is thus the area of the parallelogram spanned by the two vectors or twice the area of the triangle spanned by the two vectors.

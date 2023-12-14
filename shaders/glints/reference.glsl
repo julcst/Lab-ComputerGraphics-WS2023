@@ -6,10 +6,10 @@
  * This is only used to test my implementation against their reference implementation
  */
 
-#include "glints/debug.glsl"
+#include "shared/debug.glsl"
 #include "shared/uniforms.glsl"
 
-#line 13 209
+#line 13 208
 
 #define mupi 3.141592
 #define muiupi 0.318309
@@ -553,16 +553,16 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 		thetaBinLerp = Remap01To(thetaBinLerp, 0.0, ratioLerp);
 	vec4 tetraBarycentricWeights = GetBarycentricWeightsTetrahedron(vec3(thetaBinLerp, ratioLerp, lodLerp), tetraA, tetraB, tetraC, tetraD); // Compute barycentric coordinates within chosen tetrahedron
 
-	DEBUG_VIEW(4, vec3(footprintArea * 4000.0));
-    DEBUG_VIEW(5, angleToRGB(theta * DEG2RAD));
-    DEBUG_VIEW(6, vec3(1.0 / ellipseRatio));
-    DEBUG_VIEW(7, normalToRGB(normalize(ellipseMajor)));
+	GDEBUG_area(vec3(footprintArea * 4000.0));
+    GDEBUG_theta(angleToRGB(theta * DEG2RAD));
+    GDEBUG_aniso(vec3(1.0 / ellipseRatio));
+    GDEBUG_major(normalToRGB(normalize(ellipseMajor)));
 
-	DEBUG_VIEW(8, vec3(footprintAreaLOD0 * 1000.0, 1.0 / ratio0, thetaBin0 / 360.0));
-    DEBUG_VIEW(9, vec3(lodLerp));
-    DEBUG_VIEW(10, vec3(ratioLerp));
-    DEBUG_VIEW(11, vec3(thetaBinLerp));
-    DEBUG_VIEW(12, boolToRGB(centerSpecialCase));
+	GDEBUG_grid(vec3(footprintAreaLOD0 * 1000.0, 1.0 / ratio0, thetaBin0 / 360.0));
+    GDEBUG_lodWeight(vec3(lodLerp));
+    GDEBUG_anisoWeight(vec3(ratioLerp));
+    GDEBUG_thetaWeight(vec3(thetaBinLerp));
+    GDEBUG_centerCase(boolToRGB(centerSpecialCase));
 
 	// PREPARE NEEDED ROTATIONS
 	tetraA.x *= 2; tetraB.x *= 2; tetraC.x *= 2; tetraD.x *= 2;

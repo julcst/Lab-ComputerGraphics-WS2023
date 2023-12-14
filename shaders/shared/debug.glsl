@@ -7,6 +7,20 @@
 #define DEBUG_VIEW(i, v)
 #endif
 
+// Glints debug macros
+#define GDEBUG_D(v) DEBUG_VIEW(1, v)
+#define GDEBUG_Dmax(v) DEBUG_VIEW(2, v)
+#define GDEBUG_DP(v) DEBUG_VIEW(3, v)
+#define GDEBUG_area(v) DEBUG_VIEW(4, v)
+#define GDEBUG_theta(v) DEBUG_VIEW(5, v)
+#define GDEBUG_aniso(v) DEBUG_VIEW(6, v)
+#define GDEBUG_major(v) DEBUG_VIEW(7, v)
+#define GDEBUG_grid(v) DEBUG_VIEW(8, v)
+#define GDEBUG_lodWeight(v) DEBUG_VIEW(9, v)
+#define GDEBUG_anisoWeight(v) DEBUG_VIEW(10, v)
+#define GDEBUG_thetaWeight(v) DEBUG_VIEW(11, v)
+#define GDEBUG_centerCase(v) DEBUG_VIEW(12, v)
+
 /**
  * Interprets angle as hue and converts it to RGB.
  */

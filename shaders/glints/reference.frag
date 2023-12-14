@@ -8,10 +8,10 @@ out vec3 fragColor;
 
 #include "shared/uniforms.glsl"
 #include "shared/ggx.glsl"
-#include "glints/debug.glsl"
+#include "shared/debug.glsl"
 #include "glints/reference.glsl"
 
-#line 15 208
+#line 15 207
 
 void main() {
 
@@ -71,7 +71,7 @@ void main() {
     lighting += uSkyColor * uAlbedo * uAmbientStrength;
 
     RENDER_VIEW(lighting);
-    DEBUG_VIEW(1, vec3(D));
-    DEBUG_VIEW(2, vec3(Dmax));
-    DEBUG_VIEW(3, vec3(DP));
+    GDEBUG_D(vec3(D));
+    GDEBUG_Dmax(vec3(Dmax));
+    GDEBUG_DP(vec3(DP));
 }

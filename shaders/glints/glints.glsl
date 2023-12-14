@@ -3,12 +3,12 @@
  * Deliot, T., and L. Belcour. "Real-Time Rendering of Glinty Appearances using Distributed Binomial Laws on Anisotropic Grids." (2023)
  * in GLSL
  */
+#include "shared/debug.glsl"
 #include "glints/binom.glsl"
-#include "glints/debug.glsl"
 #include "glints/footprint.glsl"
 #include "glints/random.glsl"
 
-#line 12 206
+#line 12 205
 #define DEG360 6.28319
 #define DEG180 3.14159
 #define DEG90 1.5708
@@ -105,10 +105,10 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Calculate the pixel footprint
     Footprint foot = calcPixelFootprint(uv, screenSpaceScale);
 
-    DEBUG_VIEW(4, vec3(foot.area) * 4000.0);
-    DEBUG_VIEW(5, angleToRGB(foot.angle));
-    DEBUG_VIEW(6, vec3(1.0 / foot.ratio));
-    DEBUG_VIEW(7, normalToRGB(normalize(foot.major)));
+    GDEBUG_area(vec3(foot.area) * 4000.0);
+    GDEBUG_theta(angleToRGB(foot.angle));
+    GDEBUG_aniso(vec3(1.0 / foot.ratio));
+    GDEBUG_major(normalToRGB(normalize(foot.major)));
 
     // The footprint can now be parametrized into three dimensions which are
     // logarithmic area (or LOD) + major/minor ratio (or anisotropy) + orientation
@@ -119,11 +119,11 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
 
-    DEBUG_VIEW(8, vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
-    DEBUG_VIEW(9, vec3(hepta.lodWeight));
-    DEBUG_VIEW(10, vec3(hepta.anisoWeight));
-    DEBUG_VIEW(11, vec3(hepta.thetaWeight));
-    DEBUG_VIEW(12, boolToRGB(centerCase));
+    GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
+    GDEBUG_lodWeight(vec3(hepta.lodWeight));
+    GDEBUG_anisoWeight(vec3(hepta.anisoWeight));
+    GDEBUG_thetaWeight(vec3(hepta.thetaWeight));
+    GDEBUG_centerCase(boolToRGB(centerCase));
 
     Tetrahedron tetra = tetrifyFootprint(hepta);
     

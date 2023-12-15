@@ -34,6 +34,13 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "anisoWeight",      // 10
     "thetaWeight",      // 11
     "centerCase",       // 12
+    "baryA",            // 13
+    "baryB",            // 14
+    "baryC",            // 15
+    "baryD",            // 16
+    "seedA",            // 17
+    "uvGrid",           // 18
+    "samples",          // 19
 };
 
 const unsigned int MAX_LAYERS = 4;

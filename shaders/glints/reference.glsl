@@ -364,6 +364,8 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	ivec2 glint2 = baseId + ivec2(1.0 - s, s);
 	vec3 barycentrics = vec3(-temp.z * s2, s - temp.y * s2, s - temp.x * s2);
 
+	GDEBUG_uvGrid(barycentrics);
+
 	// Generate per surface cell random numbers
 	vec3 rand0 = pcg3dFloat(uvec3(glint0 + 2147483648, gridSeed)); // TODO : optimize away manual seeds
 	vec3 rand1 = pcg3dFloat(uvec3(glint1 + 2147483648, gridSeed));
@@ -428,11 +430,14 @@ void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, inout float theta
 	}
 	else // NORMAL CASE
 	{
+		// 		 vec3(theta, aniso, area)
+		// bottom
 		vec3 a = vec3(0, 1, 0);
 		vec3 b = vec3(0, 0, 0);
 		vec3 c = vec3(0.5, 1, 0);
 		vec3 d = vec3(1, 0, 0);
 		vec3 e = vec3(1, 1, 0);
+		// top
 		vec3 f = vec3(0, 1, 1);
 		vec3 g = vec3(0, 0, 1);
 		vec3 h = vec3(0.5, 1, 1);
@@ -515,12 +520,12 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	float lod = log2(length(ellipseMinor) * halfScreenSpaceScaler);
 	float lod0 = int(lod); //lod >= 0.0 ? (int)(lod) : (int)(lod - 1.0);
 	float lod1 = lod0 + 1;
-	float divLod0 = pow(2.0, lod0);
-	float divLod1 = pow(2.0, lod1);
+	float divLod0 = exp2(lod0);
+	float divLod1 = exp2(lod1);
 	float lodLerp = fract(lod);
 	// ! This is not the real area just the minor length
-	float footprintAreaLOD0 = pow(exp2(lod0), 2.0);
-	float footprintAreaLOD1 = pow(exp2(lod1), 2.0);
+	float footprintAreaLOD0 = divLod0 * divLod0;
+	float footprintAreaLOD1 = divLod1 * divLod1;
 
 	// MANUAL ANISOTROPY RATIO COMPENSATION
 	float ratio0 = max(pow(2.0, int(log2(ellipseRatio))), 1.0);
@@ -563,6 +568,10 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
     GDEBUG_anisoWeight(vec3(ratioLerp));
     GDEBUG_thetaWeight(vec3(thetaBinLerp));
     GDEBUG_centerCase(boolToRGB(centerSpecialCase));
+	GDEBUG_baryA(vec3(tetraBarycentricWeights.x));
+	GDEBUG_baryB(vec3(tetraBarycentricWeights.y));
+	GDEBUG_baryC(vec3(tetraBarycentricWeights.z));
+	GDEBUG_baryD(vec3(tetraBarycentricWeights.w));
 
 	// PREPARE NEEDED ROTATIONS
 	tetraA.x *= 2; tetraB.x *= 2; tetraC.x *= 2; tetraD.x *= 2;
@@ -584,6 +593,7 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 
 	// SAMPLE GLINT GRIDS
 	uint gridSeedA = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraA.z]), mod(thetaBins[iTetraA.x], 360), ratios[iTetraA.y])) * 4294967296.0);
+	GDEBUG_seedA(vec3(float(gridSeedA) / 4294967296.0));
 	uint gridSeedB = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraB.z]), mod(thetaBins[iTetraB.x], 360), ratios[iTetraB.y])) * 4294967296.0);
 	uint gridSeedC = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraC.z]), mod(thetaBins[iTetraC.x], 360), ratios[iTetraC.y])) * 4294967296.0);
 	uint gridSeedD = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraD.z]), mod(thetaBins[iTetraD.x], 360), ratios[iTetraD.y])) * 4294967296.0);

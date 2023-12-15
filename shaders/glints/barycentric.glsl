@@ -28,7 +28,7 @@ vec3 calcBarycentric(vec2 P, vec2 A, vec2 B, vec2 C) {
     float areaABP = cross2D(AB, AP);
     float areaACP = cross2D(AP, AC);
 
-    vec3 weights:
+    vec3 weights;
     weights.z = areaABP * invAreaABC; // C
     weights.y = areaACP * invAreaABC; // B
     weights.x = 1.0 - weights.y - weights.z; // A - Because the weights sum up to 1.0

@@ -20,6 +20,13 @@
 #define GDEBUG_anisoWeight(v) DEBUG_VIEW(10, v)
 #define GDEBUG_thetaWeight(v) DEBUG_VIEW(11, v)
 #define GDEBUG_centerCase(v) DEBUG_VIEW(12, v)
+#define GDEBUG_baryA(v) DEBUG_VIEW(13, v)
+#define GDEBUG_baryB(v) DEBUG_VIEW(14, v)
+#define GDEBUG_baryC(v) DEBUG_VIEW(15, v)
+#define GDEBUG_baryD(v) DEBUG_VIEW(16, v)
+#define GDEBUG_seedA(v) DEBUG_VIEW(17, v)
+#define GDEBUG_uvGrid(v) DEBUG_VIEW(18, v)
+#define GDEBUG_samples(v) DEBUG_VIEW(19, v)
 
 /**
  * Interprets angle as hue and converts it to RGB.
@@ -39,4 +46,14 @@ vec3 normalToRGB(vec2 normal) {
 
 vec3 boolToRGB(bool b) {
     return b ? vec3(1.0) : vec3(0.0);
+}
+
+vec3 colorDebug(float x) {
+    if (isnan(x)) return vec3(1.0, 0.0, 1.0);
+    if (isinf(x)) return vec3(1.0, 0.0, 0.0);
+    if (x <  0.0) return vec3(0.0, 0.0, 1.0);
+    if (x == 0.0) return vec3(0.0, 0.0, 0.1);
+    if (x == 1.0) return vec3(0.9, 1.0, 0.9);
+    if (x >  1.0) return vec3(0.0, 1.0, 0.0);
+    return vec3(x);
 }

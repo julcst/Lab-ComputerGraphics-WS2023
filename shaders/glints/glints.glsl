@@ -208,8 +208,8 @@ float sampleGridPoint(vec2 uv, vec3 seed, float area, float target, float weight
 
     // Draw random numbers per triangle vertex
     vec3 randA = hash3f(vec3(a.xy, seed.x));
-    vec3 randB = hash3f(vec3(b.xy, seed.y));
-    vec3 randC = hash3f(vec3(c.xy, seed.z));
+    vec3 randB = hash3f(vec3(b.xy, seed.x));
+    vec3 randC = hash3f(vec3(c.xy, seed.x));
 
     // Randomize the logarithmic microfacet density
     vec3 logDensityRand = clamp(sampleNormal(uLogMicrofacetDensity, uDensityRandomization, vec3(randA.x, randB.x, randC.x)), 0.0, 50.0);

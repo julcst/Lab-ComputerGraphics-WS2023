@@ -28,7 +28,7 @@ float uDensityRandomization;
 
 // HLSL to GLSL
 #define saturate(x) clamp(x, 0.0, 1.0)
-#define mul(a, b) b * a
+#define mul(a, b) a * b
 #define asuint(x) floatBitsToUint(x)
 #define lerp(a, b, t) mix(a, b, t)
 #define atan2(y, x) atan(y, x)

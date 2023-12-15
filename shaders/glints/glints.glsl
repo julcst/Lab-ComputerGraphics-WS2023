@@ -12,6 +12,11 @@
 #define DEG360 6.28319
 #define DEG180 3.14159
 #define DEG90 1.5708
+#define DEG45 0.785398
+
+float fmod(float x, float y) {
+    return x - y * trunc(x / y);
+}
 
 float map01(float x, float x0, float x1) {
     return (x - x0) / (x1 - x0);
@@ -52,14 +57,14 @@ Heptahedron heptifyFootprint(Footprint foot) {
     hepta.anisoWeight = map01(foot.ratio, hepta.aniso0, hepta.aniso1);
 
     // Discretize orientation with adaptive grid
-    float theta = foot.angle;
+    // Map the angle to the range [0, 180]
+    float theta = fmod(foot.angle, DEG180);
+    // The adaptive grid size depends on the anisotropy
     float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
-    float thetaBin = floor(theta / thetaGrid) * thetaGrid;
-    hepta.theta0 = theta < thetaBin ? thetaBin : thetaBin + thetaGrid / 2.0;
-	hepta.thetaH = hepta.theta0 + thetaGrid / 4.0;
-	hepta.theta1 = hepta.theta0 + thetaGrid / 2.0;
+    hepta.theta0 = floor(theta / thetaGrid) * thetaGrid;
+    hepta.thetaH = hepta.theta0 + thetaGrid * 0.5;
+    hepta.theta1 = hepta.theta0 + thetaGrid;
     hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);
-    hepta.theta0 = hepta.theta0 <= 0.0 ? hepta.theta0 + DEG180 : hepta.theta0;
 
     return hepta;
 }
@@ -118,11 +123,13 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // The center case is the case without anisotropy
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
+    // In the center case we limit the theta weight by the anisotropy to account for the vanishing orientation dimension
+    hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
 
     GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
     GDEBUG_lodWeight(vec3(hepta.lodWeight));
     GDEBUG_anisoWeight(vec3(hepta.anisoWeight));
-    GDEBUG_thetaWeight(vec3(hepta.thetaWeight));
+    GDEBUG_thetaWeight(vec3(abs(hepta.thetaWeight)));
     GDEBUG_centerCase(boolToRGB(centerCase));
 
     Tetrahedron tetra = tetrifyFootprint(hepta);

@@ -330,9 +330,14 @@ void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, o
 	outGaussian = pcg4dFloat(uvec4(uSlopeCoord.yx + 8192U, slope.xy + 16384U));
 }
 
+// This performs  4x binomial Samples per call
+// This is called 3x per vertex of the tetrahedron (uv triangle)
+// The tetrahedron has 4 vertices
+// So 4x3x4 = 48x binomial samples per pixel
 float GenerateAngularBinomialValueForSurfaceCell(vec4 randB, vec4 randG, vec2 slopeLerp, float footprintOneHitProba, float binomialSmoothWidth, float footprintMean, float footprintSTD, float microfacetCount)
 {
 	vec4 gating;
+	// ? What is the binomial smooth width?
 	if (binomialSmoothWidth > 0.0000001)
 		gating = saturate(RemapTo01(randB, footprintOneHitProba + binomialSmoothWidth, footprintOneHitProba - binomialSmoothWidth));
 	else

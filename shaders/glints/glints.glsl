@@ -10,6 +10,8 @@
 #include "glints/random.glsl"
 #line 12 205
 
+// TODO: Renaming and restructuring for better readability
+
 #define DEG360 6.28319
 #define DEG180 3.14159
 #define DEG90 1.5708
@@ -82,13 +84,17 @@ struct Tetrahedron {
 /**
  * Splits the heptahedron into six tetrahedra by first splitting it into three prisms along the ground pentagon shape
  * and then splitting each prism into two tetrahedra along the diagonal
+ *
+ * NOTE:  In difference to the reference implementation I do not return the points of the tetrahedron relative to the heptahedron but in absolute coordinates.
+ *        This avoids the dynamic indexing process used in the reference implementation and may benefit performance.
+ *        Dynamic indexing can be costly because it may require the use of pointers instead of registers.
  */
 Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
     Tetrahedron tetra;
 
+    // TODO: Thoroughly understand cutting
     //////////////////// Center Case ////////////////////
     if (centerCase) {
-
         // The points of the hexahedron in the form vec3(theta, aniso, area)
         // Ground triangle (lod0)
         vec3 a = vec3(hepta.theta0, hepta.aniso1, hepta.lod0);
@@ -259,6 +265,7 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     GDEBUG_thetaWeight(vec3(abs(hepta.thetaWeight)));
     GDEBUG_centerCase(boolToRGB(centerCase));
 
+    // TODO: The barycentric weights contain far more zeros than in the reference implementation
     Tetrahedron tetra = tetrifyFootprint(hepta, foot, centerCase);
 
     GDEBUG_baryA(vec3(tetra.weights.x));

@@ -527,8 +527,11 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	float lod1 = lod0 + 1;
 	float divLod0 = exp2(lod0);
 	float divLod1 = exp2(lod1);
+	// ! this is not a real lerp but a logarithmic lerp
 	float lodLerp = fract(lod);
-	// ! This is not the real area just the minor length
+	// ! This leads to artifacts! Why?
+	// float lodLerp = RemapTo01(length(ellipseMinor) * halfScreenSpaceScaler, divLod0, divLod1);
+	// ! This is not the real area just the minor length squared
 	float footprintAreaLOD0 = divLod0 * divLod0;
 	float footprintAreaLOD1 = divLod1 * divLod1;
 

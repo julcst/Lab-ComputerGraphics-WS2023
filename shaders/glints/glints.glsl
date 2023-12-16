@@ -51,6 +51,7 @@ Heptahedron heptifyFootprint(Footprint foot) {
     float lod = log2(foot.minorLength);
     hepta.lod0 = exp2(floor(lod));
     hepta.lod1 = hepta.lod0 * 2.0;
+    //hepta.lodWeight = fract(lod);
     hepta.lodWeight = map01(foot.minorLength, hepta.lod0, hepta.lod1);
 
     // Discretize anisotropy with logarithmic scale
@@ -194,9 +195,9 @@ Tetrahedron tetrifyFootprint(Heptahedron hepta, Footprint foot, bool centerCase)
     return tetra;
 }
 
-float sampleGridPoint(vec2 uv, vec3 seed, float area, float target, float weight, float p) {
+float sampleGridPoint(vec2 uv, uint seed, float area, float target, float weight, float p) {
     // Triangulate uv coordinates
-    // TODO: Make the triangulation hexagonal to reduce artifacts
+    // TODO: Skew the triangulation to reduce artifacts
     vec2 cell = floor(uv);
     vec2 fractional = uv - cell;
     bool triangle = (fractional.x + fractional.y) > 1.0;
@@ -207,15 +208,15 @@ float sampleGridPoint(vec2 uv, vec3 seed, float area, float target, float weight
     GDEBUG_uvGrid(vec3(weights));
 
     // Draw random numbers per triangle vertex
-    vec3 randA = hash3f(vec3(a.xy, seed.x));
-    vec3 randB = hash3f(vec3(b.xy, seed.x));
-    vec3 randC = hash3f(vec3(c.xy, seed.x));
+    vec3 randA = hash3f(uvec3(mapu(a), seed));
+    vec3 randB = hash3f(uvec3(mapu(b), seed));
+    vec3 randC = hash3f(uvec3(mapu(c), seed));
 
     // Randomize the logarithmic microfacet density
     vec3 logDensityRand = clamp(sampleNormal(uLogMicrofacetDensity, uDensityRandomization, vec3(randA.x, randB.x, randC.x)), 0.0, 50.0);
     vec3 density = exp(logDensityRand);
     // NP is the number of discrete microfacets in the weighted pixel footprint
-    vec3 NP = area * density * weight;
+    vec3 NP = area * density * weight; 
 
     vec3 samples;
     samples.x = sampleBinom(NP.x, p, randA.yz) / NP.x;
@@ -265,7 +266,7 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     GDEBUG_thetaWeight(vec3(abs(hepta.thetaWeight)));
     GDEBUG_centerCase(boolToRGB(centerCase));
 
-    // TODO: The barycentric weights contain far more zeros than in the reference implementation
+    // FIXME: The barycentric weights contain far more zeros than in the reference implementation
     Tetrahedron tetra = tetrifyFootprint(hepta, foot, centerCase);
 
     GDEBUG_baryA(vec3(tetra.weights.x));
@@ -273,12 +274,12 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
 	GDEBUG_baryC(vec3(tetra.weights.z));
 	GDEBUG_baryD(vec3(tetra.weights.w));
     
-    vec3 gridSeedA = hash3f(tetra.p0);
-    vec3 gridSeedB = hash3f(tetra.p1);
-    vec3 gridSeedC = hash3f(tetra.p2);
-    vec3 gridSeedD = hash3f(tetra.p3);
+    uint gridSeedA = seed(mapu(tetra.p0));
+    uint gridSeedB = seed(mapu(tetra.p1));
+    uint gridSeedC = seed(mapu(tetra.p2));
+    uint gridSeedD = seed(mapu(tetra.p3));
 
-    GDEBUG_seedA(gridSeedA);
+    GDEBUG_seedA(vec3(mapf(gridSeedA)));
 
     float area = foot.area;
     float p = microfacetRoughness * D / Dmax;
@@ -286,9 +287,9 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // TODO: Rotate uv grid to align with the orientation of the footprint
     // TODO: Integrate slope
     float sampleA = sampleGridPoint(uv / vec2(1.0, tetra.p0.y) / tetra.p0.z, gridSeedA, tetra.p0.y * tetra.p0.z * tetra.p0.z, D, tetra.weights.x, p);
-    float sampleB = sampleGridPoint(uv / vec2(1.0, tetra.p1.y) / tetra.p1.z, gridSeedB, tetra.p1.y * tetra.p1.z * tetra.p0.z, D, tetra.weights.y, p);
-    float sampleC = sampleGridPoint(uv / vec2(1.0, tetra.p2.y) / tetra.p2.z, gridSeedC, tetra.p2.y * tetra.p2.z * tetra.p0.z, D, tetra.weights.z, p);
-    float sampleD = sampleGridPoint(uv / vec2(1.0, tetra.p3.y) / tetra.p3.z, gridSeedD, tetra.p3.y * tetra.p3.z * tetra.p0.z, D, tetra.weights.w, p);
+    float sampleB = sampleGridPoint(uv / vec2(1.0, tetra.p1.y) / tetra.p1.z, gridSeedB, tetra.p1.y * tetra.p1.z * tetra.p1.z, D, tetra.weights.y, p);
+    float sampleC = sampleGridPoint(uv / vec2(1.0, tetra.p2.y) / tetra.p2.z, gridSeedC, tetra.p2.y * tetra.p2.z * tetra.p2.z, D, tetra.weights.z, p);
+    float sampleD = sampleGridPoint(uv / vec2(1.0, tetra.p3.y) / tetra.p3.z, gridSeedD, tetra.p3.y * tetra.p3.z * tetra.p3.z, D, tetra.weights.w, p);
 
     return (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);
 }

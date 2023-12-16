@@ -11,7 +11,13 @@
 #define MAX_UINT 0xffffffffU
 #define MAX_INT  0x7fffffff
 
-///////////// Mapping uint -> float (range 0-1) /////////////
+//////////////// Mapping N -> 1 /////////////////
+// Uses a linear combination of the input with prime factors from the supplementary material of the paper
+uint seed(uvec2 p) { return 19u * p.x + 47u * p.y + 101u; }
+uint seed(uvec3 p) { return 19u * p.x + 47u * p.y + 101u * p.z + 131u; }
+uint seed(uvec4 p) { return 19u * p.x + 47u * p.y + 101u * p.z + 131u * p.w + 173u; }
+
+/////// Mapping uint -> float (range 0-1) ///////
 float mapf(uint v) { return float(v) / float(MAX_UINT); }
 vec2 mapf(uvec2 v) { return vec2(v) / float(MAX_UINT); }
 vec3 mapf(uvec3 v) { return vec3(v) / float(MAX_UINT); }
@@ -54,7 +60,7 @@ uint hash1u(vec2 v) { return hash1u(mapu(v)); }
 float hash1f(uvec2 v) { return mapf(hash1u(v)); }
 float hash1f(vec2 v) { return mapf(hash1u(mapu(v))); }
 
-////////////////// N -> 2 hash //////////////////
+////////////////// 2 -> 2 hash //////////////////
 
 /**
  * pcg2d, from:
@@ -75,7 +81,7 @@ uvec2 hash2u(vec2 v) { return hash2u(mapu(v)); }
 vec2 hash2f(uvec2 v) { return mapf(hash2u(v)); }
 vec2 hash2f(vec2 v) { return mapf(hash2u(mapu(v))); }
 
-////////////////// N -> 3 hash //////////////////
+////////////////// 3 -> 3 hash //////////////////
 
 /**
  * pcg3d, from:
@@ -95,7 +101,7 @@ uvec3 hash3u(vec3 v) { return hash3u(mapu(v)); }
 vec3 hash3f(uvec3 v) { return mapf(hash3u(v)); }
 vec3 hash3f(vec3 v) { return mapf(hash3u(mapu(v))); }
 
-////////////////// N -> 4 hash //////////////////
+////////////////// 4 -> 4 hash //////////////////
 
 /**
  * pcg4d, from:

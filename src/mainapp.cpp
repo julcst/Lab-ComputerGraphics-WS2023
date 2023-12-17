@@ -198,6 +198,8 @@ void MainApp::buildImGui() {
                 ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Max Layer Count reached");
                 ImGui::EndPopup();
             }
+            ImGui::Separator();
+            Util::combo("Debug mode", &obj.material.debug, Config::LAYERED_DEBUG_MODES);
         }
         ImGui::Separator();
         if (ImGui::Button("Destroy")) {

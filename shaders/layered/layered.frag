@@ -11,6 +11,7 @@ out vec3 fragColor;
 
 #include "uniforms.glsl"
 #include "ggx.glsl"
+#include "glints/debug.glsl"
 
 /*
 * Implementation of
@@ -93,7 +94,7 @@ float average(vec3 v){
  * @return linear variance sigma
  */
 float roughnessToVariance(float a){
-    float a11 = pow(a,11);
+    float a11 = pow(a, 1.1);
     return a11 / (1.0 - a11);
 }
 
@@ -277,17 +278,14 @@ vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 e
     float HdotV = max(dot(H, V), 0.0);
 
     //remap roughness
-    //TODO: check if alpha or alpha^2 is correct
     float k = k_direct(alpha);
 
     //fresnel term
     vec3 F = vec3(0.0);
     if(isZero(kappaT)){
-        //kappa == 0
-        F = F_dielectric(NdotL, etaI, etaT); //TODO: check if NdotL or NdotH
+        F = F_dielectric(NdotL, etaI, etaT);
     }else{
-        //kappa != 0
-        F = F_conductor(NdotL, etaI, kappaI, etaT, kappaT);  //TODO: check if NdotL or NdotH
+        F = F_conductor(NdotL, etaI, kappaI, etaT, kappaT);
     }
     
     //geometric shadowing term
@@ -316,22 +314,15 @@ vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 e
  * @param etaI imaginary part of complex IOR of the transmitted media
  * @return F
  */
-vec3 evalFresnel(vec3 N, vec3 L, vec3 V, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
+vec3 evalFresnel(vec3 N, vec3 L, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
     vec3 F = vec3(0.0);
 
-    // H is the half vector between L and V
-    vec3 H = normalize(V + L);
-
     float NdotL = max(dot(N, L), 0.0);
-    float NdotH = max(dot(N, H), 0.0);
 
-    //fresnel term
     if(isZero(kappaT)){
-        //kappa == 0
-        F = F_dielectric(NdotL, etaI, etaT); //TODO: check if NdotL or NdotH
+        F = F_dielectric(NdotL, etaI, etaT);
     }else{
-        //kappa != 0
-        F = F_conductor(NdotL, etaI, kappaI, etaT, kappaT);  //TODO: check if NdotL or NdotH
+        F = F_conductor(NdotL, etaI, kappaI, etaT, kappaT);
     }
 
     return F;
@@ -441,6 +432,10 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
                 //TODO: check if equation from paper or equation from supplemental code works better
                 sigma_transmitted_12 = roughnessToVariance(alpha * s(n12, cosTheta_I, cosTheta_T));
                 sigma_transmitted_21 = roughnessToVariance(alpha * s(1.0/n12, cosTheta_T, cosTheta_I));
+                
+                //sigma_transmitted_12 = roughnessToVariance(alpha * 0.5f * abs(n12 - 1.0)/(n12));
+                //sigma_transmitted_21 = roughnessToVariance(alpha * 0.5f * abs(1.0/n12 - 1.0)/(1.0/n12));
+                
                 //from paper supplemental code, layered_forward.cpp line 171
                 J12 = (cosTheta_T/cosTheta_I) * n12;
                 J21 = (cosTheta_I/cosTheta_T) / n12;
@@ -449,8 +444,8 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
             /* reflectance and transmittance terms for energy */
             //evaluate FGD using modified roughness accounting for top layers
             float alpha_r = varianceToRoughness(sigma_transmitted_0i + sigma_reflected_12); //from paper section 4.1, equation 9
-            vec3 FGD = evalFGD(N, L, V, alpha_r, etaI, kappaI, etaT, kappaT); //from paper section 4.1, equation 2
-            //float FGD = evalFresnel(N, L, V, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
+            //vec3 FGD = evalFGD(N, L, V, alpha_r, etaI, kappaI, etaT, kappaT); //from paper section 4.1, equation 2
+            vec3 FGD = evalFresnel(N, L, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
             energy_reflected_12 = FGD; //from paper section 4.1, equation 7 / section 5.1
             energy_transmitted_12 = 1.0 - FGD; //from paper section 4.2, equation 11 / section 5.1
             if(transmissive){
@@ -473,13 +468,13 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         vec3 t0i = vec3(0.0);
         vec3 ti0 = vec3(0.0);
         vec3 Rr = vec3(0.0);
-        vec3 denom = vec3(1.0) - energy_reflected_i0 * energy_reflected_12; 
+        vec3 denom = vec3(1.0) - energy_reflected_12 * energy_reflected_i0; 
         if(average(denom) > 0.0){
             r0i = (energy_transmitted_0i * energy_reflected_12 * energy_transmitted_i0) / denom; //from paper section 5.1, equation 28
             ri0 = (energy_transmitted_21 * energy_reflected_i0 * energy_transmitted_12) / denom; //from paper section 5.1, equation 30
             t0i = (energy_transmitted_0i * energy_transmitted_12) / denom; //from paper section 5.1, equation 31
             ti0 = (energy_transmitted_21 * energy_transmitted_i0) / denom; //from paper section 5.1, equation 29
-            Rr = (energy_reflected_i0 * energy_reflected_12) / denom;
+            Rr = (energy_reflected_12 * energy_reflected_i0) / denom;
         }
 
         vec3 e_R0i = energy_reflected_0i + r0i;
@@ -496,10 +491,10 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         
 
         //multiple scattering equations on variances
-        float sigma_r0i = (avg_energy_reflected_0i*sigma_reflected_0i + avg_r0i*(sigma_transmitted_i0 + J0i*(sigma_transmitted_0i + sigma_reflected_12 + avg_Rr*(sigma_reflected_12+sigma_reflected_i0)))); //from paper equation 38
-        float sigma_t0i = J12*sigma_transmitted_0i + sigma_transmitted_12 + J12*(sigma_reflected_12 + sigma_reflected_i0)*avg_Rr; //from paper equation 49
-        float sigma_ri0 = (avg_energy_reflected_21*sigma_reflected_21 + avg_ri0*(sigma_transmitted_12 + J12*(sigma_transmitted_21 + sigma_reflected_i0 + avg_Rr*(sigma_reflected_12+sigma_reflected_i0)))); //from paper equation 51
-        float sigma_ti0 = Ji0*sigma_transmitted_21 + sigma_transmitted_i0 + Ji0*(sigma_reflected_12 + sigma_reflected_i0)*avg_Rr; //from paper equation 50
+        float sigma_r0i = avg_energy_reflected_0i * sigma_reflected_0i + avg_r0i * (sigma_transmitted_i0 + sigma_transmitted_0i + Ji0 * (sigma_reflected_12 + avg_Rr * sigma_reflected_i0)); //from paper equation 38
+        float sigma_t0i = J12 * sigma_transmitted_0i + sigma_transmitted_12 + J12 * (sigma_reflected_12 + sigma_reflected_i0) * avg_Rr; //from paper equation 49
+        float sigma_ri0 = avg_energy_reflected_21 * sigma_reflected_21 + avg_ri0 * (sigma_transmitted_12 + J12 * (sigma_transmitted_21 + sigma_reflected_i0 + avg_Rr * (sigma_reflected_12 + sigma_reflected_i0))); //from paper equation 51
+        float sigma_ti0 = Ji0 * sigma_transmitted_21 + sigma_transmitted_i0 + Ji0 * (sigma_reflected_12 + sigma_reflected_i0) * avg_Rr; //from paper equation 50
         //normalize
         if(avg_e_R0i > 0.0){
             sigma_r0i = sigma_r0i/avg_e_R0i;
@@ -513,14 +508,16 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         }
 
         //save lobe statistics
+        int lobeIndexOfLayer_i = i - 1;
         if(avg_r0i > 0.0) {
-            lobes[i].energy = r0i;
-            lobes[i].mean = cosTheta_I;
-            lobes[i].variance = sigma_transmitted_i0 + J0i*(sigma_transmitted_0i + sigma_reflected_12 + avg_Rr*(sigma_reflected_12+sigma_reflected_i0));
+            lobes[lobeIndexOfLayer_i].energy = r0i;
+            lobes[lobeIndexOfLayer_i].mean = cosTheta_I;
+            //TODO: check why this equation
+            lobes[lobeIndexOfLayer_i].variance = (sigma_transmitted_i0 + sigma_transmitted_0i + Ji0 * (sigma_reflected_12 + avg_Rr * sigma_reflected_i0));
         } else {
-            lobes[i].energy = vec3(0.0);
-            lobes[i].mean = cosTheta_I;
-            lobes[i].variance = 0.0;
+            lobes[lobeIndexOfLayer_i].energy = vec3(0.0);
+            lobes[lobeIndexOfLayer_i].mean = cosTheta_I;
+            lobes[lobeIndexOfLayer_i].variance = 0.0;
         }
 
         //update variables for next iteration
@@ -533,12 +530,12 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         sigma_reflected_i0 = sigma_ri0;
         sigma_transmitted_0i = sigma_t0i;
         sigma_transmitted_i0 = sigma_ti0;
-        J0i *= J12; //from supplemental code layered_forward line 256
-        Ji0 *= J21; //from supplemental code layered_forward line 257
+        J0i *= J12; //from supplemental code layered_forward.cpp line 256
+        Ji0 *= J21; //from supplemental code layered_forward.cpp line 257
 
         //early return if conductor
         if(!isZero(kappaT)){
-            valid_lobes = uint(i + 1);
+            valid_lobes = uint(i);
             return;
         }
     }
@@ -558,7 +555,7 @@ void main() {
     // N is the surface normal in world space
     vec3 N = normalize(n);
     // L is the light direction in world spacegit 
-    vec3 L = uLightDir;
+    vec3 L = normalize(uLightDir);
     // V is the view direction in world space
     vec3 V = normalize(uCameraPosition - worldPos);
     // H is the half vector between L and V
@@ -581,28 +578,55 @@ void main() {
 
     addingDoubling(N, L, V, cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
  
-    //eval LayeredBSDF
-    vec3 FDG = vec3(0.0);
+    //eval LayeredBRDF
+    vec3 BRDF = vec3(0.0);
     float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
     float NdotH = max(dot(N, H), 0.0);
     float HdotV = max(dot(H, V), 0.0);
+    float debug_D = 0.0;
+    float debug_G = 0.0;
+
     for(int i = 0; i < int(valid_lobes); i++){
-        if(lobes[i].energy == vec3(0.0)){
-            continue;
-        }
-        
-        float roughness = varianceToRoughness(lobes[i].variance);
+        float alpha = varianceToRoughness(lobes[i].variance);
         // Remap roughness
-        //TODO: check if necessary
-        float a = roughness * roughness;
-        float k = k_direct(a);
+        float k = k_direct(alpha);
 
         float G =  G_smith_ggx(NdotV, NdotL, k);
-        float D = D_ggx(NdotH, a);
+        float D = D_ggx(NdotH, alpha);
 
-        FDG += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
+        BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
+
+        if(i == 0){
+             debug_D = D;
+             debug_G = G;
+        }
     }
 
-    fragColor = FDG * uLightColor * NdotL;
+    vec3 lighting = BRDF * uLightColor * NdotL;
+
+    RENDER_VIEW(lighting);
+    DEBUG_VIEW(1, BRDF);
+    DEBUG_VIEW(2, vec3(debug_D));
+    DEBUG_VIEW(3, vec3(debug_G));
+    DEBUG_VIEW(4, lobes[0].energy);
+    DEBUG_VIEW(5, vec3(layerAlpha[1]);)
+    DEBUG_VIEW(6, vec3(lobes[0].variance));
+    if(valid_lobes > 1u){
+        DEBUG_VIEW(8, lobes[1].energy);
+        DEBUG_VIEW(9, vec3(lobes[1].variance));
+    }
+
+
+    //DEBUG F 
+    vec3 etaI = layerEta[0];
+    vec3 kappaI = layerKappa[0];
+    vec3 etaT = layerEta[1];
+    vec3 kappaT = layerKappa[1];
+    vec3 F = evalFresnel(N, L, etaI, kappaI, etaT, kappaT);
+    DEBUG_VIEW(7, F);
+
+    //Fresnel comparision
+    vec3 Fs = F_schlick(cosThetaI, vec3(1.0), 0.0);
+    DEBUG_VIEW(10, Fs);
 }

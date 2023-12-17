@@ -7,7 +7,8 @@ out vec2 uv;
 out vec3 n;
 out vec3 worldPos;
 
-#include "uniforms.glsl"
+#include "shared/uniforms.glsl"
+#line 12 107
 
 /**
  * Applies the model, view, and projection matrices to a mesh

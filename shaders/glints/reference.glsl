@@ -6,9 +6,10 @@
  * This is only used to test my implementation against their reference implementation
  */
 
-#include "glints/debug.glsl"
+#include "shared/debug.glsl"
+#include "shared/uniforms.glsl"
 
-#line 12 9
+#line 13 208
 
 #define mupi 3.141592
 #define muiupi 0.318309
@@ -24,11 +25,10 @@ float uLogMicrofacetDensity;
 float uMicrofacetRoughness;
 float uDensityRandomization;
 */
-#include "uniforms.glsl"
 
 // HLSL to GLSL
 #define saturate(x) clamp(x, 0.0, 1.0)
-#define mul(a, b) b * a
+#define mul(a, b) a * b
 #define asuint(x) floatBitsToUint(x)
 #define lerp(a, b, t) mix(a, b, t)
 #define atan2(y, x) atan(y, x)
@@ -141,21 +141,24 @@ float HashWithoutSine13(vec3 p3)
 	return fract((p3.x + p3.y) * p3.z);
 }
 
+/* NOTE: Not translated
 mat2 Inverse(mat2 A)
 {
 	return mat2(A[1][1], -A[0][1], -A[1][0], A[0][0]) / determinant(A);
 }
+*/
 
 void GetGradientEllipse(vec2 duvdx, vec2 duvdy, out vec2 ellipseMajor, out vec2 ellipseMinor)
 {
-	mat2 J = mat2(duvdx, duvdy);
-	J = Inverse(J);
+	// Transposed because HLSL->GLSL
+	mat2 J = transpose(mat2(duvdx, duvdy));
+	J = inverse(J); // inverse is a GLSL function
 	J = mul(J, transpose(J));
 
-	// TODO: HLSL is [row][column] and GLSL [column][row]
+	// Indices swapped because HLSL->GLSL
 	float a = J[0][0];
-	float b = J[0][1];
-	float c = J[1][0];
+	float b = J[1][0];
+	float c = J[0][1];
 	float d = J[1][1];
 
 	float T = a + d;
@@ -327,9 +330,14 @@ void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, o
 	outGaussian = pcg4dFloat(uvec4(uSlopeCoord.yx + 8192U, slope.xy + 16384U));
 }
 
+// This performs  4x binomial Samples per call
+// This is called 3x per vertex of the tetrahedron (uv triangle)
+// The tetrahedron has 4 vertices
+// So 4x3x4 = 48x binomial samples per pixel
 float GenerateAngularBinomialValueForSurfaceCell(vec4 randB, vec4 randG, vec2 slopeLerp, float footprintOneHitProba, float binomialSmoothWidth, float footprintMean, float footprintSTD, float microfacetCount)
 {
 	vec4 gating;
+	// ? What is the binomial smooth width?
 	if (binomialSmoothWidth > 0.0000001)
 		gating = saturate(RemapTo01(randB, footprintOneHitProba + binomialSmoothWidth, footprintOneHitProba - binomialSmoothWidth));
 	else
@@ -360,6 +368,8 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	ivec2 glint1 = baseId + ivec2(s, 1.0 - s);
 	ivec2 glint2 = baseId + ivec2(1.0 - s, s);
 	vec3 barycentrics = vec3(-temp.z * s2, s - temp.y * s2, s - temp.x * s2);
+
+	GDEBUG_uvGrid(barycentrics);
 
 	// Generate per surface cell random numbers
 	vec3 rand0 = pcg3dFloat(uvec3(glint0 + 2147483648, gridSeed)); // TODO : optimize away manual seeds
@@ -425,11 +435,14 @@ void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, inout float theta
 	}
 	else // NORMAL CASE
 	{
+		// 		 vec3(theta, aniso, area)
+		// bottom
 		vec3 a = vec3(0, 1, 0);
 		vec3 b = vec3(0, 0, 0);
 		vec3 c = vec3(0.5, 1, 0);
 		vec3 d = vec3(1, 0, 0);
 		vec3 e = vec3(1, 1, 0);
+		// top
 		vec3 f = vec3(0, 1, 1);
 		vec3 g = vec3(0, 0, 1);
 		vec3 h = vec3(0.5, 1, 1);
@@ -512,12 +525,12 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	float lod = log2(length(ellipseMinor) * halfScreenSpaceScaler);
 	float lod0 = int(lod); //lod >= 0.0 ? (int)(lod) : (int)(lod - 1.0);
 	float lod1 = lod0 + 1;
-	float divLod0 = pow(2.0, lod0);
-	float divLod1 = pow(2.0, lod1);
+	float divLod0 = exp2(lod0);
+	float divLod1 = exp2(lod1);
 	float lodLerp = fract(lod);
 	// ! This is not the real area just the minor length
-	float footprintAreaLOD0 = pow(exp2(lod0), 2.0);
-	float footprintAreaLOD1 = pow(exp2(lod1), 2.0);
+	float footprintAreaLOD0 = divLod0 * divLod0;
+	float footprintAreaLOD1 = divLod1 * divLod1;
 
 	// MANUAL ANISOTROPY RATIO COMPENSATION
 	float ratio0 = max(pow(2.0, int(log2(ellipseRatio))), 1.0);
@@ -550,16 +563,20 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 		thetaBinLerp = Remap01To(thetaBinLerp, 0.0, ratioLerp);
 	vec4 tetraBarycentricWeights = GetBarycentricWeightsTetrahedron(vec3(thetaBinLerp, ratioLerp, lodLerp), tetraA, tetraB, tetraC, tetraD); // Compute barycentric coordinates within chosen tetrahedron
 
-	DEBUG_VIEW(4, vec3(footprintArea * 4000.0));
-    DEBUG_VIEW(5, angleToRGB(theta * DEG2RAD));
-    DEBUG_VIEW(6, vec3(1.0 / ellipseRatio));
-    DEBUG_VIEW(7, normalToRGB(normalize(ellipseMajor)));
+	GDEBUG_area(vec3(footprintArea * 4000.0));
+    GDEBUG_theta(angleToRGB(theta * DEG2RAD));
+    GDEBUG_aniso(vec3(1.0 / ellipseRatio));
+    GDEBUG_major(normalToRGB(normalize(ellipseMajor)));
 
-	DEBUG_VIEW(8, vec3(footprintAreaLOD0 * 1000.0, 1.0 / ratio0, thetaBin0 / 360.0));
-    DEBUG_VIEW(9, vec3(lodLerp));
-    DEBUG_VIEW(10, vec3(ratioLerp));
-    DEBUG_VIEW(11, vec3(thetaBinLerp));
-    DEBUG_VIEW(12, boolToRGB(centerSpecialCase));
+	GDEBUG_grid(vec3(footprintAreaLOD0 * 1000.0, 1.0 / ratio0, thetaBin0 / 360.0));
+    GDEBUG_lodWeight(vec3(lodLerp));
+    GDEBUG_anisoWeight(vec3(ratioLerp));
+    GDEBUG_thetaWeight(vec3(thetaBinLerp));
+    GDEBUG_centerCase(boolToRGB(centerSpecialCase));
+	GDEBUG_baryA(vec3(tetraBarycentricWeights.x));
+	GDEBUG_baryB(vec3(tetraBarycentricWeights.y));
+	GDEBUG_baryC(vec3(tetraBarycentricWeights.z));
+	GDEBUG_baryD(vec3(tetraBarycentricWeights.w));
 
 	// PREPARE NEEDED ROTATIONS
 	tetraA.x *= 2; tetraB.x *= 2; tetraC.x *= 2; tetraD.x *= 2;
@@ -581,6 +598,7 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 
 	// SAMPLE GLINT GRIDS
 	uint gridSeedA = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraA.z]), mod(thetaBins[iTetraA.x], 360), ratios[iTetraA.y])) * 4294967296.0);
+	GDEBUG_seedA(vec3(float(gridSeedA) / 4294967296.0));
 	uint gridSeedB = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraB.z]), mod(thetaBins[iTetraB.x], 360), ratios[iTetraB.y])) * 4294967296.0);
 	uint gridSeedC = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraC.z]), mod(thetaBins[iTetraC.x], 360), ratios[iTetraC.y])) * 4294967296.0);
 	uint gridSeedD = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraD.z]), mod(thetaBins[iTetraD.x], 360), ratios[iTetraD.y])) * 4294967296.0);

@@ -1,4 +1,5 @@
 #version 330 core
+#line 3 102
 
 in vec3 pos;
 in vec2 uv;

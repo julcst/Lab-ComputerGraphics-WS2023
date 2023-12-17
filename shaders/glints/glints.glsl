@@ -3,15 +3,23 @@
  * Deliot, T., and L. Belcour. "Real-Time Rendering of Glinty Appearances using Distributed Binomial Laws on Anisotropic Grids." (2023)
  * in GLSL
  */
+#include "shared/debug.glsl"
+#include "glints/barycentric.glsl"
 #include "glints/binom.glsl"
-#include "glints/debug.glsl"
 #include "glints/footprint.glsl"
 #include "glints/random.glsl"
+#line 12 205
 
-#line 12 6
+// TODO: Renaming and restructuring for better readability
+
 #define DEG360 6.28319
 #define DEG180 3.14159
 #define DEG90 1.5708
+#define DEG45 0.785398
+
+float fmod(float x, float y) {
+    return x - y * trunc(x / y);
+}
 
 float map01(float x, float x0, float x1) {
     return (x - x0) / (x1 - x0);
@@ -52,14 +60,14 @@ Heptahedron heptifyFootprint(Footprint foot) {
     hepta.anisoWeight = map01(foot.ratio, hepta.aniso0, hepta.aniso1);
 
     // Discretize orientation with adaptive grid
-    float theta = foot.angle;
+    // Map the angle to the range [0, 180]
+    float theta = fmod(foot.angle, DEG180);
+    // The adaptive grid size depends on the anisotropy
     float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
-    float thetaBin = floor(theta / thetaGrid) * thetaGrid;
-    hepta.theta0 = theta < thetaBin ? thetaBin : thetaBin + thetaGrid / 2.0;
-	hepta.thetaH = hepta.theta0 + thetaGrid / 4.0;
-	hepta.theta1 = hepta.theta0 + thetaGrid / 2.0;
+    hepta.theta0 = floor(theta / thetaGrid) * thetaGrid;
+    hepta.thetaH = hepta.theta0 + thetaGrid * 0.5;
+    hepta.theta1 = hepta.theta0 + thetaGrid;
     hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);
-    hepta.theta0 = hepta.theta0 <= 0.0 ? hepta.theta0 + DEG180 : hepta.theta0;
 
     return hepta;
 }
@@ -76,15 +84,145 @@ struct Tetrahedron {
 /**
  * Splits the heptahedron into six tetrahedra by first splitting it into three prisms along the ground pentagon shape
  * and then splitting each prism into two tetrahedra along the diagonal
+ *
+ * NOTE:  In difference to the reference implementation I do not return the points of the tetrahedron relative to the heptahedron but in absolute coordinates.
+ *        This avoids the dynamic indexing process used in the reference implementation and may benefit performance.
+ *        Dynamic indexing can be costly because it may require the use of pointers instead of registers.
  */
-Tetrahedron getTetrahedron(Heptahedron hepta) {
+Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
     Tetrahedron tetra;
+
+    // TODO: Thoroughly understand cutting
+    //////////////////// Center Case ////////////////////
+    if (centerCase) {
+        // The points of the hexahedron in the form vec3(theta, aniso, area)
+        // Ground triangle (lod0)
+        vec3 a = vec3(hepta.theta0, hepta.aniso1, hepta.lod0);
+        vec3 b = vec3(hepta.theta0, hepta.aniso0, hepta.lod0);
+        vec3 c = vec3(hepta.theta1, hepta.aniso1, hepta.lod0); // e in heptahedron
+        // Top triangle (lod1)
+        vec3 d = vec3(hepta.theta0, hepta.aniso1, hepta.lod1); // f in heptahedron
+        vec3 e = vec3(hepta.theta0, hepta.aniso0, hepta.lod1); // g in heptahedron
+        vec3 f = vec3(hepta.theta1, hepta.aniso1, hepta.lod1); // j in heptahedron
+
+        // Upper pyramid acdef
+        if (hepta.lodWeight > 1.0 - hepta.anisoWeight) {
+            // Left-up tetrahedron aedf
+			if (map01(hepta.lodWeight, 1.0 - hepta.anisoWeight, 1.0) > hepta.thetaWeight) {
+				tetra.p0 = a; tetra.p1 = e; tetra.p2 = d; tetra.p3 = f;
+            // Right-down tetrahedron feca
+            } else {
+				tetra.p0 = f; tetra.p1 = e; tetra.p2 = c; tetra.p3 = a;
+			}
+        // Lower tetrahedron bace
+		} else {
+			tetra.p0 = b; tetra.p1 = a; tetra.p2 = c; tetra.p3 = e;
+		}
+    //////////////////// Normal Case ////////////////////
+    } else { 
+
+        // The points of the hepathedron in the form vec3(theta, aniso, area)
+        // Ground pentagon (lod0), triangularization: abc, bcd, cde
+        vec3 a = vec3(hepta.theta0, hepta.aniso1, hepta.lod0);
+        vec3 b = vec3(hepta.theta0, hepta.aniso0, hepta.lod0);
+        vec3 c = vec3(hepta.thetaH, hepta.aniso1, hepta.lod0);
+        vec3 d = vec3(hepta.theta1, hepta.aniso0, hepta.lod0);
+        vec3 e = vec3(hepta.theta1, hepta.aniso1, hepta.lod0);
+        // Top pentagon (lod1), triangularization: fgh, ghi, hij
+        vec3 f = vec3(hepta.theta0, hepta.aniso1, hepta.lod1);
+        vec3 g = vec3(hepta.theta0, hepta.aniso0, hepta.lod1);
+        vec3 h = vec3(hepta.thetaH, hepta.aniso1, hepta.lod1);
+        vec3 i = vec3(hepta.theta1, hepta.aniso0, hepta.lod1);
+        vec3 j = vec3(hepta.theta1, hepta.aniso1, hepta.lod1);
+
+        // Firstly cut the heptahedron up into three prisms: abcfgh, bcdghi, cdehij
+        // Then cut these prisms into three tetrahedrons each
+        // Prism abcfgh
+        if (hepta.thetaWeight < 0.5 && hepta.thetaWeight * 2.0 < hepta.anisoWeight) {
+            // Upper pyramid acfgh
+            if (hepta.lodWeight > 1.0 - hepta.anisoWeight) {
+                // Tetrahedron afhg
+                if (map01(hepta.lodWeight, 1.0 - hepta.anisoWeight, 1.0) > map01(hepta.thetaWeight * 2.0, 0.0, hepta.anisoWeight)) {
+                    tetra.p0 = a; tetra.p1 = f; tetra.p2 = h; tetra.p3 = g;
+                // Tetrahedron cahg
+                } else {
+                    tetra.p0 = c; tetra.p1 = a; tetra.p2 = h; tetra.p3 = g;
+                }
+            // Tetrahedron bacg
+            } else {
+                tetra.p0 = b; tetra.p1 = a; tetra.p2 = c; tetra.p3 = g;
+            }
+        // Prism bcdghi
+        } else if (1.0 - ((hepta.thetaWeight - 0.5) * 2.0) > hepta.anisoWeight) {
+            // Lower pyramid bcdgi
+            if (hepta.lodWeight < 1.0 - hepta.anisoWeight) {
+                // Tetrahedron bgic
+                if (map01(hepta.lodWeight, 0.0, 1.0 - hepta.anisoWeight) > map01(hepta.thetaWeight, 0.5 - (1.0 - hepta.anisoWeight) * 0.5, 0.5 + (1.0 - hepta.anisoWeight) * 0.5)) {
+                    tetra.p0 = b; tetra.p1 = g; tetra.p2 = i; tetra.p3 = c;
+                // Tetrahedron dbci
+                } else {
+                    tetra.p0 = d; tetra.p1 = b; tetra.p2 = c; tetra.p3 = i;
+                }
+            // Tetrahedron cghi
+            } else {
+                tetra.p0 = c; tetra.p1 = g; tetra.p2 = h; tetra.p3 = i;
+            }
+        // Prism cdehij
+        } else {
+            // Upper pyramid cehij
+            if (hepta.lodWeight > 1.0 - hepta.anisoWeight) {
+                // Tetrahedron cjhi
+                if (map01(hepta.lodWeight, 1.0 - hepta.anisoWeight, 1.0) > map01(hepta.thetaWeight * 2.0, 1.0 - hepta.anisoWeight, 1.0)) {
+                    tetra.p0 = c; tetra.p1 = j; tetra.p2 = h; tetra.p3 = i;
+                // Tetrahedron eicj
+                } else {
+                    tetra.p0 = e; tetra.p1 = i; tetra.p2 = c; tetra.p3 = j;
+                }
+            // Tetrahedron deci
+            } else {
+                tetra.p0 = d; tetra.p1 = e; tetra.p2 = c; tetra.p3 = i;
+            }
+        }
+    }
     return tetra;
 }
 
-Tetrahedron tetrifyFootprint(Heptahedron hepta) {
-    Tetrahedron tetra = getTetrahedron(hepta);
+Tetrahedron tetrifyFootprint(Heptahedron hepta, Footprint foot, bool centerCase) {
+    Tetrahedron tetra = getTetrahedron(hepta, centerCase);
+    vec3 p = vec3(fmod(foot.angle, DEG180), foot.ratio, foot.minorLength);
+    tetra.weights = calcBarycentric(p, tetra.p0, tetra.p1, tetra.p2, tetra.p3);
     return tetra;
+}
+
+float sampleGridPoint(vec2 uv, vec3 seed, float area, float target, float weight, float p) {
+    // Triangulate uv coordinates
+    // TODO: Make the triangulation hexagonal to reduce artifacts
+    vec2 cell = floor(uv);
+    vec2 fractional = uv - cell;
+    bool triangle = (fractional.x + fractional.y) > 1.0;
+    vec2 a = triangle ? cell + vec2(1.0, 1.0) : cell;
+    vec2 b = cell + vec2(1.0, 0.0);
+    vec2 c = cell + vec2(0.0, 1.0);
+    vec3 weights = calcBarycentric(uv, a, b, c);
+    GDEBUG_uvGrid(vec3(weights));
+
+    // Draw random numbers per triangle vertex
+    vec3 randA = hash3f(vec3(a.xy, seed.x));
+    vec3 randB = hash3f(vec3(b.xy, seed.x));
+    vec3 randC = hash3f(vec3(c.xy, seed.x));
+
+    // Randomize the logarithmic microfacet density
+    vec3 logDensityRand = clamp(sampleNormal(uLogMicrofacetDensity, uDensityRandomization, vec3(randA.x, randB.x, randC.x)), 0.0, 50.0);
+    vec3 density = exp(logDensityRand);
+    // NP is the number of discrete microfacets in the weighted pixel footprint
+    vec3 NP = area * density * weight;
+
+    vec3 samples;
+    samples.x = sampleBinom(NP.x, p, randA.yz) / NP.x;
+    samples.y = sampleBinom(NP.y, p, randB.yz) / NP.y;
+    samples.z = sampleBinom(NP.z, p, randC.yz) / NP.z;
+
+    return dot(samples, weights);
 }
 
 /**
@@ -105,10 +243,10 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Calculate the pixel footprint
     Footprint foot = calcPixelFootprint(uv, screenSpaceScale);
 
-    DEBUG_VIEW(4, vec3(foot.area) * 4000.0);
-    DEBUG_VIEW(5, angleToRGB(foot.angle));
-    DEBUG_VIEW(6, vec3(1.0 / foot.ratio));
-    DEBUG_VIEW(7, normalToRGB(normalize(foot.major)));
+    GDEBUG_area(vec3(foot.area) * 4000.0);
+    GDEBUG_theta(angleToRGB(foot.angle));
+    GDEBUG_aniso(vec3(1.0 / foot.ratio));
+    GDEBUG_major(normalToRGB(normalize(foot.major)));
 
     // The footprint can now be parametrized into three dimensions which are
     // logarithmic area (or LOD) + major/minor ratio (or anisotropy) + orientation
@@ -118,32 +256,39 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // The center case is the case without anisotropy
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
+    // In the center case we limit the theta weight by the anisotropy to account for the vanishing orientation dimension
+    hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
 
-    DEBUG_VIEW(8, vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
-    DEBUG_VIEW(9, vec3(hepta.lodWeight));
-    DEBUG_VIEW(10, vec3(hepta.anisoWeight));
-    DEBUG_VIEW(11, vec3(hepta.thetaWeight));
-    DEBUG_VIEW(12, boolToRGB(centerCase));
+    GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
+    GDEBUG_lodWeight(vec3(hepta.lodWeight));
+    GDEBUG_anisoWeight(vec3(hepta.anisoWeight));
+    GDEBUG_thetaWeight(vec3(abs(hepta.thetaWeight)));
+    GDEBUG_centerCase(boolToRGB(centerCase));
 
-    Tetrahedron tetra = tetrifyFootprint(hepta);
+    // TODO: The barycentric weights contain far more zeros than in the reference implementation
+    Tetrahedron tetra = tetrifyFootprint(hepta, foot, centerCase);
+
+    GDEBUG_baryA(vec3(tetra.weights.x));
+	GDEBUG_baryB(vec3(tetra.weights.y));
+	GDEBUG_baryC(vec3(tetra.weights.z));
+	GDEBUG_baryD(vec3(tetra.weights.w));
     
-    // Generate incoherent random numbers based on the uv coordinates
-    vec3 rand = hash3f(vec3(uv.xy, uv.x * uv.y));
+    vec3 gridSeedA = hash3f(tetra.p0);
+    vec3 gridSeedB = hash3f(tetra.p1);
+    vec3 gridSeedC = hash3f(tetra.p2);
+    vec3 gridSeedD = hash3f(tetra.p3);
 
-    // p ist the probability for a single microfacet to be reflecting
+    GDEBUG_seedA(gridSeedA);
+
+    float area = foot.area;
     float p = microfacetRoughness * D / Dmax;
 
-    // Randomize the logarithmic microfacet density
-    // ? Wouldn't it be more intuitive to randomize the linear microfacet density instead? ()
-    // ? Why is this normal distributed and not binomial distributed? (better controllability)
-    float logDensityRand = clamp(sampleNormal(logMicrofacetDensity, densityRandomization, rand.x), 0.0, 50.0);
-    float density = exp(logDensityRand);
-    // NP is the number of discrete microfacets in the pixel footprint
-    float NP = foot.area * density;
-    // c is the number of reflecting microfacets in the pixel footprint
-    float c = (Dmax / uMicrofacetRoughness) * sampleBinom(NP, p, rand.yz); // Equation (4)
-    // DP is the microfacet distribution term over the pixel footprint
-    float DP = c / NP; // Equation (3)
+    // TODO: Rotate uv grid to align with the orientation of the footprint
+    // TODO: Integrate slope
+    float sampleA = sampleGridPoint(uv / vec2(1.0, tetra.p0.y) / tetra.p0.z, gridSeedA, tetra.p0.y * tetra.p0.z * tetra.p0.z, D, tetra.weights.x, p);
+    float sampleB = sampleGridPoint(uv / vec2(1.0, tetra.p1.y) / tetra.p1.z, gridSeedB, tetra.p1.y * tetra.p1.z * tetra.p0.z, D, tetra.weights.y, p);
+    float sampleC = sampleGridPoint(uv / vec2(1.0, tetra.p2.y) / tetra.p2.z, gridSeedC, tetra.p2.y * tetra.p2.z * tetra.p0.z, D, tetra.weights.z, p);
+    float sampleD = sampleGridPoint(uv / vec2(1.0, tetra.p3.y) / tetra.p3.z, gridSeedD, tetra.p3.y * tetra.p3.z * tetra.p0.z, D, tetra.weights.w, p);
 
-    return DP;
+    return (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);
 }

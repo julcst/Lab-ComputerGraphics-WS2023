@@ -1,4 +1,4 @@
-#line 2 1
+#line 2 201
 /**
  * Returns the length of the cross product of two vectors when we add a imaginative z-component of 0.
  * The result is thus the area of the parallelogram spanned by the two vectors or twice the area of the triangle spanned by the two vectors.
@@ -28,7 +28,7 @@ vec3 calcBarycentric(vec2 P, vec2 A, vec2 B, vec2 C) {
     float areaABP = cross2D(AB, AP);
     float areaACP = cross2D(AP, AC);
 
-    vec3 weights:
+    vec3 weights;
     weights.z = areaABP * invAreaABC; // C
     weights.y = areaACP * invAreaABC; // B
     weights.x = 1.0 - weights.y - weights.z; // A - Because the weights sum up to 1.0

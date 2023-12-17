@@ -3,7 +3,8 @@
 layout (location = 0) in vec3 position;
 out vec3 viewDir;
 
-#include "uniforms.glsl"
+#include "shared/uniforms.glsl"
+#line 8 108
 
 /**
  * Calculates the ray direction for every vertex, which is then hardware interpolated to calculate the per pixel ray direction

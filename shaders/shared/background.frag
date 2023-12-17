@@ -3,7 +3,8 @@
 in vec3 viewDir;
 out vec3 fragColor;
 
-#include "uniforms.glsl"
+#include "shared/uniforms.glsl"
+#line 8 101
 
 /**
  * Renders a simple procedural sky and sun

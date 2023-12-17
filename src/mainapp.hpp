@@ -5,9 +5,9 @@
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
 #include "framework/gl/uniformbuffer.hpp"
-#include "framework/object.hpp"
-#include "framework/ub0.hpp"
-#include "framework/material.hpp"
+#include "scene/object.hpp"
+#include "scene/ub0.hpp"
+#include "scene/ub1.hpp"
 
 class MainApp : public App {
    public:

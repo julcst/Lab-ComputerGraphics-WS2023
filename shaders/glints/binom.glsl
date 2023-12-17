@@ -1,4 +1,4 @@
-#line 2 2
+#line 2 202
 /**
  * Functions to generate normal/binomial distributed random numbers.
  *
@@ -55,6 +55,16 @@ float sampleNormal(float rand) {
 }
 
 /**
+ * Converts a uniform random vector of range [0, 1] to a normal distributed random vector using Inversion Sampling.
+ * 
+ * @param rand A uniform random vector in the range [0, 1]. 
+ */
+vec3 sampleNormal(vec3 rand) {
+    vec3 rand11 = 2.0 * rand - 1.0;
+    return sqrt(2.0) * vec3(erfinv(rand11.x), erfinv(rand11.y), erfinv(rand11.z));
+}
+
+/**
  * Converts a uniform random number of range [0, 1] to a normal distributed random number using Inversion Sampling.
  *
  * @param mu The mean of the normal distribution.
@@ -62,6 +72,17 @@ float sampleNormal(float rand) {
  * @param rand A uniform random number in the range [0, 1]. 
  */
 float sampleNormal(float mu, float sigma, float rand) {
+    return mu + sigma * sampleNormal(rand);
+}
+
+/**
+ * Converts a uniform random vector of range [0, 1] to a normal distributed random vector using Inversion Sampling.
+ *
+ * @param mu The mean of the normal distribution.
+ * @param sigma The standard deviation of the normal distribution.
+ * @param rand A uniform random vector in the range [0, 1]. 
+ */
+vec3 sampleNormal(float mu, float sigma, vec3 rand) {
     return mu + sigma * sampleNormal(rand);
 }
 

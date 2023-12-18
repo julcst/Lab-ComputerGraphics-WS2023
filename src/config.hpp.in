@@ -43,5 +43,19 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "samples",          // 19
 };
 
+const std::vector<std::string> LAYERED_DEBUG_MODES = {
+    "off",                      // 0
+    "BRDF",                     // 1
+    "D",                        // 2
+    "G",                        // 3
+    "Energy of lobe 0",         // 4
+    "Alpha input of lobe 0",    // 5
+    "Variance of lobe 0",       // 6
+    "Fresnel of layer 0",       // 7
+    "Energy of lobe 1",         // 8
+    "Variance of lobe 1",       // 9
+    "F Schlick of layer 0",     // 10
+};
+
 const unsigned int MAX_LAYERS = 4;
 }

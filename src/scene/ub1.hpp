@@ -28,7 +28,8 @@ struct UB1 {
 // Location 2
     float densityRandomization = 0.0f;
     unsigned int debug = 0;
-    glm::vec2 padding = glm::vec2(0.0f);
+    float alphaX = 0.0f; //Anisotropic Roughness
+    float alphaY = 0.0f; //Anisotropic Roughness
 
 // Location 3-6
     glm::mat4 MVP = glm::mat4(1.0f);

@@ -123,6 +123,7 @@ set(SHADERS
     shaders/shared/background.frag
     shaders/shared/debug.frag
     shaders/shared/debug.glsl
+    shaders/shared/ggx_aniso.frag
     shaders/shared/ggx.frag
     shaders/shared/ggx.glsl
     shaders/shared/lambert.frag

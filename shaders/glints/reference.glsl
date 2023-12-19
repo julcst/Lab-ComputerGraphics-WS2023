@@ -8,8 +8,7 @@
 
 #include "shared/debug.glsl"
 #include "shared/uniforms.glsl"
-
-#line 13 208
+#line 12 209
 
 #define mupi 3.141592
 #define muiupi 0.318309
@@ -557,6 +556,7 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	bool centerSpecialCase = (ratio0 == 1.0);
 	// ? Why this complicated indexing process?
 	vec2 divLods = vec2(divLod0, divLod1);
+	// ! This is just divLods squared
 	vec2 footprintAreas = vec2(footprintAreaLOD0, footprintAreaLOD1);
 	vec2 ratios = vec2(ratio0, ratio1);
 	vec4 thetaBins = vec4(thetaBin0, thetaBinH, thetaBin1, 0.0); // added 0.0 for center singularity case

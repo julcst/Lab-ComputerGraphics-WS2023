@@ -27,6 +27,23 @@ Footprint calcNaivePixelFootprint(vec2 uv, float scale) {
     return footprint;
 }
 
+Footprint calcWorldPixelFootprint(vec2 uv, vec3 worldPos, float scale) {
+    vec2 duvdx = dFdx(uv);
+    vec3 dpdx = scale * dFdx(worldPos);
+    vec3 dpdy = scale * dFdy(worldPos);
+
+    float Px = dot(dpdx, dpdx);
+    float Py = dot(dpdy, dpdy);
+    float Pmax = max(Px, Py);
+    float Pmin = min(Px, Py);
+
+    Footprint footprint;
+    footprint.area = length(cross(dpdx, dpdy));
+    footprint.angle = atan(duvdx.y, duvdx.x);
+    footprint.ratio = sqrt(Pmax / Pmin);
+    return footprint;
+}
+
 /**
  * Calculates the footprint of a pixel by constructing a footprint ellipse, which major and minor axis
  * are calculated as the Eigenvectors of the matrix J that deforms the unit circle into the footprint.

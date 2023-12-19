@@ -116,9 +116,11 @@ set(SHADERS
     shaders/glints/footprint.glsl
     shaders/glints/glints.frag
     shaders/glints/glints.glsl
+    shaders/glints/hepta.glsl
     shaders/glints/random.glsl
     shaders/glints/reference.frag
     shaders/glints/reference.glsl
+    shaders/glints/tetra.glsl
     shaders/layered/layered.frag
     shaders/shared/background.frag
     shaders/shared/debug.frag

@@ -1,4 +1,18 @@
 #line 2 201
+
+#define DEG360 6.28319
+#define DEG180 3.14159
+#define DEG90 1.5708
+#define DEG45 0.785398
+
+float fmod(float x, float y) {
+    return x - y * trunc(x / y);
+}
+
+float map01(float x, float x0, float x1) {
+    return (x - x0) / (x1 - x0);
+}
+
 /**
  * Returns the length of the cross product of two vectors when we add a imaginative z-component of 0.
  * The result is thus the area of the parallelogram spanned by the two vectors or twice the area of the triangle spanned by the two vectors.

@@ -4,14 +4,12 @@
  */
 
 struct Footprint {
-    /** The area of the pixel footprint. */
-    float area;
-    vec2 major;
-    vec2 minor;
-    float minorLength;
-    float angle;
-    /** major length / minor length */
-    float ratio;
+    float area; // Unused
+    vec2 major; // Unused
+
+    float angle; // theta
+    float ratio; // anisotropy
+    float minorLength; // lod
 };
 
 /**

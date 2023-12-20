@@ -10,8 +10,7 @@ out vec3 fragColor;
 #include "shared/ggx.glsl"
 #include "shared/debug.glsl"
 #include "glints/glints.glsl"
-
-#line 15 204
+#line 14 204
 
 void main() {
 

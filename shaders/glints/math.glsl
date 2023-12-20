@@ -30,7 +30,7 @@ float cross2D(vec2 a, vec2 b) {
  * The implementation is based on area ratios, the area of a triangle (a, b, c) is |cross(ab, ac)| / 2.
  * Because we are only interested in the ratios, we can omit the sign and the division by 2.
  */
-vec3 calcBarycentric(vec2 P, vec2 A, vec2 B, vec2 C) {
+vec3 calcBarycentrics(vec2 P, vec2 A, vec2 B, vec2 C) {
     vec2 AP = P - A;
     
     vec2 AB = B - A;
@@ -56,7 +56,7 @@ vec3 calcBarycentric(vec2 P, vec2 A, vec2 B, vec2 C) {
  * Because we are only interested in the ratios, we can omit the sign and the division by 6.
  * Calculation taken from appendix 4 of "Robust and Efficient Barycentric Cell-Interpolation for Volumetric Coupling with preCICE" by Boris G. Martin, 2022
  */
- vec4 calcBarycentric(vec3 P, vec3 A, vec3 B, vec3 C, vec3 D) {
+ vec4 calcBarycentrics(vec3 P, vec3 A, vec3 B, vec3 C, vec3 D) {
     vec3 AP = P - A;
     vec3 CP = P - C;
     vec3 DP = P - B;

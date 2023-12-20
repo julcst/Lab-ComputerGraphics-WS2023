@@ -111,7 +111,7 @@ set(INCLUDE
 ####################################################################
 # Resource files
 set(SHADERS
-    shaders/glints/barycentric.glsl
+    shaders/glints/math.glsl
     shaders/glints/binom.glsl
     shaders/glints/footprint.glsl
     shaders/glints/glints.frag

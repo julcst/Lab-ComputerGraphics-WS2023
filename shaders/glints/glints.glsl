@@ -4,7 +4,7 @@
  * in GLSL
  */
 #include "shared/debug.glsl"
-#include "glints/barycentric.glsl"
+#include "glints/math.glsl"
 #include "glints/binom.glsl"
 #include "glints/footprint.glsl"
 #include "glints/hepta.glsl"
@@ -21,7 +21,7 @@ float sampleGridPoint(vec2 uv, uint seed, float area, float target, float weight
     vec2 a = triangle ? cell + vec2(1.0, 1.0) : cell;
     vec2 b = cell + vec2(1.0, 0.0);
     vec2 c = cell + vec2(0.0, 1.0);
-    vec3 weights = calcBarycentric(uv, a, b, c);
+    vec3 weights = calcBarycentrics(uv, a, b, c);
     GDEBUG_uvGrid(vec3(weights));
 
     // Draw random numbers per triangle vertex
@@ -61,9 +61,9 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Calculate the pixel footprint
     Footprint foot = calcPixelFootprint(uv, screenSpaceScale);
 
-    GDEBUG_area(vec3(foot.area) * 4000.0);
     GDEBUG_theta(angleToRGB(foot.angle));
     GDEBUG_aniso(vec3(1.0 / foot.ratio));
+    GDEBUG_area(vec3(foot.area) * 4000.0);
     GDEBUG_major(normalToRGB(normalize(foot.major)));
 
     // The footprint can now be parametrized into three dimensions which are
@@ -78,9 +78,9 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
 
     GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
-    GDEBUG_lodWeight(colorDebug(hepta.lodWeight));
-    GDEBUG_anisoWeight(colorDebug(hepta.anisoWeight));
     GDEBUG_thetaWeight(colorDebug(hepta.thetaWeight));
+    GDEBUG_anisoWeight(colorDebug(hepta.anisoWeight));
+    GDEBUG_lodWeight(colorDebug(hepta.lodWeight));
     GDEBUG_centerCase(boolToRGB(centerCase));
 
     // FIXME: The barycentric weights contain negative values
@@ -100,11 +100,10 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
 
     GDEBUG_seedA(vec3(mapf(gridSeedA)));
 
-    float area = foot.area;
     float p = microfacetRoughness * D / Dmax;
 
     // TODO: Rotate uv grid to align with the orientation of the footprint
-    // TODO: Integrate half vector to make glints pop in and out when rotating the LIGHT
+    // TODO: Integrate half vector to make glints pop in and out when rotating the light
     float sampleA = sampleGridPoint(uv / vec2(1.0, 1.0) / tetra.p0.z, gridSeedA, tetra.p0.y * tetra.p0.z * tetra.p0.z, D, tetra.weights.x, p);
     float sampleB = sampleGridPoint(uv / vec2(1.0, 1.0) / tetra.p1.z, gridSeedB, tetra.p1.y * tetra.p1.z * tetra.p1.z, D, tetra.weights.y, p);
     float sampleC = sampleGridPoint(uv / vec2(1.0, 1.0) / tetra.p2.z, gridSeedC, tetra.p2.y * tetra.p2.z * tetra.p2.z, D, tetra.weights.z, p);

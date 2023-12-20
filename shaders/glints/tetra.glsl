@@ -1,4 +1,4 @@
-#include "glints/barycentric.glsl"
+#include "glints/math.glsl"
 #line 2 210
 
 /**
@@ -21,6 +21,11 @@ struct Tetrahedron {
 Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
     Tetrahedron tetra;
 
+    float thetaLerp = hepta.thetaWeight;
+    float anisoLerp = hepta.anisoWeight;
+    // FIX: Scale this logarithmically and lod0 and lod1 too
+    float lodLerp = hepta.lodWeight;
+
     // TODO: Thoroughly understand cutting
     //////////////////// Center Case ////////////////////
     if (centerCase) {
@@ -35,9 +40,9 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
         vec3 f = vec3(hepta.theta1, hepta.aniso1, hepta.lod1); // j in heptahedron
 
         // Upper pyramid acdef
-        if (hepta.lodWeight > 1.0 - hepta.anisoWeight) {
+        if (lodLerp > 1.0 - anisoLerp) {
             // Left-up tetrahedron aedf
-			if (map01(hepta.lodWeight, 1.0 - hepta.anisoWeight, 1.0) > hepta.thetaWeight) {
+			if (map01(lodLerp, 1.0 - anisoLerp, 1.0) > thetaLerp) {
 				tetra.p0 = a; tetra.p1 = e; tetra.p2 = d; tetra.p3 = f;
             // Right-down tetrahedron feca
             } else {
@@ -67,11 +72,11 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
         // Firstly cut the heptahedron up into three prisms: abcfgh, bcdghi, cdehij
         // Then cut these prisms into three tetrahedrons each
         // Prism abcfgh
-        if (hepta.thetaWeight < 0.5 && hepta.thetaWeight * 2.0 < hepta.anisoWeight) {
+        if (thetaLerp < 0.5 && thetaLerp * 2.0 < anisoLerp) {
             // Upper pyramid acfgh
-            if (hepta.lodWeight > 1.0 - hepta.anisoWeight) {
+            if (lodLerp > 1.0 - anisoLerp) {
                 // Tetrahedron afhg
-                if (map01(hepta.lodWeight, 1.0 - hepta.anisoWeight, 1.0) > map01(hepta.thetaWeight * 2.0, 0.0, hepta.anisoWeight)) {
+                if (map01(lodLerp, 1.0 - anisoLerp, 1.0) > map01(thetaLerp * 2.0, 0.0, anisoLerp)) {
                     tetra.p0 = a; tetra.p1 = f; tetra.p2 = h; tetra.p3 = g;
                 // Tetrahedron cahg
                 } else {
@@ -82,11 +87,11 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
                 tetra.p0 = b; tetra.p1 = a; tetra.p2 = c; tetra.p3 = g;
             }
         // Prism bcdghi
-        } else if (1.0 - ((hepta.thetaWeight - 0.5) * 2.0) > hepta.anisoWeight) {
+        } else if (1.0 - ((thetaLerp - 0.5) * 2.0) > anisoLerp) {
             // Lower pyramid bcdgi
-            if (hepta.lodWeight < 1.0 - hepta.anisoWeight) {
+            if (lodLerp < 1.0 - anisoLerp) {
                 // Tetrahedron bgic
-                if (map01(hepta.lodWeight, 0.0, 1.0 - hepta.anisoWeight) > map01(hepta.thetaWeight, 0.5 - (1.0 - hepta.anisoWeight) * 0.5, 0.5 + (1.0 - hepta.anisoWeight) * 0.5)) {
+                if (map01(lodLerp, 0.0, 1.0 - anisoLerp) > map01(thetaLerp, 0.5 - (1.0 - anisoLerp) * 0.5, 0.5 + (1.0 - anisoLerp) * 0.5)) {
                     tetra.p0 = b; tetra.p1 = g; tetra.p2 = i; tetra.p3 = c;
                 // Tetrahedron dbci
                 } else {
@@ -99,9 +104,9 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
         // Prism cdehij
         } else {
             // Upper pyramid cehij
-            if (hepta.lodWeight > 1.0 - hepta.anisoWeight) {
+            if (lodLerp > 1.0 - anisoLerp) {
                 // Tetrahedron cjhi
-                if (map01(hepta.lodWeight, 1.0 - hepta.anisoWeight, 1.0) > map01(hepta.thetaWeight * 2.0, 1.0 - hepta.anisoWeight, 1.0)) {
+                if (map01(lodLerp, 1.0 - anisoLerp, 1.0) > map01(thetaLerp * 2.0, 1.0 - anisoLerp, 1.0)) {
                     tetra.p0 = c; tetra.p1 = j; tetra.p2 = h; tetra.p3 = i;
                 // Tetrahedron eicj
                 } else {
@@ -119,6 +124,6 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
 Tetrahedron tetrifyFootprint(Heptahedron hepta, Footprint foot, bool centerCase) {
     Tetrahedron tetra = getTetrahedron(hepta, centerCase);
     vec3 p = vec3(fmod(foot.angle, DEG180), foot.ratio, foot.minorLength);
-    tetra.weights = calcBarycentric(p, tetra.p0, tetra.p1, tetra.p2, tetra.p3);
+    tetra.weights = calcBarycentrics(p, tetra.p0, tetra.p1, tetra.p2, tetra.p3);
     return tetra;
 }

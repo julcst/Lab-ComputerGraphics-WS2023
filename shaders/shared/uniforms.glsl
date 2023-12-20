@@ -54,6 +54,10 @@ layout(std140) uniform UB1 {
     float uDensityRandomization;
     uint uDebug;
 
+/////// GGX Anisotropic ///////    
+    float uAlphaX;
+    float uAlphaY;
+
 /////// Transformation matrices ///////
     mat4 uMVP;
     mat4 uModel;

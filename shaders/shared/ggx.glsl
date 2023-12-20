@@ -108,3 +108,55 @@ vec3 BRDF_ggx(vec3 N, vec3 L, vec3 V, vec3 albedo, float metallic, float roughne
 
     return specular + diffuse;
 }
+
+
+/**
+ * Anisotropic GGX BRDF implementation following Aakash KT, Eric Heitz, Jonathan Dupuy, and P. J. Narayanan. 2022. Bringing Linearly Transformed Cosines to Anisotropic GGX. In Proceedings of SIGGRAPH I3D (I3D’22). ACM, New York, NY, USA, 9 pages.
+ */
+
+/**
+ * Normal Distribution Function
+ */
+float D_ggx_aniso(vec3 H, float alphaX, float alphaY) {
+    return 1 / (PI * alphaX * alphaY * pow(((H.x * H.x)/(alphaX*alphaX) + (H.y * H.y)/(alphaY*alphaY) + (H.z*H.z)),2));
+}
+
+/**
+ * Masking-shadowing function
+ */
+float Lambda_ggx(vec3 w, float alphaX, float alphaY){
+    return (-1 + sqrt(1 + (((alphaX*alphaX*w.x*w.x) + (alphaY*alphaY*w.y*w.y))/(w.z*w.z)))) / 2;
+}
+
+float G2_ggx_aniso(vec3 V, vec3 L, float alphaX, float alphaY) {
+return 1 / (1 + Lambda_ggx(V, alphaX, alphaY) + Lambda_ggx(L, alphaX, alphaY));
+}
+
+/**
+ * Anisotropic GGX BRDF
+ * @param N Surface normal in world space
+ * @param L Light direction in world space
+ * @param V View direction in world space
+ */
+vec3 BRDF_ggx_aniso(vec3 N, vec3 L, vec3 V, vec3 albedo, float metallic, float alphaX, float alphaY) {
+    // H is the half vector between L and V
+
+    vec3 H = normalize(V + L);
+
+    // Calculate dot products
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float HdotV = max(dot(H, V), 0.0);
+
+    vec3 F = F_schlick(HdotV, albedo, metallic);
+
+    // Calculate the specular component with GGX
+    vec3 FGD = F * G2_ggx_aniso(V, L, alphaX, alphaY) * D_ggx_aniso(H, alphaX, alphaY);
+    float denom = 4.0 * NdotL * NdotV + 0.0001;
+    vec3 specular = FGD / denom;
+
+    // Calculate the diffuse component with Lambert
+    vec3 diffuse = diffuse(F, albedo, metallic);
+
+    return specular + diffuse;
+}

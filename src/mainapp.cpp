@@ -164,6 +164,11 @@ void MainApp::buildImGui() {
             ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
             ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.0f, 1.0f);
             ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
+        } else if (obj.shaderIdx == Config::ShaderType::GGX_ANISO) {
+            ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
+            ImGui::SliderFloat("Alpha X", &obj.material.alphaX, 0.0f, 1.0f);
+            ImGui::SliderFloat("Alpha Y", &obj.material.alphaY, 0.0f, 1.0f);
+            ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
         } else if (obj.shaderIdx == Config::ShaderType::GLINTS || obj.shaderIdx == Config::ShaderType::GLINTS_REF) {
             ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
             ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.001f, 1.0f);

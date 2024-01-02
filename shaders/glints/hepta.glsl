@@ -2,7 +2,7 @@
 #line 3 206
 
 struct Heptahedron {
-    // Dimension 3: Orientation
+    // Dimension 1: Orientation
     // Here we also need to store the half angle because
     // the ground shape of our heptahedron is a pentagon
     // on the ratio-orientation plane
@@ -14,7 +14,7 @@ struct Heptahedron {
     float aniso0;
     float aniso1;
     float anisoWeight;
-    // Dimension 1: Area
+    // Dimension 3: Area
     float lod0;
     float lod1;
     float lodWeight;

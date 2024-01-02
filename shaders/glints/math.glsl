@@ -14,6 +14,14 @@ float map01(float x, float x0, float x1) {
 }
 
 /**
+ * Grid values are in the format vec4(00, 01, 10, 11)
+ */
+float bilinear(vec4 values, vec2 weights) {
+    vec2 lerp = mix(values.xy, values.zw, weights.x);
+    return mix(lerp.x, lerp.y, weights.y);
+}
+
+/**
  * Returns the length of the cross product of two vectors when we add a imaginative z-component of 0.
  * The result is thus the area of the parallelogram spanned by the two vectors or twice the area of the triangle spanned by the two vectors.
  */

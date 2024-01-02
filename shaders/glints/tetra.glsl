@@ -1,6 +1,19 @@
 #include "glints/math.glsl"
 #line 2 210
 
+// TODO: Use this for cutting the heptahedron
+/**
+ * Given a plane defined by three points a, b, c and a point p, this function returns true
+ * if p is on the same side of the plane as the normal vector of the plane.
+ */
+bool calcPlaneSide(vec3 p, vec3 a, vec3 b, vec3 c) {
+    vec3 ab = b - a;
+    vec3 ac = c - a;
+    vec3 ap = p - a;
+    vec3 n = cross(ab, ac);
+    return dot(n, ap) >= 0.0;
+}
+
 /**
  * Conatins the four vertices of a tetrahedron in the (area, ratio, orientation) space
  * and the barycentric weights of the current pixel footprint inside the tetrahedron
@@ -23,7 +36,8 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
 
     float thetaLerp = hepta.thetaWeight;
     float anisoLerp = hepta.anisoWeight;
-    // FIX: Scale this logarithmically and lod0 and lod1 too
+    // ! Why is this in log space in the reference implementation
+    // NOTE: May not matter much
     float lodLerp = hepta.lodWeight;
 
     // TODO: Thoroughly understand cutting
@@ -123,7 +137,7 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase) {
 
 Tetrahedron tetrifyFootprint(Heptahedron hepta, Footprint foot, bool centerCase) {
     Tetrahedron tetra = getTetrahedron(hepta, centerCase);
-    vec3 p = vec3(fmod(foot.angle, DEG180), foot.ratio, foot.minorLength);
+    vec3 p = vec3(foot.angle, foot.ratio, foot.minorLength);
     tetra.weights = calcBarycentrics(p, tetra.p0, tetra.p1, tetra.p2, tetra.p3);
     return tetra;
 }

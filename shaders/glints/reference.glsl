@@ -340,11 +340,7 @@ float GenerateAngularBinomialValueForSurfaceCell(vec4 randB, vec4 randG, vec2 sl
 	if (binomialSmoothWidth > 0.0000001)
 		gating = saturate(RemapTo01(randB, footprintOneHitProba + binomialSmoothWidth, footprintOneHitProba - binomialSmoothWidth));
 	else
-		gating = vec4(
-			randB.x < footprintOneHitProba ? 1.0 : 0.0,
-			randB.y < footprintOneHitProba ? 1.0 : 0.0,
-			randB.z < footprintOneHitProba ? 1.0 : 0.0,
-			randB.w < footprintOneHitProba ? 1.0 : 0.0);
+		gating = mix(vec4(0.0), vec4(1.0), lessThan(randB, vec4(footprintOneHitProba)));
 
 	vec4 gauss = randG * footprintSTD + footprintMean;
 	gauss = clamp(floor(gauss), 0, microfacetCount);
@@ -368,7 +364,7 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	ivec2 glint2 = baseId + ivec2(1.0 - s, s);
 	vec3 barycentrics = vec3(-temp.z * s2, s - temp.y * s2, s - temp.x * s2);
 
-	GDEBUG_uvGrid(barycentrics);
+	GDEBUG_uvTriangles(barycentrics);
 
 	// Generate per surface cell random numbers
 	vec3 rand0 = pcg3dFloat(uvec3(glint0 + 2147483648, gridSeed)); // TODO : optimize away manual seeds
@@ -535,6 +531,7 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	float footprintAreaLOD1 = divLod1 * divLod1;
 
 	// MANUAL ANISOTROPY RATIO COMPENSATION
+
 	float ratio0 = max(pow(2.0, int(log2(ellipseRatio))), 1.0);
 	float ratio1 = ratio0 * 2.0;
 	float ratioLerp = clamp(Remap(ellipseRatio, ratio0, ratio1, 0.0, 1.0), 0.0, 1.0);
@@ -594,6 +591,7 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 		iTetraC.x = (iTetraC.y == 0) ? 3 : iTetraC.x;
 		iTetraD.x = (iTetraD.y == 0) ? 3 : iTetraD.x;
 	}
+	GDEBUG_uvGrid(checkerboard(uv, 100.0));
 	vec2 uvRotA = RotateUV(uv, thetaBins[iTetraA.x] * DEG2RAD, vec2(0.0));
 	vec2 uvRotB = RotateUV(uv, thetaBins[iTetraB.x] * DEG2RAD, vec2(0.0));
 	vec2 uvRotC = RotateUV(uv, thetaBins[iTetraC.x] * DEG2RAD, vec2(0.0));
@@ -609,5 +607,6 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	float sampleB = SampleGlintGridSimplex(uvRotB / divLods[iTetraB.z] / vec2(1.0, ratios[iTetraB.y]), gridSeedB, slope, ratios[iTetraB.y] * footprintAreas[iTetraB.z], rescaledTargetNDF, tetraBarycentricWeights.y);
 	float sampleC = SampleGlintGridSimplex(uvRotC / divLods[iTetraC.z] / vec2(1.0, ratios[iTetraC.y]), gridSeedC, slope, ratios[iTetraC.y] * footprintAreas[iTetraC.z], rescaledTargetNDF, tetraBarycentricWeights.z);
 	float sampleD = SampleGlintGridSimplex(uvRotD / divLods[iTetraD.z] / vec2(1.0, ratios[iTetraD.y]), gridSeedD, slope, ratios[iTetraD.y] * footprintAreas[iTetraD.z], rescaledTargetNDF, tetraBarycentricWeights.w);
+	GDEBUG_uvGridCompensated(checkerboard(uvRotD / divLods[iTetraD.z] / vec2(1.0, ratios[iTetraD.y])));
 	return (sampleA + sampleB + sampleC + sampleD) * (1.0 / uMicrofacetRoughness) * maxNDF;
 }

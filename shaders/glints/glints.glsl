@@ -12,9 +12,12 @@
 #include "glints/tetra.glsl"
 #line 14 205
 
-float sampleGridPoint(vec2 uv, uint seed, float area, float target, float weight, float p) {
+// TODO: Integrate half vector to make glints pop in and out when rotating the light
+float sampleFootprint(uint seed, float area, float weight, vec2 uv, float targetD, float p) {
     // Triangulate uv coordinates
     // TODO: Skew the triangulation for symmetric glint shapes
+    const mat2 gridToSkewedGrid = mat2(1.0, -0.57735027, 0.0, 1.15470054);
+    uv = gridToSkewedGrid * uv;
     vec2 cell = floor(uv);
     vec2 fractional = uv - cell;
     bool triangle = (fractional.x + fractional.y) > 1.0;
@@ -22,7 +25,7 @@ float sampleGridPoint(vec2 uv, uint seed, float area, float target, float weight
     vec2 b = cell + vec2(1.0, 0.0);
     vec2 c = cell + vec2(0.0, 1.0);
     vec3 weights = calcBarycentrics(uv, a, b, c);
-    GDEBUG_uvGrid(vec3(weights));
+    GDEBUG_uvTriangles(weights);
 
     // Draw random numbers per triangle vertex
     vec3 randA = hash3f(uvec3(mapu(a), seed));
@@ -41,6 +44,25 @@ float sampleGridPoint(vec2 uv, uint seed, float area, float target, float weight
     samples.z = sampleBinom(NP.z, p, randC.yz) / NP.z;
 
     return dot(samples, weights);
+}
+
+float sampleGridPoint(uint seed, vec3 gridPoint, float weight, vec2 uv, float targetD, float p) {
+    // The area of the fotprint represented by the gridPoint is anisotropy * minorLength^2
+    float area = gridPoint.y * gridPoint.z * gridPoint.z;
+
+    GDEBUG_uvGrid(checkerboard(uv, 100.0));
+
+    // FIXME: The transformation is off (theta seems to be wrong)
+    // Transform the uv coordinate to be homogenous
+    float theta = gridPoint.x;
+    uv = vec2(cos(theta) * uv.x + sin(theta) * uv.y,
+		      cos(theta) * uv.y - sin(theta) * uv.x); // Compensate for orientation
+    uv.y /= gridPoint.y;  // Compensate for anisotropy
+    uv /= gridPoint.z;    // Compensate for level of detail
+
+    GDEBUG_uvGridCompensated(checkerboard(uv));
+
+    return sampleFootprint(seed, area, weight, uv, targetD, p);
 }
 
 /**
@@ -75,7 +97,7 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
     // In the center case we limit the theta weight by the anisotropy to account for the vanishing orientation dimension
-    // hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
+    hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
 
     GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
     GDEBUG_thetaWeight(colorDebug(hepta.thetaWeight));
@@ -101,13 +123,11 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     GDEBUG_seedA(vec3(mapf(gridSeedA)));
 
     float p = microfacetRoughness * D / Dmax;
-
-    // TODO: Rotate uv grid to align with the orientation of the footprint
-    // TODO: Integrate half vector to make glints pop in and out when rotating the light
-    float sampleA = sampleGridPoint(uv / vec2(1.0, 1.0) / tetra.p0.z, gridSeedA, tetra.p0.y * tetra.p0.z * tetra.p0.z, D, tetra.weights.x, p);
-    float sampleB = sampleGridPoint(uv / vec2(1.0, 1.0) / tetra.p1.z, gridSeedB, tetra.p1.y * tetra.p1.z * tetra.p1.z, D, tetra.weights.y, p);
-    float sampleC = sampleGridPoint(uv / vec2(1.0, 1.0) / tetra.p2.z, gridSeedC, tetra.p2.y * tetra.p2.z * tetra.p2.z, D, tetra.weights.z, p);
-    float sampleD = sampleGridPoint(uv / vec2(1.0, 1.0) / tetra.p3.z, gridSeedD, tetra.p3.y * tetra.p3.z * tetra.p3.z, D, tetra.weights.w, p);
+    
+    float sampleA = sampleGridPoint(gridSeedA, tetra.p0, tetra.weights.x, uv, D, p);
+    float sampleB = sampleGridPoint(gridSeedB, tetra.p1, tetra.weights.y, uv, D, p);
+    float sampleC = sampleGridPoint(gridSeedC, tetra.p2, tetra.weights.z, uv, D, p);
+    float sampleD = sampleGridPoint(gridSeedD, tetra.p3, tetra.weights.w, uv, D, p);
 
     return (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);
 }

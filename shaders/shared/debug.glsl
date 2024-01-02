@@ -26,7 +26,9 @@
 #define GDEBUG_baryD(v) DEBUG_VIEW(16, v)
 #define GDEBUG_seedA(v) DEBUG_VIEW(17, v)
 #define GDEBUG_uvGrid(v) DEBUG_VIEW(18, v)
-#define GDEBUG_samples(v) DEBUG_VIEW(19, v)
+#define GDEBUG_uvGridCompensated(v) DEBUG_VIEW(19, v)
+#define GDEBUG_uvTriangles(v) DEBUG_VIEW(20, v)
+#define GDEBUG_samples(v) DEBUG_VIEW(21, v)
 
 /**
  * Interprets angle as hue and converts it to RGB.
@@ -34,6 +36,16 @@
 vec3 angleToRGB(float angle) {
     float angle01 = angle / 6.283 + 0.5;
     return clamp(abs(mod(angle01 * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+}
+
+vec3 checkerboard(vec2 uv) {
+    vec2 p = floor(uv);
+    return vec3(mod(p.x + p.y, 2.0));
+}
+
+vec3 checkerboard(vec2 uv, float steps) {
+    vec2 p = floor(uv * steps);
+    return vec3(mod(p.x + p.y, 2.0));
 }
 
 vec3 normalToRGB(vec3 normal) {

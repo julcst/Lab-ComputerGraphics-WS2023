@@ -65,6 +65,16 @@ vec3 sampleNormal(vec3 rand) {
 }
 
 /**
+ * Converts a uniform random vector of range [0, 1] to a normal distributed random vector using Inversion Sampling.
+ * 
+ * @param rand A uniform random vector in the range [0, 1]. 
+ */
+vec4 sampleNormal(vec4 rand) {
+    vec4 rand11 = 2.0 * rand - 1.0;
+    return sqrt(2.0) * vec4(erfinv(rand11.x), erfinv(rand11.y), erfinv(rand11.z), erfinv(rand11.w));
+}
+
+/**
  * Converts a uniform random number of range [0, 1] to a normal distributed random number using Inversion Sampling.
  *
  * @param mu The mean of the normal distribution.
@@ -87,6 +97,17 @@ vec3 sampleNormal(float mu, float sigma, vec3 rand) {
 }
 
 /**
+ * Converts a uniform random vector of range [0, 1] to a normal distributed random vector using Inversion Sampling.
+ *
+ * @param mu The mean of the normal distribution.
+ * @param sigma The standard deviation of the normal distribution.
+ * @param rand A uniform random vector in the range [0, 1]. 
+ */
+vec4 sampleNormal(float mu, float sigma, vec4 rand) {
+    return mu + sigma * sampleNormal(rand);
+}
+
+/**
  * Samples a binomial distributed random number using the Gated Gaussian Binomial Approximation.
  *
  * @param N The number of trials.
@@ -103,5 +124,25 @@ float sampleBinom(float N, float p, vec2 rand) {
     float normalSample = clamp(floor(sampleNormal(mu, sigma, rand.y)) + 1.0, 1.0, N); // Clamping to ensure valid range
     // Gate the normal sample using a single Bernoulli trial
     float gated = rand.x < pOneSuccess ? normalSample : 0.0; // Equation (18)
+    return gated;
+}
+
+/**
+ * Samples a binomial distributed random vector using the Gated Gaussian Binomial Approximation.
+ *
+ * @param N The number of trials.
+ * @param p The probability of success.
+ * @param rand Two uniform random vectors in the range [0, 1].
+ */
+vec4 sampleBinom(float N, float p, vec4 randA, vec4 randB) {
+    // The probability of having at least one success in a binomial distribution b(N,p)
+    float pOneSuccess = 1.0 - pow(1.0 - p, N); // Equation (16)
+    // Compute the parameters of the normal approximation of the binomial distribution for one less sample, b(N-1,p)
+    float mu = (N - 1.0) * p;
+    float sigma = sqrt((N - 1.0) * p * (1.0 - p)); // Equation (17)
+    // Approximate the binomial distribution b(N-1,p) by sampling from the normal distribution N(mu,sigma)
+    vec4 normalSample = clamp(floor(sampleNormal(mu, sigma, randB)) + 1.0, 1.0, N); // Clamping to ensure valid range
+    // Gate the normal sample using a single Bernoulli trial
+    vec4 gated = mix(normalSample, vec4(0.0), lessThan(randA, vec4(pOneSuccess))); // Equation (18)
     return gated;
 }

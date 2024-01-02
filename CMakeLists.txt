@@ -100,6 +100,7 @@ set(SRC
     src/framework/gl/buffer.cpp
     src/framework/gl/mesh.cpp
     src/framework/gl/program.cpp
+    src/framework/gl/query.cpp
     src/framework/gl/shader.cpp
     src/framework/gl/vertexarray.cpp
 )

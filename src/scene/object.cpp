@@ -9,8 +9,10 @@
 
 #include "config.hpp"
 #include "framework/common.hpp"
+#include "framework/series.hpp"
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
+#include "framework/gl/query.hpp"
 #include "framework/gl/uniformbuffer.hpp"
 #include "scene/ub1.hpp"
 
@@ -47,5 +49,8 @@ void Object::render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, Un
     ub1.upload(material);
 
     shaders[static_cast<int>(shaderIdx)].bind();
+    static Query timerQuery;
+    timerQuery.begin(Query::Type::TIME_ELAPSED);
     meshes[meshIdx].draw();
+    measurements.push(timerQuery.end());
 }

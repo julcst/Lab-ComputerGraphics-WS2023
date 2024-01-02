@@ -60,4 +60,5 @@ const std::vector<std::string> LAYERED_DEBUG_MODES = {
 };
 
 const unsigned int MAX_LAYERS = 4;
+const size_t NUMBER_OF_MEASUREMENTS = 60;
 }

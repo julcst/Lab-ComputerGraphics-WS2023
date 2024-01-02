@@ -9,23 +9,24 @@
 template <typename T, size_t N>
 class Series {
    public:
-    T sum = 0.0f;
-    T avg = 0.0f;
+    T sum = 0;
+    T avg = 0;
 
     void push(T measurement) {
-        measurements[head] = measurement; // store new measurement
         head = (head + 1) % N; // increment head and wrap around if necessary
-        sum = sum + measurement; // add new measurement to sum
+        // head know points to the oldest measurement
         if (count < N) {
             count++;
         } else {
-            sum = sum - measurements[head]; // remove oldest measurement from sum
+            sum -= measurements[head]; // remove oldest measurement from sum
         }
+        measurements[head] = measurement; // override oldest measurement with new one
+        sum += measurement; // add new measurement to sum
         avg = sum / count;
     }
 
-    T latest() const {
-        return measurements[(head + N - 1) % N];
+    T newest() const {
+        return measurements[head];
     }
 
    private:

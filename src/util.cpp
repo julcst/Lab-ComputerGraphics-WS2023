@@ -8,13 +8,20 @@
 #include <string>
 #include <vector>
 
+#include "config.hpp"
+#include "framework/series.hpp"
+
 using namespace glm;
 
 void Util::FPSWindow(float frametime, const vec2& resolution) {
+    static Series<float, Config::NUMBER_OF_MEASUREMENTS> measurements;
+    measurements.push(frametime);
+    float avg = measurements.avg;
+
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.5f));
     ImGui::Begin("Statistics", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings);
-    ImGui::Text("%2.1ffps avg: %2.1ffps %.0fx%.0f", 1.f / frametime, ImGui::GetIO().Framerate, resolution.x, resolution.y);
+    ImGui::Text("%2.1ffps (%2.1ffps) | %2.1fms (%2.1fms) | %.0fx%.0f", 1.0f / avg, 1.0f / frametime, avg * 1000.0f, frametime * 1000.0f, resolution.x, resolution.y);
     ImGui::PopStyleColor();
     ImGui::End();
 }

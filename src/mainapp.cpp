@@ -152,7 +152,7 @@ void MainApp::buildImGui() {
         }
         Util::combo("Shader", reinterpret_cast<unsigned int*>(&obj.shaderIdx), Config::SHADER_FILES);
         Util::combo("Mesh", &obj.meshIdx, Config::MODEL_FILES);
-        ImGui::Text("Performance: %.2fms (%fms)", obj.measurements.avg * 0.000001f, obj.measurements.latest() * 0.000001f);
+        ImGui::Text("Performance: %.2fms (%fms)", obj.measurements.avg * 0.000001f, obj.measurements.newest() * 0.000001f);
         ImGui::Separator();
         ImGui::Checkbox("Auto Rotate Mesh", &obj.rotate);
         Util::angleSlider3("Rotation", obj.rotation);

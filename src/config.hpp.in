@@ -43,6 +43,9 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "uvGridCompensated",// 19
     "uvTriangles",      // 20
     "samples",          // 21
+    "0",                // 22
+    "1",                // 23
+    "2",                // 24
 };
 
 const std::vector<std::string> LAYERED_DEBUG_MODES = {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <type_traits>
 
 /**
  * Implements a circular buffer that holds a fixed number of measurements and continously computes the average and the sum
@@ -14,7 +13,7 @@ class Series {
 
     void push(T measurement) {
         head = (head + 1) % N; // increment head and wrap around if necessary
-        // head know points to the oldest measurement
+        // head now points to the oldest measurement
         if (count < N) {
             count++;
         } else {

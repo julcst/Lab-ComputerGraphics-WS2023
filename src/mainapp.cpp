@@ -48,7 +48,7 @@ MainApp::MainApp() :
     meshes.reserve(Config::MODEL_FILES.size());
     for (const std::string& file : Config::MODEL_FILES) {
         Mesh mesh;
-        mesh.load(file);
+        mesh.loadWithTangents(file);
         meshes.push_back(std::move(mesh));
     }
 

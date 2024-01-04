@@ -156,16 +156,14 @@ set(MATERIALS
 set(ICON
     icons/AppIcon.icns
 )
-set(RES "${SHADERS};${MODELS};${MATERIALS};${ICON}")
+set(RES "${SHADERS};${MODELS};${MATERIALS}")
 set_source_files_properties(${RES} PROPERTIES HEADER_FILE_ONLY True)
 
 ####################################################################
 # Add executable
 add_executable(${PROJECT_NAME}
     ${SRC}
-    ${SHADERS}
-    ${MODELS}
-    ${MATERIALS}
+    ${RES}
     ${ICON}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE})
@@ -188,7 +186,7 @@ if(APPLE)
         BUNDLE True
         MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
         MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
-        MACOSX_BUNDLE_GUI_IDENTIFIER de.julcs.${PROJECT_NAME}
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.julcs.${PROJECT_NAME}
         MACOSX_BUNDLE_ICON_FILE AppIcon
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION}
     )
@@ -201,6 +199,11 @@ if(APPLE)
             MACOSX_PACKAGE_LOCATION "Resources/${LOC}"
         )
     endforeach()
+
+    set_source_files_properties(${ICON}
+        PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources"
+    )
 
     # Packaging macOS installer
     install(TARGETS ${PROJECT_NAME} BUNDLE DESTINATION .)

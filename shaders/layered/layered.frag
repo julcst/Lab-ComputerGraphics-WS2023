@@ -13,6 +13,8 @@ out vec3 fragColor;
 #include "shared/ggx.glsl"
 #include "shared/debug.glsl"
 
+float debugX = 0.0;
+
 /*
 * Implementation of
 * Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
@@ -94,6 +96,7 @@ float average(vec3 v){
  * @return linear variance sigma
  */
 float roughnessToVariance(float a){
+    a = clamp(a, 0.0, 0.99999);
     float a11 = pow(a, 1.1);
     return a11 / (1.0 - a11);
 }
@@ -123,13 +126,13 @@ float s(float n12, float cosTheta_I, float cosTheta_T){
 }
 
 /**
- * mapping from Henyey-Greenstein's anisotropy factor g to roughness
+ * mapping from Henyey-Greenstein's anisotropy factor g to variance
  * equation 21 from paper
  * 
  * @param g HG's anisotropy factor
- * @return roughness sigma_g
+ * @return variance sigma_g
  */
-float gToRoughness(float g){
+float gToVariance(float g){
     return pow(((1-g)/g), 0.8) * (1/(1+g));
 }
 
@@ -314,15 +317,13 @@ vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 e
  * @param etaI imaginary part of complex IOR of the transmitted media
  * @return F
  */
-vec3 evalFresnel(vec3 N, vec3 L, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
+vec3 evalFresnel(float cosTheta_I, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
     vec3 F = vec3(0.0);
 
-    float NdotL = max(dot(N, L), 0.0);
-
     if(isZero(kappaT)){
-        F = F_dielectric(NdotL, etaI, etaT);
+        F = F_dielectric(cosTheta_I, etaI, etaT);
     }else{
-        F = F_conductor(NdotL, etaI, kappaI, etaT, kappaT);
+        F = F_conductor(cosTheta_I, etaI, kappaI, etaT, kappaT);
     }
 
     return F;
@@ -393,7 +394,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         float sigma_s = layerSigmaS[i];
         float g = layerG[i];
 
-        //start values for local variables
+        //initial values for local variables
         //energy
         vec3 energy_reflected_12 = vec3(0.0);
         vec3 energy_reflected_21 = vec3(0.0);
@@ -421,7 +422,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
                 cosTheta_T = -1.0;
             }
 
-            /* reftectance and transmittance terms for variance */
+            /* reflectance and transmittance terms for variance */
             sigma_reflected_12 = roughnessToVariance(alpha); //from paper section 4.1
             sigma_reflected_21 = sigma_reflected_12;
 
@@ -445,7 +446,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
             //evaluate FGD using modified roughness accounting for top layers
             float alpha_r = varianceToRoughness(sigma_transmitted_0i + sigma_reflected_12); //from paper section 4.1, equation 9
             //vec3 FGD = evalFGD(N, L, V, alpha_r, etaI, kappaI, etaT, kappaT); //from paper section 4.1, equation 2
-            vec3 FGD = evalFresnel(N, L, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
+            vec3 FGD = evalFresnel(cosTheta_I, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
             energy_reflected_12 = FGD; //from paper section 4.1, equation 7 / section 5.1
             energy_transmitted_12 = 1.0 - FGD; //from paper section 4.2, equation 11 / section 5.1
             if(transmissive){
@@ -546,7 +547,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
 /////////// main ///////////
 
 void main() {
-   
+
     if(uLayerCount == 0u){
         fragColor = vec3(0.0);
         return;
@@ -584,8 +585,8 @@ void main() {
     float NdotL = max(dot(N, L), 0.0);
     float NdotH = max(dot(N, H), 0.0);
     float HdotV = max(dot(H, V), 0.0);
-    float debug_D = 0.0;
-    float debug_G = 0.0;
+    float debug_D[MAX_LAYERS];
+    float debug_G[MAX_LAYERS];
 
     for(int i = 0; i < int(valid_lobes); i++){
         float alpha = varianceToRoughness(lobes[i].variance);
@@ -597,24 +598,35 @@ void main() {
 
         BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
 
-        if(i == 0){
-             debug_D = D;
-             debug_G = G;
-        }
+        debug_D[i] = D;
+        debug_G[i] = G;
     }
 
     vec3 lighting = BRDF * uLightColor * NdotL;
 
     RENDER_VIEW(lighting);
     DEBUG_VIEW(1, BRDF);
-    DEBUG_VIEW(2, vec3(debug_D));
-    DEBUG_VIEW(3, vec3(debug_G));
-    DEBUG_VIEW(4, lobes[0].energy);
+
+    DEBUG_VIEW(2, lobes[0].energy);
+    DEBUG_VIEW(3, vec3(debug_D[0]));
+    DEBUG_VIEW(4, vec3(debug_G[0]));
     DEBUG_VIEW(5, vec3(layerAlpha[1]);)
-    DEBUG_VIEW(6, vec3(lobes[0].variance));
+    DEBUG_VIEW(6, vec3(varianceToRoughness(lobes[0].variance)));
+
     if(valid_lobes > 1u){
-        DEBUG_VIEW(8, lobes[1].energy);
-        DEBUG_VIEW(9, vec3(lobes[1].variance));
+        DEBUG_VIEW(7, lobes[1].energy);
+        DEBUG_VIEW(8, vec3(debug_D[1]));
+        DEBUG_VIEW(9, vec3(debug_G[1]));
+        DEBUG_VIEW(10, vec3(layerAlpha[2]));
+        DEBUG_VIEW(11, vec3(varianceToRoughness(lobes[1].variance)));
+    }
+
+    if(valid_lobes > 2u){
+        DEBUG_VIEW(12, lobes[2].energy);
+        DEBUG_VIEW(13, vec3(debug_D[2]));
+        DEBUG_VIEW(14, vec3(debug_G[2]));
+        DEBUG_VIEW(15, vec3(layerAlpha[3]));
+        DEBUG_VIEW(16, vec3(varianceToRoughness(lobes[2].variance)));
     }
 
 
@@ -623,10 +635,24 @@ void main() {
     vec3 kappaI = layerKappa[0];
     vec3 etaT = layerEta[1];
     vec3 kappaT = layerKappa[1];
-    vec3 F = evalFresnel(N, L, etaI, kappaI, etaT, kappaT);
-    DEBUG_VIEW(7, F);
+    vec3 F = evalFresnel(cosThetaI, etaI, kappaI, etaT, kappaT);
+    DEBUG_VIEW(17, F);
 
-    //Fresnel comparision
-    vec3 Fs = F_schlick(cosThetaI, vec3(1.0), 0.0);
-    DEBUG_VIEW(10, Fs);
+    etaI = layerEta[1];
+    kappaI = layerKappa[1];
+    etaT = layerEta[2];
+    kappaT = layerKappa[2];
+    F = evalFresnel(cosThetaI, etaI, kappaI, etaT, kappaT);
+    DEBUG_VIEW(18, F);
+
+    etaI = layerEta[2];
+    kappaI = layerKappa[2];
+    etaT = layerEta[3];
+    kappaT = layerKappa[3];
+    F = evalFresnel(cosThetaI, etaI, kappaI, etaT, kappaT);
+    DEBUG_VIEW(19, F);
+
+    // nan/inf check
+    DEBUG_VIEW(20, colorDebug(debugX));
+
 }

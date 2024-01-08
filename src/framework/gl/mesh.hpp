@@ -20,6 +20,7 @@ class Mesh {
    public:
     void load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
     void load(const std::string& filepath);
+    bool loadWithTangents(const std::string& filepath);
     void draw();
     std::string getFilepath();
 

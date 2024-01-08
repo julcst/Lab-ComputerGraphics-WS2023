@@ -23,29 +23,47 @@ struct Heptahedron {
 Heptahedron heptifyFootprint(Footprint foot) {
     Heptahedron hepta;
 
-    // Discretize orientation with adaptive grid
-    // Map the angle to the range [0, 180]
-    float theta = fmod(foot.angle, DEG180);
-    // The adaptive grid size depends on the anisotropy
-    float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
-    hepta.theta0 = floor(theta / thetaGrid) * thetaGrid;
-    hepta.thetaH = hepta.theta0 + thetaGrid * 0.5;
-    hepta.theta1 = hepta.theta0 + thetaGrid;
-    hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);
-
     // Discretize anisotropy with logarithmic scale
     float aniso = log2(foot.ratio);
     hepta.aniso0 = exp2(floor(aniso));
     hepta.aniso1 = hepta.aniso0 * 2.0;
     hepta.anisoWeight = map01(foot.ratio, hepta.aniso0, hepta.aniso1);
 
+    // Discretize orientation with adaptive grid
+    // Map the angle to the range [0, 180]
+    /*float theta = fmod(foot.angle, DEG180);
+    // The adaptive grid size depends on the anisotropy
+    float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
+    hepta.theta0 = floor(theta / thetaGrid) * thetaGrid;
+    hepta.thetaH = hepta.theta0 + thetaGrid * 0.5;
+    hepta.theta1 = hepta.theta0 + thetaGrid;
+    hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);*/
+
+    float theta = foot.angle;
+	float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
+	float thetaBin = int((theta / thetaGrid)) * thetaGrid;
+	thetaBin = thetaBin + (thetaGrid / 2.0);
+	hepta.theta0 = theta < thetaBin ? thetaBin - thetaGrid / 2.0 : thetaBin;
+	hepta.thetaH = hepta.theta0 + thetaGrid / 4.0;
+	hepta.theta1 = hepta.theta0 + thetaGrid / 2.0;
+	hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);
+	hepta.theta0 = hepta.theta0 <= 0.0 ? DEG180 + hepta.theta0 : hepta.theta0;
+
+    /*float theta = foot.angle;
+    float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
+    float thetaBin = floor(theta / thetaGrid) * thetaGrid;
+    hepta.theta0 = thetaBin;
+    hepta.thetaH = hepta.theta0 + thetaGrid / 2.0;
+    hepta.theta1 = hepta.theta0 + thetaGrid;
+    hepta.thetaWeight = map01(theta, hepta.theta0, hepta.theta1);*/
+
     // Discretize LOD with logarithmic scale
     // ? Why use the minor length instead of the area
     float lod = log2(foot.minorLength);
     hepta.lod0 = exp2(floor(lod));
     hepta.lod1 = hepta.lod0 * 2.0;
-    //hepta.lodWeight = fract(lod);
-    hepta.lodWeight = map01(foot.minorLength, hepta.lod0, hepta.lod1);
+    hepta.lodWeight = fract(lod);
+    //hepta.lodWeight = map01(foot.minorLength, hepta.lod0, hepta.lod1);
 
     return hepta;
 }

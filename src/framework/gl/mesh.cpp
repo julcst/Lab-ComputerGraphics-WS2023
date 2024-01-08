@@ -1,14 +1,18 @@
 #include "mesh.hpp"
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 #include <objgl.h>
 
 #include <fstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "common.hpp"
 #include "config.hpp"
+
+using namespace glm;
 
 void Mesh::load(const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
     // Load data into buffers
@@ -80,6 +84,129 @@ void Mesh::load(const std::string& filepath) {
 
     // cleanup
     objgl_delete(&model);
+}
+
+struct Vertex {
+    vec3 position;
+    vec2 texCoord;
+    vec3 normal;
+    vec3 tangent;
+    vec3 bitangent;
+};
+
+void addTangentsToVertex(Vertex& v0, const Vertex& v1, const Vertex& v2) {
+    vec3 delta_pos1 = v1.position - v0.position;
+    vec3 delta_pos2 = v2.position - v0.position;
+
+    vec2 delta_uv1 = v1.texCoord - v0.texCoord;
+    vec2 delta_uv2 = v2.texCoord - v0.texCoord;
+
+    float r = 1.0f / (delta_uv1.x * delta_uv2.y - delta_uv1.y * delta_uv2.x);
+    v0.tangent += (delta_pos1 * delta_uv2.y - delta_pos2 * delta_uv1.y) * r;
+    v0.bitangent += (delta_pos2 * delta_uv1.x - delta_pos1 * delta_uv2.x) * r; 
+}
+
+bool Mesh::loadWithTangents(const std::string& filepath) {
+    // Read file
+    std::string rawobj = Common::readFile(filepath);
+    path = filepath;
+
+    // Parse
+    ObjGLData model = objgl_loadObj(rawobj.c_str());
+    if (!model.hasNormals || !model.hasTexCoords) return false;
+    numVertices = model.numVertices;
+    numIndices = model.numIndices;
+
+    // Convert to vectors
+    std::vector<float> srcVertices(model.data, model.data + model.numVertices * model.vertSize / sizeof(float));
+    std::vector<uint> srcIndices(model.indices, model.indices + model.numIndices);
+
+    // Generate tangents and bitangents
+    std::vector<Vertex> vertices(numVertices);
+    std::vector<float> triangleCount(numVertices);
+
+    std::cout << "Reading vertex data for " << filepath << "\n";
+
+    // Read vertex data from model
+    const uint floatsPerSrcVertex = model.vertSize / sizeof(float);
+    for (uint i = 0; i < numVertices; i++) {
+        uint srcIndex = i * floatsPerSrcVertex;
+        Vertex v;
+        v.position  = vec3(model.data[srcIndex + 0u], model.data[srcIndex + 1u], model.data[srcIndex + 2u]);
+        v.texCoord  = vec2(model.data[srcIndex + 3u], model.data[srcIndex + 4u]);
+        v.normal    = vec3(model.data[srcIndex + 5u], model.data[srcIndex + 6u], model.data[srcIndex + 7u]);
+        v.tangent   = vec3(0.0f);
+        v.bitangent = vec3(0.0f);
+        vertices[i] = v;
+        triangleCount[i] = 0.0f;
+    }
+
+    std::cout << "Generating tangents and bitangents for " << filepath << "\n";
+
+    // Loop over triangles
+    for (uint i = 0; i < numIndices; i += 3) {
+        // Get vertices
+        uint index0 = model.indices[i + 0u];
+        uint index1 = model.indices[i + 1u];
+        uint index2 = model.indices[i + 2u];
+        Vertex& v0 = vertices[index0];
+        Vertex& v1 = vertices[index1];
+        Vertex& v2 = vertices[index2];
+
+        // Add tangent and bitangent to each vertex
+        addTangentsToVertex(v0, v1, v2);
+        addTangentsToVertex(v1, v2, v0);
+        addTangentsToVertex(v2, v0, v1);
+
+        // Increment the triangle count for each vertex
+        triangleCount[index0]++;
+        triangleCount[index1]++;
+        triangleCount[index2]++;
+    }
+
+    std::cout << "Normalizing tangents and bitangents for " << filepath << "\n";
+
+    // Average tangents and bitangents per vertex
+    for (uint i = 0; i < numVertices; i++) {
+        if (triangleCount[i] > 0.0f) {
+            vertices[i].tangent /= triangleCount[i]; // This should not be necessary because we normalize in the next step
+            vertices[i].bitangent /= triangleCount[i]; // This should not be necessary because we normalize in the next step
+            vertices[i].tangent = normalize(vertices[i].tangent);
+            vertices[i].bitangent = normalize(vertices[i].bitangent);
+        }
+    }
+
+    // Load buffers
+    vbo.load(Buffer::Type::ARRAY_BUFFER, vertices);
+    ebo._load(Buffer::Type::INDEX_BUFFER, numIndices * sizeof(uint_least32_t), model.indices);
+
+    vao.bind();
+    vbo.bind(Buffer::Type::ARRAY_BUFFER);
+    ebo.bind(Buffer::Type::INDEX_BUFFER);
+
+    // vertex attributes
+    std::cout << "Stride: " << sizeof(Vertex) / sizeof(float) << "\n";
+    // location 0 vec3 position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(0 * sizeof(float)));
+    // location 1 vec2 texture coordinate
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
+    // location 2 vec3 normal
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(5 * sizeof(float)));
+    // location 3 vec3 tangent
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(8 * sizeof(float)));
+    // location 4 vec3 bitangent
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(11 * sizeof(float)));
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
+
+    // Cleanup
+    vao.unbind();
+    objgl_delete(&model);
+    return true;
 }
 
 void Mesh::draw() {

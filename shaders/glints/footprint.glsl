@@ -63,7 +63,7 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     mat2 Jinv = inverse(J); // ? This may not be necessary
     // Make J symmetric
     // M = (J^{-1})^T J^{-1}
-    mat2 M = transpose(Jinv) * Jinv;
+    mat2 M = Jinv * transpose(Jinv);
 
     // Extract entries (GLSL is [column][row])
     float a = M[0][0];
@@ -94,8 +94,11 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     footprint.major = ev1 * ew1;
     // footprint.minor = ev2 * ew2;
     footprint.minorLength = ew2;
+    //footprint.minorLength = 1.0;
+    //footprint.angle = DEG90; // ! Fixing the angle to 90 degrees makes the barycentric weights stay between 0 and 1
     footprint.angle = atan(-ev1.x, ev1.y);
     //footprint.angle = atan(ev1.y, ev1.x);
     footprint.ratio = ew1 / ew2;
+    //footprint.ratio = 1.0;
     return footprint;
 }

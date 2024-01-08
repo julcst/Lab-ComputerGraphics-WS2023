@@ -2,13 +2,22 @@
 
 #include <string>
 #include <vector>
+#include <unistd.h>
+#include <pwd.h>
 
 namespace Config {
+
+#ifdef __APPLE__
+    const std::string HOME = std::string(getpwuid(getuid())->pw_dir); // Get home directory on Unix/Linux/MacOS
+    const std::string APP_DIR = HOME + "/Library/Application Support/@PROJECT_NAME@/";
+#else
+    const std::string APP_DIR = "";
+#endif
 
 const std::string SHADER_DIR = "shaders/";
 const std::string MODEL_DIR = "models/";
 const std::string MATERIAL_DIR = "materials/";
-const std::string SCENE_DIR = "scenes/";
+const std::string SCENE_DIR = APP_DIR + "scenes/";
 
 #ifndef NDEBUG
 #define COMPOSE_SHADERS
@@ -43,6 +52,9 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "uvGridCompensated",// 19
     "uvTriangles",      // 20
     "samples",          // 21
+    "0",                // 22
+    "1",                // 23
+    "2",                // 24
 };
 
 const std::vector<std::string> LAYERED_DEBUG_MODES = {

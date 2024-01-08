@@ -105,6 +105,10 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     GDEBUG_lodWeight(colorDebug(hepta.lodWeight));
     GDEBUG_centerCase(boolToRGB(centerCase));
 
+    GDEBUG0(boolToRGB(hepta.theta0 <= foot.angle && foot.angle <= hepta.thetaH));
+    GDEBUG1(boolToRGB(hepta.thetaH <= foot.angle && foot.angle <= hepta.theta1));
+    GDEBUG2(boolToRGB(hepta.theta0 < hepta.thetaH && hepta.thetaH < hepta.theta1));
+
     // FIXME: The barycentric weights contain negative values
     // A is negative outside the center case
     // B, C and D are negative inside the center case

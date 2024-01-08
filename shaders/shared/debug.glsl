@@ -29,6 +29,9 @@
 #define GDEBUG_uvGridCompensated(v) DEBUG_VIEW(19, v)
 #define GDEBUG_uvTriangles(v) DEBUG_VIEW(20, v)
 #define GDEBUG_samples(v) DEBUG_VIEW(21, v)
+#define GDEBUG0(v) DEBUG_VIEW(22, v)
+#define GDEBUG1(v) DEBUG_VIEW(23, v)
+#define GDEBUG2(v) DEBUG_VIEW(24, v)
 
 /**
  * Interprets angle as hue and converts it to RGB.
@@ -57,7 +60,7 @@ vec3 normalToRGB(vec2 normal) {
 }
 
 vec3 boolToRGB(bool b) {
-    return b ? vec3(1.0) : vec3(0.0);
+    return b ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
 }
 
 vec3 colorDebug(float x) {

@@ -401,8 +401,8 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	float result = dot(results, barycentrics);
 	return result;
 }
-
-void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, inout float thetaBinLerp, float ratioLerp, float lodLerp, out vec3 p0, out vec3 p1, out vec3 p2, out vec3 p3)
+															   // ! weird
+void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, /*inout*/ float thetaBinLerp, float ratioLerp, float lodLerp, out vec3 p0, out vec3 p1, out vec3 p2, out vec3 p3)
 {
 	if (centerSpecialCase == true) // SPECIAL CASE (no anisotropy, center of blending pattern, different triangulation)
 	{

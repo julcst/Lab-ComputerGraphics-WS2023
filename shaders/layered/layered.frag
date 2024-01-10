@@ -38,26 +38,26 @@ float getLayerDepth(int layerIndex){
     return uLayerDepth[layerIndex/4][layerIndex%4];
 }
 
-float getLayerSigmaA(int layerIndex){
-    return uLayerSigmaA[layerIndex/4][layerIndex%4];
+vec3 getLayerSigmaA(int layerIndex){
+    return uLayerSigmaA[layerIndex].xyz;
 }
 
-float getLayerSigmaS(int layerIndex){
-    return uLayerSigmaS[layerIndex/4][layerIndex%4];
+vec3 getLayerSigmaS(int layerIndex){
+    return uLayerSigmaS[layerIndex].xyz;
 }
 
 float getLayerG(int layerIndex){
     return uLayerG[layerIndex/4][layerIndex%4];
 }
 
-void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SIZE], out vec3 _layerKappa[LAYER_ARRAY_SIZE], out float _layerAlpha[LAYER_ARRAY_SIZE], out float _layerDepth[LAYER_ARRAY_SIZE], out float _layerSigmaA[LAYER_ARRAY_SIZE], out float _layerSigmaS[LAYER_ARRAY_SIZE], out float _layerG[LAYER_ARRAY_SIZE]){
+void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SIZE], out vec3 _layerKappa[LAYER_ARRAY_SIZE], out float _layerAlpha[LAYER_ARRAY_SIZE], out float _layerDepth[LAYER_ARRAY_SIZE], out vec3 _layerSigmaA[LAYER_ARRAY_SIZE], out vec3 _layerSigmaS[LAYER_ARRAY_SIZE], out float _layerG[LAYER_ARRAY_SIZE]){
     //air layer
     _layerEta[0] = vec3(1.0);
     _layerKappa[0] = vec3(0.0);
     _layerAlpha[0] = 0.0;
     _layerDepth[0] = 0.0;
-    _layerSigmaA[0] = 0.0;
-    _layerSigmaS[0] = 0.0;
+    _layerSigmaA[0] = vec3(0.0);
+    _layerSigmaS[0] = vec3(0.0);
     _layerG[0] = 0.0;
     //fill with data from uniforms or textures
     //TODO: texture lookup
@@ -69,6 +69,12 @@ void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SI
         _layerSigmaA[i+1] = getLayerSigmaA(i);
         _layerSigmaS[i+1] = getLayerSigmaS(i);
         _layerG[i+1] = getLayerG(i);
+
+        if(_layerDepth[i+1] > 0.0){
+            //layer is volume -> use eta and kappa from previous interface
+            _layerEta[i+1] = _layerEta[i];
+            _layerKappa[i+1] = _layerKappa[i];
+        }
     }
 }
 
@@ -133,6 +139,7 @@ float s(float n12, float cosTheta_I, float cosTheta_T){
  * @return variance sigma_g
  */
 float gToVariance(float g){
+    g = clamp(g, 0.00001, 1.0);
     return pow(((1-g)/g), 0.8) * (1/(1+g));
 }
 
@@ -308,9 +315,7 @@ vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 e
 /**
  * Calculates the Fresnel equation
  * 
- * @param N surface normal
- * @param L light direction (wi)
- * @param V view direction (wo)
+ * @param cosTheta_I
  * @param etaI real part of complex IOR of the incident media
  * @param etaI imaginary part of complex IOR of the incident media
  * @param etaI real part of complex IOR of the transmitted media
@@ -357,7 +362,7 @@ struct BsdfLobe {
  * @param BsdfLobe
  * @param valid_lobes
  */
-void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[LAYER_ARRAY_SIZE], vec3 layerKappa[LAYER_ARRAY_SIZE], float layerAlpha[LAYER_ARRAY_SIZE], float layerDepth[LAYER_ARRAY_SIZE], float layerSigmaA[LAYER_ARRAY_SIZE], float layerSigmaS[LAYER_ARRAY_SIZE], float layerG[LAYER_ARRAY_SIZE], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
+void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[LAYER_ARRAY_SIZE], vec3 layerKappa[LAYER_ARRAY_SIZE], float layerAlpha[LAYER_ARRAY_SIZE], float layerDepth[LAYER_ARRAY_SIZE], vec3 layerSigmaA[LAYER_ARRAY_SIZE], vec3 layerSigmaS[LAYER_ARRAY_SIZE], float layerG[LAYER_ARRAY_SIZE], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
     valid_lobes = 0u;
     
     float cosTheta_I = cosThetaI; //incident
@@ -390,8 +395,8 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         float n12 = average(etaT / etaI);
         float alpha = layerAlpha[i];
         float depth = layerDepth[i];
-        float sigma_a = layerSigmaA[i];
-        float sigma_s = layerSigmaS[i];
+        vec3 sigma_a = layerSigmaA[i];
+        vec3 sigma_s = layerSigmaS[i];
         float g = layerG[i];
 
         //initial values for local variables
@@ -409,9 +414,21 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         float J12 = 1.0;
         float J21 = 1.0;
 
+        //TODO implement doubling
+
         //check if thin slab/interface or participating media/vloume
         if(depth > 0.0){
-            //TODO implement doubling and volume absorption/scattering
+            //mean doesn't change
+            cosTheta_T = cosTheta_I;
+
+            /* volume absorption and scattering, from the paper Section 4.3 and 4.4*/
+            //energy
+            vec3 sigma_t = sigma_a + sigma_s;
+            energy_transmitted_12 = (vec3(1.0) + (sigma_s * depth) / cosTheta_T) * exp(-(sigma_t * depth) / cosTheta_T); //from paper, equation 15 and 22
+            energy_transmitted_21 = energy_transmitted_12;
+            //variance
+            sigma_transmitted_12 = gToVariance(g); //from paper, equation 24
+            sigma_transmitted_21 = sigma_transmitted_12;
         }else{
             /* off-specular transmission, from the paper Section 4.2 */
             float sinTheta_I = sqrt(1.0 - pow(cosTheta_I,2));
@@ -571,8 +588,8 @@ void main() {
     vec3 layerKappa[LAYER_ARRAY_SIZE];
     float layerAlpha[LAYER_ARRAY_SIZE];
     float layerDepth[LAYER_ARRAY_SIZE];
-    float layerSigmaA[LAYER_ARRAY_SIZE];
-    float layerSigmaS[LAYER_ARRAY_SIZE];
+    vec3 layerSigmaA[LAYER_ARRAY_SIZE];
+    vec3 layerSigmaS[LAYER_ARRAY_SIZE];
     float layerG[LAYER_ARRAY_SIZE];
 
     fillLayerMaterialArrays(uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);

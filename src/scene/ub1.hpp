@@ -46,8 +46,8 @@ struct UB1 {
     glm::vec4 layerKappa[Config::MAX_LAYERS];
     float layerAlpha[Config::MAX_LAYERS];
     float layerDepth[Config::MAX_LAYERS];
-    float layerSigmaA[Config::MAX_LAYERS];
-    float layerSigmaS[Config::MAX_LAYERS];
+    glm::vec4 layerSigmaA[Config::MAX_LAYERS];
+    glm::vec4 layerSigmaS[Config::MAX_LAYERS];
     float layerG[Config::MAX_LAYERS];
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, debug);

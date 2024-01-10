@@ -188,8 +188,8 @@ void MainApp::buildImGui() {
                 ImGui::DragFloat3("Kappa##", value_ptr(obj.material.layerKappa[l]), 0.001f);
                 ImGui::SliderFloat("Alpha##", &obj.material.layerAlpha[l], 0.0f, 1.0f);
                 ImGui::SliderFloat("Depth##", &obj.material.layerDepth[l], 0.0f, 1.0f);
-                ImGui::SliderFloat("Sigma A##", &obj.material.layerSigmaA[l], 0.0f, 1.0f);
-                ImGui::SliderFloat("Sigma S##", &obj.material.layerSigmaS[l], 0.0f, 1.0f);
+                ImGui::DragFloat3("Sigma A##", value_ptr(obj.material.layerSigmaA[l]), 0.001f);
+                ImGui::DragFloat3("Sigma S##", value_ptr(obj.material.layerSigmaS[l]), 0.001f);
                 ImGui::SliderFloat("G##", &obj.material.layerG[l], 0.0f, 1.0f);
                 ImGui::PopID();
             }

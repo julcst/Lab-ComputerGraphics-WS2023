@@ -196,6 +196,7 @@ void MainApp::buildImGui() {
                 ImGui::SliderFloat("G##", &obj.material.layerG[l], 0.0f, 1.0f);
                 ImGui::PopID();
             }
+            ImGui::Separator();
             if(ImGui::Button("Add Layer")) {
                 if(obj.material.layerCount < Config::MAX_LAYERS){
                     obj.material.layerCount++;
@@ -206,6 +207,12 @@ void MainApp::buildImGui() {
             if (ImGui::BeginPopup("Max Layer Count reached")) {
                 ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Max Layer Count reached");
                 ImGui::EndPopup();
+            }
+            ImGui::SameLine();
+            if(ImGui::Button("Remove last Layer")) {
+                if(obj.material.layerCount > 1){
+                    obj.material.layerCount--;
+                }
             }
             ImGui::Separator();
             Util::combo("Debug mode", &obj.material.debug, Config::LAYERED_DEBUG_MODES);

@@ -9,9 +9,9 @@ namespace Config {
 
 #ifdef __APPLE__
     const std::string HOME = std::string(getpwuid(getuid())->pw_dir); // Get home directory on Unix/Linux/MacOS
-    const std::string APP_DIR = HOME + "/Library/Application Support/@PROJECT_NAME@/";
+    const std::string APP_DIR = HOME + "/Library/Application Support/@PROJECT_NAME@/"; // Writing into the .app bundle is not allowed as it is signed
 #else
-    const std::string APP_DIR = "";
+    const std::string APP_DIR = ""; // On other platforms just write into the application directory
 #endif
 
 const std::string SHADER_DIR = "shaders/";
@@ -20,7 +20,8 @@ const std::string MATERIAL_DIR = "materials/";
 const std::string SCENE_DIR = APP_DIR + "scenes/";
 
 #ifndef NDEBUG
-#define COMPOSE_SHADERS
+//#define COMPOSE_SHADERS // Uncomment to compose shaders in DEBUG mode
+                          // Currently disabled because the #line directive serves better for debugging
 #endif
 const std::string COMPOSED_SHADER_DIR = "@CMAKE_SOURCE_DIR@/composed/";
 

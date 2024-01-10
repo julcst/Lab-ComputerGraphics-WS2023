@@ -132,6 +132,7 @@ set(SHADERS
     shaders/shared/lambert.frag
     shaders/shared/projection.vert
     shaders/shared/screen.vert
+    shaders/shared/tangentspace.glsl
     shaders/shared/uniforms.glsl
 )
 set(MODELS

@@ -5,10 +5,6 @@ in VertexData {
     vec2 uv;
     vec3 worldPosition;
     vec3 worldNormal;
-    vec3 tangentLightDir;
-    vec3 tangentViewDir;
-    vec3 tangentPosition;
-    vec3 tangentViewPosition;
     vec3 worldTangent;
 };
 out vec3 fragColor;
@@ -23,10 +19,9 @@ vec3 normalToRGB(vec3 N) {
 }
 
 /**
- * Renders the normals and a checkerboard pattern onto the mesh
+ * Renders the normals and a uv checkerboard pattern onto the mesh
  */
 void main() {
     vec3 N = normalize(worldNormal);
-    vec3 T = normalize(worldTangent);
-    fragColor = normalToRGB(T) * (checkerboard(uv, 100.0) * 0.5 + 0.5);
+    fragColor = normalToRGB(N) * (checkerboard(uv, 100.0) * 0.5 + 0.5);
 }

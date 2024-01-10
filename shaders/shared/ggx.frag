@@ -4,23 +4,24 @@ in VertexData {
     vec2 uv;
     vec3 worldPosition;
     vec3 worldNormal;
-    vec3 tangentLightDir;
-    vec3 tangentViewDir;
-    vec3 tangentPosition;
-    vec3 tangentViewPosition;
+    vec3 worldTangent;
 };
 out vec3 fragColor;
 
 #include "shared/uniforms.glsl"
 #include "shared/ggx.glsl"
-#line 15 104
+#include "shared/tangentspace.glsl"
+#line 15 105
 
 void main() {
-    // The normal is (0, 0, 1) in tangent space
+    mat3 worldToTangent = calcWorldToTangentMatrix(worldNormal, worldTangent);
+
+    // Normal vector in tangent space
     vec3 N = vec3(0.0, 0.0, 1.0);
-    // Calculate view vector
-    vec3 V = normalize(tangentViewPosition - tangentPosition);
-    vec3 L = normalize(tangentLightDir);
+    // View vector in tangent space
+    vec3 V = worldToTangent * normalize(uCameraPosition - worldPosition);
+    // Light vector in tangent space
+    vec3 L = worldToTangent * uLightDir;
     // H is the half vector between L and V
     vec3 H = normalize(V + L);
 

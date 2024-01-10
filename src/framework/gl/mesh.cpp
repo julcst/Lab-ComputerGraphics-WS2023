@@ -177,8 +177,8 @@ bool Mesh::loadWithTangents(const std::string& filepath) {
         if (triangleCount[i] > 0.0f) {
             vertices[i].tangent /= triangleCount[i]; // This should not be necessary because we normalize in the next step
             vertices[i].bitangent /= triangleCount[i]; // This should not be necessary because we normalize in the next step
-            vertices[i].tangent = normalize(vertices[i].tangent);
-            vertices[i].bitangent = normalize(vertices[i].bitangent);
+            //vertices[i].tangent = normalize(vertices[i].tangent);
+            //vertices[i].bitangent = normalize(vertices[i].bitangent);
         }
     }
 

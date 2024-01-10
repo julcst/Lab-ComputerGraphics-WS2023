@@ -22,7 +22,7 @@ class Object {
     std::string name = "Object";
     unsigned int meshIdx = 0;
     Config::ShaderType shaderIdx = Config::ShaderType::DEBUG;
-    UB1 material = UB1{.layerCount = 0, .layerEta={glm::vec4(0.0)}, .layerKappa={glm::vec4(0.0)}, .layerAlpha{0.0}, .layerDepth{0.0}, .layerSigmaA{0.0}, .layerSigmaS{0.0}, .layerG{0.0}};
+    UB1 material = UB1{.layerCount = 0, .layerEta={glm::vec4(0.0)}, .layerKappa={glm::vec4(0.0)}, .layerAlpha{0.0}, .layerDepth{0.0}, .layerSigmaA{glm::vec4(0.0)}, .layerSigmaS{glm::vec4(0.0)}, .layerG{0.9}};
     bool rotate = false;
     glm::vec3 translation = glm::vec3(0.0f);
     glm::vec3 rotation = glm::vec3(0.0f);

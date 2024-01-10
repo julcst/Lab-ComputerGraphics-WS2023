@@ -16,6 +16,8 @@ out vec3 fragColor;
 #include "shared/ggx.glsl"
 #include "shared/debug.glsl"
 
+float debugX = 0.0;
+
 /*
 * Implementation of
 * Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
@@ -39,26 +41,26 @@ float getLayerDepth(int layerIndex){
     return uLayerDepth[layerIndex/4][layerIndex%4];
 }
 
-float getLayerSigmaA(int layerIndex){
-    return uLayerSigmaA[layerIndex/4][layerIndex%4];
+vec3 getLayerSigmaA(int layerIndex){
+    return uLayerSigmaA[layerIndex].xyz;
 }
 
-float getLayerSigmaS(int layerIndex){
-    return uLayerSigmaS[layerIndex/4][layerIndex%4];
+vec3 getLayerSigmaS(int layerIndex){
+    return uLayerSigmaS[layerIndex].xyz;
 }
 
 float getLayerG(int layerIndex){
     return uLayerG[layerIndex/4][layerIndex%4];
 }
 
-void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SIZE], out vec3 _layerKappa[LAYER_ARRAY_SIZE], out float _layerAlpha[LAYER_ARRAY_SIZE], out float _layerDepth[LAYER_ARRAY_SIZE], out float _layerSigmaA[LAYER_ARRAY_SIZE], out float _layerSigmaS[LAYER_ARRAY_SIZE], out float _layerG[LAYER_ARRAY_SIZE]){
+void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SIZE], out vec3 _layerKappa[LAYER_ARRAY_SIZE], out float _layerAlpha[LAYER_ARRAY_SIZE], out float _layerDepth[LAYER_ARRAY_SIZE], out vec3 _layerSigmaA[LAYER_ARRAY_SIZE], out vec3 _layerSigmaS[LAYER_ARRAY_SIZE], out float _layerG[LAYER_ARRAY_SIZE]){
     //air layer
     _layerEta[0] = vec3(1.0);
     _layerKappa[0] = vec3(0.0);
     _layerAlpha[0] = 0.0;
     _layerDepth[0] = 0.0;
-    _layerSigmaA[0] = 0.0;
-    _layerSigmaS[0] = 0.0;
+    _layerSigmaA[0] = vec3(0.0);
+    _layerSigmaS[0] = vec3(0.0);
     _layerG[0] = 0.0;
     //fill with data from uniforms or textures
     //TODO: texture lookup
@@ -70,6 +72,12 @@ void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SI
         _layerSigmaA[i+1] = getLayerSigmaA(i);
         _layerSigmaS[i+1] = getLayerSigmaS(i);
         _layerG[i+1] = getLayerG(i);
+
+        if(_layerDepth[i+1] > 0.0){
+            //layer is volume -> use eta and kappa from previous interface
+            _layerEta[i+1] = _layerEta[i];
+            _layerKappa[i+1] = _layerKappa[i];
+        }
     }
 }
 
@@ -97,6 +105,7 @@ float average(vec3 v){
  * @return linear variance sigma
  */
 float roughnessToVariance(float a){
+    a = clamp(a, 0.0, 0.99999);
     float a11 = pow(a, 1.1);
     return a11 / (1.0 - a11);
 }
@@ -126,13 +135,14 @@ float s(float n12, float cosTheta_I, float cosTheta_T){
 }
 
 /**
- * mapping from Henyey-Greenstein's anisotropy factor g to roughness
+ * mapping from Henyey-Greenstein's anisotropy factor g to variance
  * equation 21 from paper
  * 
  * @param g HG's anisotropy factor
- * @return roughness sigma_g
+ * @return variance sigma_g
  */
-float gToRoughness(float g){
+float gToVariance(float g){
+    g = clamp(g, 0.00001, 1.0);
     return pow(((1-g)/g), 0.8) * (1/(1+g));
 }
 
@@ -308,24 +318,20 @@ vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 e
 /**
  * Calculates the Fresnel equation
  * 
- * @param N surface normal
- * @param L light direction (wi)
- * @param V view direction (wo)
+ * @param cosTheta_I
  * @param etaI real part of complex IOR of the incident media
  * @param etaI imaginary part of complex IOR of the incident media
  * @param etaI real part of complex IOR of the transmitted media
  * @param etaI imaginary part of complex IOR of the transmitted media
  * @return F
  */
-vec3 evalFresnel(vec3 N, vec3 L, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
+vec3 evalFresnel(float cosTheta_I, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
     vec3 F = vec3(0.0);
 
-    float NdotL = max(dot(N, L), 0.0);
-
     if(isZero(kappaT)){
-        F = F_dielectric(NdotL, etaI, etaT);
+        F = F_dielectric(cosTheta_I, etaI, etaT);
     }else{
-        F = F_conductor(NdotL, etaI, kappaI, etaT, kappaT);
+        F = F_conductor(cosTheta_I, etaI, kappaI, etaT, kappaT);
     }
 
     return F;
@@ -359,7 +365,7 @@ struct BsdfLobe {
  * @param BsdfLobe
  * @param valid_lobes
  */
-void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[LAYER_ARRAY_SIZE], vec3 layerKappa[LAYER_ARRAY_SIZE], float layerAlpha[LAYER_ARRAY_SIZE], float layerDepth[LAYER_ARRAY_SIZE], float layerSigmaA[LAYER_ARRAY_SIZE], float layerSigmaS[LAYER_ARRAY_SIZE], float layerG[LAYER_ARRAY_SIZE], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
+void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[LAYER_ARRAY_SIZE], vec3 layerKappa[LAYER_ARRAY_SIZE], float layerAlpha[LAYER_ARRAY_SIZE], float layerDepth[LAYER_ARRAY_SIZE], vec3 layerSigmaA[LAYER_ARRAY_SIZE], vec3 layerSigmaS[LAYER_ARRAY_SIZE], float layerG[LAYER_ARRAY_SIZE], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
     valid_lobes = 0u;
     
     float cosTheta_I = cosThetaI; //incident
@@ -392,11 +398,11 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         float n12 = average(etaT / etaI);
         float alpha = layerAlpha[i];
         float depth = layerDepth[i];
-        float sigma_a = layerSigmaA[i];
-        float sigma_s = layerSigmaS[i];
+        vec3 sigma_a = layerSigmaA[i];
+        vec3 sigma_s = layerSigmaS[i];
         float g = layerG[i];
 
-        //start values for local variables
+        //initial values for local variables
         //energy
         vec3 energy_reflected_12 = vec3(0.0);
         vec3 energy_reflected_21 = vec3(0.0);
@@ -411,9 +417,21 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         float J12 = 1.0;
         float J21 = 1.0;
 
+        //TODO implement doubling
+
         //check if thin slab/interface or participating media/vloume
         if(depth > 0.0){
-            //TODO implement doubling and volume absorption/scattering
+            //mean doesn't change
+            cosTheta_T = cosTheta_I;
+
+            /* volume absorption and scattering, from the paper Section 4.3 and 4.4*/
+            //energy
+            vec3 sigma_t = sigma_a + sigma_s;
+            energy_transmitted_12 = (vec3(1.0) + (sigma_s * depth) / cosTheta_T) * exp(-(sigma_t * depth) / cosTheta_T); //from paper, equation 15 and 22
+            energy_transmitted_21 = energy_transmitted_12;
+            //variance
+            sigma_transmitted_12 = gToVariance(g); //from paper, equation 24
+            sigma_transmitted_21 = sigma_transmitted_12;
         }else{
             /* off-specular transmission, from the paper Section 4.2 */
             float sinTheta_I = sqrt(1.0 - pow(cosTheta_I,2));
@@ -424,7 +442,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
                 cosTheta_T = -1.0;
             }
 
-            /* reftectance and transmittance terms for variance */
+            /* reflectance and transmittance terms for variance */
             sigma_reflected_12 = roughnessToVariance(alpha); //from paper section 4.1
             sigma_reflected_21 = sigma_reflected_12;
 
@@ -448,7 +466,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
             //evaluate FGD using modified roughness accounting for top layers
             float alpha_r = varianceToRoughness(sigma_transmitted_0i + sigma_reflected_12); //from paper section 4.1, equation 9
             //vec3 FGD = evalFGD(N, L, V, alpha_r, etaI, kappaI, etaT, kappaT); //from paper section 4.1, equation 2
-            vec3 FGD = evalFresnel(N, L, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
+            vec3 FGD = evalFresnel(cosTheta_I, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
             energy_reflected_12 = FGD; //from paper section 4.1, equation 7 / section 5.1
             energy_transmitted_12 = 1.0 - FGD; //from paper section 4.2, equation 11 / section 5.1
             if(transmissive){
@@ -549,7 +567,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
 /////////// main ///////////
 
 void main() {
-   
+
     if(uLayerCount == 0u){
         fragColor = vec3(0.0);
         return;
@@ -573,8 +591,8 @@ void main() {
     vec3 layerKappa[LAYER_ARRAY_SIZE];
     float layerAlpha[LAYER_ARRAY_SIZE];
     float layerDepth[LAYER_ARRAY_SIZE];
-    float layerSigmaA[LAYER_ARRAY_SIZE];
-    float layerSigmaS[LAYER_ARRAY_SIZE];
+    vec3 layerSigmaA[LAYER_ARRAY_SIZE];
+    vec3 layerSigmaS[LAYER_ARRAY_SIZE];
     float layerG[LAYER_ARRAY_SIZE];
 
     fillLayerMaterialArrays(uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
@@ -587,8 +605,8 @@ void main() {
     float NdotL = max(dot(N, L), 0.0);
     float NdotH = max(dot(N, H), 0.0);
     float HdotV = max(dot(H, V), 0.0);
-    float debug_D = 0.0;
-    float debug_G = 0.0;
+    float debug_D[MAX_LAYERS];
+    float debug_G[MAX_LAYERS];
 
     for(int i = 0; i < int(valid_lobes); i++){
         float alpha = varianceToRoughness(lobes[i].variance);
@@ -600,24 +618,35 @@ void main() {
 
         BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
 
-        if(i == 0){
-             debug_D = D;
-             debug_G = G;
-        }
+        debug_D[i] = D;
+        debug_G[i] = G;
     }
 
     vec3 lighting = BRDF * uLightColor * NdotL;
 
     RENDER_VIEW(lighting);
     DEBUG_VIEW(1, BRDF);
-    DEBUG_VIEW(2, vec3(debug_D));
-    DEBUG_VIEW(3, vec3(debug_G));
-    DEBUG_VIEW(4, lobes[0].energy);
+
+    DEBUG_VIEW(2, lobes[0].energy);
+    DEBUG_VIEW(3, vec3(debug_D[0]));
+    DEBUG_VIEW(4, vec3(debug_G[0]));
     DEBUG_VIEW(5, vec3(layerAlpha[1]);)
-    DEBUG_VIEW(6, vec3(lobes[0].variance));
+    DEBUG_VIEW(6, vec3(varianceToRoughness(lobes[0].variance)));
+
     if(valid_lobes > 1u){
-        DEBUG_VIEW(8, lobes[1].energy);
-        DEBUG_VIEW(9, vec3(lobes[1].variance));
+        DEBUG_VIEW(7, lobes[1].energy);
+        DEBUG_VIEW(8, vec3(debug_D[1]));
+        DEBUG_VIEW(9, vec3(debug_G[1]));
+        DEBUG_VIEW(10, vec3(layerAlpha[2]));
+        DEBUG_VIEW(11, vec3(varianceToRoughness(lobes[1].variance)));
+    }
+
+    if(valid_lobes > 2u){
+        DEBUG_VIEW(12, lobes[2].energy);
+        DEBUG_VIEW(13, vec3(debug_D[2]));
+        DEBUG_VIEW(14, vec3(debug_G[2]));
+        DEBUG_VIEW(15, vec3(layerAlpha[3]));
+        DEBUG_VIEW(16, vec3(varianceToRoughness(lobes[2].variance)));
     }
 
 
@@ -626,10 +655,24 @@ void main() {
     vec3 kappaI = layerKappa[0];
     vec3 etaT = layerEta[1];
     vec3 kappaT = layerKappa[1];
-    vec3 F = evalFresnel(N, L, etaI, kappaI, etaT, kappaT);
-    DEBUG_VIEW(7, F);
+    vec3 F = evalFresnel(cosThetaI, etaI, kappaI, etaT, kappaT);
+    DEBUG_VIEW(17, F);
 
-    //Fresnel comparision
-    vec3 Fs = F_schlick(cosThetaI, vec3(1.0), 0.0);
-    DEBUG_VIEW(10, Fs);
+    etaI = layerEta[1];
+    kappaI = layerKappa[1];
+    etaT = layerEta[2];
+    kappaT = layerKappa[2];
+    F = evalFresnel(cosThetaI, etaI, kappaI, etaT, kappaT);
+    DEBUG_VIEW(18, F);
+
+    etaI = layerEta[2];
+    kappaI = layerKappa[2];
+    etaT = layerEta[3];
+    kappaT = layerKappa[3];
+    F = evalFresnel(cosThetaI, etaI, kappaI, etaT, kappaT);
+    DEBUG_VIEW(19, F);
+
+    // nan/inf check
+    DEBUG_VIEW(20, colorDebug(debugX));
+
 }

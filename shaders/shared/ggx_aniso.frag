@@ -15,11 +15,11 @@ out vec3 fragColor;
 
 void main() {
     // Renormalize because of interpolation
-    vec3 N = vec3(0.0, 0.0, 1.0);
+    vec3 N = normalize(n);
     // Calculate view vector
     vec3 V = tangentViewDir;
     //Light vector
-    vec3 L = tangentLightDir;
+    vec3 L = normalize(uLightDir);
 
     // Calculate GGX BRDF
     fragColor = BRDF_ggx_aniso(N, L, V, uAlbedo, uMetallic, uAlphaX, uAlphaY) * uLightColor * max(dot(L, N), 0.0);

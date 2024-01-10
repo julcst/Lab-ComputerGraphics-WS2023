@@ -155,13 +155,12 @@ return 1 / (1 + Lambda_ggx(V, alphaX, alphaY) + Lambda_ggx(L, alphaX, alphaY));
 
 /**
  * Anisotropic GGX BRDF
- * @param N Surface normal in world space
- * @param L Light direction in world space
- * @param V View direction in world space
+ * @param N Surface normal in tangent space
+ * @param L Light direction in tangent space
+ * @param V View direction in tangent space
  */
 vec3 BRDF_ggx_aniso(vec3 N, vec3 L, vec3 V, vec3 albedo, float metallic, float alphaX, float alphaY) {
     // H is the half vector between L and V
-
     vec3 H = normalize(V + L);
 
     // Calculate dot products

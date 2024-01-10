@@ -26,7 +26,7 @@ const std::string SCENE_DIR = APP_DIR + "scenes/";
 const std::string COMPOSED_SHADER_DIR = "@CMAKE_SOURCE_DIR@/composed/";
 
 const std::vector<std::string> MODEL_FILES = {@MODEL_FILES@};
-const std::vector<std::string> SHADER_FILES = {"shared/debug.frag", "shared/lambert.frag", "shared/ggx.frag", "shared/ggx_aniso.frag", "glints/glints.frag", "glints/reference.frag", /*"layered/layered.frag"*/};
+const std::vector<std::string> SHADER_FILES = {"shared/debug.frag", "shared/lambert.frag", "shared/ggx.frag", "shared/ggx_aniso.frag", "glints/glints.frag", "glints/reference.frag", "layered/layered.frag"};
 enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GGX_ANISO, GLINTS, GLINTS_REF, LAYER};
 const std::vector<std::string> MATERIAL_FILES = {@MATERIAL_FILES@};
 

@@ -1,9 +1,12 @@
 #version 330 core
 
-in vec3 pos;
-in vec2 uv;
-in vec3 n;
-in vec3 worldPos;
+in VertexData {
+    vec2 uv;
+    vec3 worldPosition;
+    vec3 worldNormal;
+    vec3 tangentLightDir;
+    vec3 tangentViewDir;
+};
 out vec3 fragColor;
 
 #define MAX_LAYERS 4

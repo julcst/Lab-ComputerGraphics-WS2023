@@ -101,6 +101,7 @@ void addTangentsToVertex(Vertex& v0, const Vertex& v1, const Vertex& v2) {
     vec2 delta_uv1 = v1.texCoord - v0.texCoord;
     vec2 delta_uv2 = v2.texCoord - v0.texCoord;
 
+    // From: https://sotrh.github.io/learn-wgpu/showcase/compute
     float r = 1.0f / (delta_uv1.x * delta_uv2.y - delta_uv1.y * delta_uv2.x);
     v0.tangent += (delta_pos1 * delta_uv2.y - delta_pos2 * delta_uv1.y) * r;
     v0.bitangent += (delta_pos2 * delta_uv1.x - delta_pos1 * delta_uv2.x) * r; 
@@ -117,15 +118,10 @@ bool Mesh::loadWithTangents(const std::string& filepath) {
     numVertices = model.numVertices;
     numIndices = model.numIndices;
 
-    // Convert to vectors
-    std::vector<float> srcVertices(model.data, model.data + model.numVertices * model.vertSize / sizeof(float));
-    std::vector<uint> srcIndices(model.indices, model.indices + model.numIndices);
-
     // Generate tangents and bitangents
     std::vector<Vertex> vertices(numVertices);
+    // TODO: Maybe remove this
     std::vector<float> triangleCount(numVertices);
-
-    std::cout << "Reading vertex data for " << filepath << "\n";
 
     // Read vertex data from model
     const uint floatsPerSrcVertex = model.vertSize / sizeof(float);
@@ -141,8 +137,6 @@ bool Mesh::loadWithTangents(const std::string& filepath) {
         triangleCount[i] = 0.0f;
     }
 
-    std::cout << "Generating tangents and bitangents for " << filepath << "\n";
-
     // Loop over triangles
     for (uint i = 0; i < numIndices; i += 3) {
         // Get vertices
@@ -153,18 +147,30 @@ bool Mesh::loadWithTangents(const std::string& filepath) {
         Vertex& v1 = vertices[index1];
         Vertex& v2 = vertices[index2];
 
-        // Add tangent and bitangent to each vertex
+        vec3 delta_pos1 = v1.position - v0.position;
+        vec3 delta_pos2 = v2.position - v0.position;
+
+        vec2 delta_uv1 = v1.texCoord - v0.texCoord;
+        vec2 delta_uv2 = v2.texCoord - v0.texCoord;
+
+        float r = 1.0f / (delta_uv1.x * delta_uv2.y - delta_uv1.y * delta_uv2.x);
+        vec3 tangent = (delta_pos1 * delta_uv2.y - delta_pos2 * delta_uv1.y) * r;
+        vec3 bitangent = (delta_pos2 * delta_uv1.x - delta_pos1 * delta_uv2.x) * r;
+
+        v0.tangent += tangent; v0.bitangent += bitangent;
+        v1.tangent += tangent; v1.bitangent += bitangent;
+        v2.tangent += tangent; v2.bitangent += bitangent;
+
+        /*// Add tangent and bitangent to each vertex
         addTangentsToVertex(v0, v1, v2);
         addTangentsToVertex(v1, v2, v0);
-        addTangentsToVertex(v2, v0, v1);
+        addTangentsToVertex(v2, v0, v1);*/
 
         // Increment the triangle count for each vertex
         triangleCount[index0]++;
         triangleCount[index1]++;
         triangleCount[index2]++;
     }
-
-    std::cout << "Normalizing tangents and bitangents for " << filepath << "\n";
 
     // Average tangents and bitangents per vertex
     for (uint i = 0; i < numVertices; i++) {
@@ -184,8 +190,7 @@ bool Mesh::loadWithTangents(const std::string& filepath) {
     vbo.bind(Buffer::Type::ARRAY_BUFFER);
     ebo.bind(Buffer::Type::INDEX_BUFFER);
 
-    // vertex attributes
-    std::cout << "Stride: " << sizeof(Vertex) / sizeof(float) << "\n";
+    // Vertex attributes
     // location 0 vec3 position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(0 * sizeof(float)));
     // location 1 vec2 texture coordinate

@@ -78,6 +78,27 @@ vec3 BRDF_lambert(vec3 albedo) {
 
 /**
  * The GGX Cook-Torrance BRDF
+ */
+vec3 BRDF_ggx(float NdotV, float NdotL, float NdotH, float HdotV, vec3 albedo, float metallic, float roughness) {
+    // Remap roughness
+    float a = roughness * roughness;
+    float k = k_direct(a);
+
+    vec3 F = F_schlick(HdotV, albedo, metallic);
+
+    // Calculate the specular component with Cook-Torrance GGX
+    vec3 FGD = F * G_smith_ggx(NdotV, NdotL, k) * D_ggx(NdotH, a);
+    float denom = 4.0 * NdotL * NdotV + 0.0001;
+    vec3 specular = FGD / denom;
+
+    // Calculate the diffuse component with Lambert
+    vec3 diffuse = diffuse(F, albedo, metallic);
+
+    return specular + diffuse;
+}
+
+/**
+ * The GGX Cook-Torrance BRDF
  * @param N Surface normal in world space
  * @param L Light direction in world space
  * @param V View direction in world space

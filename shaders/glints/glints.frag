@@ -1,25 +1,27 @@
-#version 330 core
+#version 410 core
 
-in vec3 pos;
-in vec2 uv;
-in vec3 n;
-in vec3 worldPos;
+in VertexData {
+    vec2 uv;
+    vec3 worldPosition;
+    vec3 worldNormal;
+    vec3 tangentLightDir;
+    vec3 tangentViewDir;
+};
 out vec3 fragColor;
 
 #include "shared/uniforms.glsl"
 #include "shared/ggx.glsl"
 #include "shared/debug.glsl"
 #include "glints/glints.glsl"
-#line 14 204
+#line 17 204
 
 void main() {
-
-    // N is the surface normal in world space
-    vec3 N = normalize(n);
-    // L is the light direction in world space
-    vec3 L = uLightDir;
-    // V is the view direction in world space
-    vec3 V = normalize(uCameraPosition - worldPos);
+    // N is the surface normal in tangent space
+    vec3 N = vec3(0.0, 0.0, 1.0);
+    // L is the light direction in tangent space
+    vec3 L = tangentLightDir;
+    // V is the view direction in tangent space
+    vec3 V = tangentViewDir;
     // H is the half vector between L and V
     vec3 H = normalize(V + L);
     

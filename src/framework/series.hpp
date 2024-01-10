@@ -3,7 +3,8 @@
 #include <array>
 
 /**
- * Implements a circular buffer that holds a fixed number of measurements and continously computes the average and the sum
+ * Implements a circular buffer that holds a fixed number of measurements and continously computes the average and the sum.
+ * Makes (in my opinion) very cool usage of the wonderful concept of circular buffers to keep the time complexity O(1) for all operations
  */
 template <typename T, size_t N>
 class Series {

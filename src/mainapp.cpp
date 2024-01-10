@@ -8,6 +8,7 @@
 #include <misc/cpp/imgui_stdlib.h>
 #include <nlohmann/json.hpp>
 
+#include <iostream>
 #include <iterator>
 #include <string>
 #include <vector>
@@ -47,6 +48,7 @@ MainApp::MainApp() :
 
     meshes.reserve(Config::MODEL_FILES.size());
     for (const std::string& file : Config::MODEL_FILES) {
+        std::cout << "Loading mesh " << file << std::endl;
         Mesh mesh;
         mesh.loadWithTangents(file);
         meshes.push_back(std::move(mesh));
@@ -54,6 +56,7 @@ MainApp::MainApp() :
 
     shaders.reserve(Config::SHADER_FILES.size());
     for (const std::string& file : Config::SHADER_FILES) {
+        std::cout << "Loading shader " << file << std::endl;
         Program program;
         program.load("shared/projection.vert", file);
         program.bindUBO("UB0", 0);

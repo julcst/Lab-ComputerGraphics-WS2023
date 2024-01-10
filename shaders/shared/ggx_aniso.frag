@@ -1,22 +1,25 @@
 #version 330 core
 
-in vec3 pos;
-in vec2 uv;
-in vec3 n;
-in vec3 worldPos;
+in VertexData {
+    vec2 uv;
+    vec3 worldPosition;
+    vec3 worldNormal;
+    vec3 tangentLightDir;
+    vec3 tangentViewDir;
+};
 out vec3 fragColor;
 
 #include "shared/uniforms.glsl"
 #include "shared/ggx.glsl"
-#line 12 104
+#line 15 104
 
 void main() {
     // Renormalize because of interpolation
-    vec3 N = normalize(n);
+    vec3 N = vec3(0.0, 0.0, 1.0);
     // Calculate view vector
-    vec3 V = normalize(uCameraPosition - worldPos);
+    vec3 V = tangentViewDir;
     //Light vector
-    vec3 L = normalize(uLightDir);
+    vec3 L = tangentLightDir;
 
     // Calculate GGX BRDF
     fragColor = BRDF_ggx_aniso(N, L, V, uAlbedo, uMetallic, uAlphaX, uAlphaY) * uLightColor * max(dot(L, N), 0.0);

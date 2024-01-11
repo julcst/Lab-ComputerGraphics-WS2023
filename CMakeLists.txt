@@ -153,6 +153,8 @@ set(MATERIALS
     materials/lambert.material
     materials/bunny.material
     materials/gold.material
+    materials/two_layers.material
+    materials/volume_layer.material
 )
 set(ICON
     icons/AppIcon.icns

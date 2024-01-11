@@ -14,10 +14,10 @@
 
 // TODO: Integrate half vector to make glints pop in and out when rotating the light
 float sampleFootprint(uint seed, float area, float weight, vec2 uv, float targetD, float p) {
-    // Triangulate uv coordinates
-    // TODO: Skew the triangulation for symmetric glint shapes
+    // Skew the uv grid to make the hexagonal glint shapes symmetric
     const mat2 gridToSkewedGrid = mat2(1.0, -0.57735027, 0.0, 1.15470054);
     uv = gridToSkewedGrid * uv;
+    // Triangulate uv coordinates
     vec2 cell = floor(uv);
     vec2 fractional = uv - cell;
     bool triangle = (fractional.x + fractional.y) > 1.0;
@@ -52,9 +52,9 @@ float sampleGridPoint(uint seed, vec3 gridPoint, float weight, vec2 uv, float ta
 
     GDEBUG_uvGrid(checkerboard(uv, 100.0));
 
-    // FIXME: The transformation is off (theta seems to be wrong)
     // Transform the uv coordinate to be homogenous
-    float theta = gridPoint.x;
+    // Do not rotate the uv coordinate if the gridPoint is in the center case (anisotropy == 1.0)
+    float theta = gridPoint.y == 1.0 ? 0.0 : gridPoint.x;
     uv = vec2(cos(theta) * uv.x + sin(theta) * uv.y,
 		      cos(theta) * uv.y - sin(theta) * uv.x); // Compensate for orientation
     uv.y /= gridPoint.y;  // Compensate for anisotropy
@@ -97,7 +97,7 @@ float D_glints(float D, float Dmax, vec2 uv, float screenSpaceScale, float micro
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
     // In the center case we limit the theta weight by the anisotropy to account for the vanishing orientation dimension
-    hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
+    // hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
 
     GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
     GDEBUG_thetaWeight(colorDebug(hepta.thetaWeight));

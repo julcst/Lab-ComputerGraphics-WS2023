@@ -30,7 +30,7 @@ struct Tetrahedron {
  *
  * NOTE:  In difference to the reference implementation I do not return the points of the tetrahedron relative to the heptahedron but in absolute coordinates.
  *        This avoids the dynamic indexing process used in the reference implementation and may benefit performance.
- *        Dynamic indexing can be costly because it may require the use of pointers instead of registers.
+ *        Dynamic indexing could be costly because it may require the use of pointers instead of registers.
  */
 Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase, vec3 p) {
     Tetrahedron tetra;
@@ -188,8 +188,10 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase, vec3 p) {
 
 Tetrahedron tetrifyFootprint(Heptahedron hepta, Footprint foot, bool centerCase) {
     vec3 p = vec3(foot.angle, foot.ratio, foot.minorLength);
-    vec3 P = vec3(hepta.thetaWeight, hepta.anisoWeight, hepta.lodWeight);
     Tetrahedron tetra = getTetrahedron(hepta, centerCase, p);
+    // This fixes almost all artifacts in the center case
+    hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
+    vec3 P = vec3(hepta.thetaWeight, hepta.anisoWeight, hepta.lodWeight);
     tetra.weights = calcBarycentrics(P, tetra.P0, tetra.P1, tetra.P2, tetra.P3);
     return tetra;
 }

@@ -559,6 +559,8 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	vec4 thetaBins = vec4(thetaBin0, thetaBinH, thetaBin1, 0.0); // added 0.0 for center singularity case
 	vec3 tetraA, tetraB, tetraC, tetraD;
 	GetAnisoCorrectingGridTetrahedron(centerSpecialCase, thetaBinLerp, ratioLerp, lodLerp, tetraA, tetraB, tetraC, tetraD);
+	// ! This is very important to avoid artifacts
+	// ? Why?
 	if (centerSpecialCase == true) // Account for center singularity in barycentric computation
 		thetaBinLerp = Remap01To(thetaBinLerp, 0.0, ratioLerp);
 	vec4 tetraBarycentricWeights = GetBarycentricWeightsTetrahedron(vec3(thetaBinLerp, ratioLerp, lodLerp), tetraA, tetraB, tetraC, tetraD); // Compute barycentric coordinates within chosen tetrahedron
@@ -584,6 +586,7 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	ivec3 iTetraB = ivec3(tetraB);
 	ivec3 iTetraC = ivec3(tetraC);
 	ivec3 iTetraD = ivec3(tetraD);
+	// TODO: Implement this
 	if (centerSpecialCase == true) // Account for center singularity (if center vertex => no rotation)
 	{
 		iTetraA.x = (iTetraA.y == 0) ? 3 : iTetraA.x;

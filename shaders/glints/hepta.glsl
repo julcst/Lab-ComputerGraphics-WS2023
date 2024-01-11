@@ -41,7 +41,7 @@ Heptahedron heptifyFootprint(Footprint foot) {
 
     float theta = foot.angle;
 	float thetaGrid = DEG90 / max(hepta.aniso0, 2.0);
-	float thetaBin = int((theta / thetaGrid)) * thetaGrid;
+	float thetaBin = floor(theta / thetaGrid) * thetaGrid;
 	thetaBin = thetaBin + (thetaGrid / 2.0);
 	hepta.theta0 = theta < thetaBin ? thetaBin - thetaGrid / 2.0 : thetaBin;
 	hepta.thetaH = hepta.theta0 + thetaGrid / 4.0;

@@ -29,6 +29,51 @@ void Object::loadPreset(json preset) {
     material.albedo = preset.value("albedo", material.albedo);
     material.roughness = preset.value("roughness", material.roughness);
     material.metallic = preset.value("metallic", material.metallic);
+    material.alphaX = preset.value("alphaX", material.alphaX);
+    material.alphaY = preset.value("alphaY", material.alphaY);
+    material.layerCount = preset.value("layerCount", material.layerCount);
+    if(preset.contains("layerEta")){
+        std::vector<glm::vec4> array{preset["layerEta"].get<std::vector<glm::vec4>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerEta[i] = array[i];
+        }
+    }
+    if(preset.contains("layerKappa")){
+        std::vector<glm::vec4> array{preset["layerKappa"].get<std::vector<glm::vec4>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerKappa[i] = array[i];
+        }
+    }
+    if(preset.contains("layerAlpha")){
+        std::vector<float> array{preset["layerAlpha"].get<std::vector<float>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerAlpha[i] = array[i];
+        }
+    }
+    if(preset.contains("layerDepth")){
+        std::vector<float> array{preset["layerDepth"].get<std::vector<float>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerDepth[i] = array[i];
+        }
+    }
+    if(preset.contains("layerSigmaA")){
+        std::vector<glm::vec4> array{preset["layerSigmaA"].get<std::vector<glm::vec4>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerSigmaA[i] = array[i];
+        }
+    }
+    if(preset.contains("layerSigmaS")){
+        std::vector<glm::vec4> array{preset["layerSigmaS"].get<std::vector<glm::vec4>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerSigmaS[i] = array[i];
+        }
+    }
+    if(preset.contains("layerG")){
+        std::vector<float> array{preset["layerG"].get<std::vector<float>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerG[i] = array[i];
+        }
+    }
     rotate = preset.value("rotate", rotate);
     translation = preset.value("translation", translation);
     rotation = preset.value("rotation", rotation);

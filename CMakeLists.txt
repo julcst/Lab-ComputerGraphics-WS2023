@@ -123,6 +123,8 @@ set(SHADERS
     shaders/glints/reference.glsl
     shaders/glints/tetra.glsl
     shaders/layered/layered.frag
+    shaders/layered/common.glsl
+    shaders/layered/layered_aniso.frag
     shaders/shared/background.frag
     shaders/shared/debug.frag
     shaders/shared/debug.glsl

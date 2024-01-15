@@ -71,4 +71,6 @@ layout(std140) uniform UB1 {
     vec4 uLayerSigmaA[MAX_LAYERS];
     vec4 uLayerSigmaS[MAX_LAYERS];
     vec4 uLayerG[MAX_LAYERS/4];
+    vec4 uLayerAlphaX[MAX_LAYERS/4];
+    vec4 uLayerAlphaY[MAX_LAYERS/4];
 };

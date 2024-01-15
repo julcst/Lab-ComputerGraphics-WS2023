@@ -216,6 +216,41 @@ void MainApp::buildImGui() {
             }
             ImGui::Separator();
             Util::combo("Debug mode", &obj.material.debug, Config::LAYERED_DEBUG_MODES);
+        } else if (obj.shaderIdx == Config::ShaderType::LAYER_ANISO) {
+            for(unsigned int l = 0; l < obj.material.layerCount; l++) {
+                ImGui::PushID(l);
+                ImGui::Separator();
+                ImGui::Text("Layer %d", l);
+                ImGui::DragFloat3("Eta##", value_ptr(obj.material.layerEta[l]), 0.001f);
+                ImGui::DragFloat3("Kappa##", value_ptr(obj.material.layerKappa[l]), 0.001f);
+                ImGui::SliderFloat("AlphaX##", &obj.material.layerAlphaX[l], 0.0f, 1.0f);
+                ImGui::SliderFloat("AlphaY##", &obj.material.layerAlphaY[l], 0.0f, 1.0f);
+                ImGui::SliderFloat("Depth##", &obj.material.layerDepth[l], 0.0f, 1.0f);
+                ImGui::DragFloat3("Sigma A##", value_ptr(obj.material.layerSigmaA[l]), 0.001f);
+                ImGui::DragFloat3("Sigma S##", value_ptr(obj.material.layerSigmaS[l]), 0.001f);
+                ImGui::SliderFloat("G##", &obj.material.layerG[l], 0.0f, 1.0f);
+                ImGui::PopID();
+            }
+            ImGui::Separator();
+            if(ImGui::Button("Add Layer")) {
+                if(obj.material.layerCount < Config::MAX_LAYERS){
+                    obj.material.layerCount++;
+                } else {
+                    ImGui::OpenPopup("Max Layer Count reached");
+                }
+            }
+            if (ImGui::BeginPopup("Max Layer Count reached")) {
+                ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Max Layer Count reached");
+                ImGui::EndPopup();
+            }
+            ImGui::SameLine();
+            if(ImGui::Button("Remove last Layer")) {
+                if(obj.material.layerCount > 1){
+                    obj.material.layerCount--;
+                }
+            }
+            ImGui::Separator();
+            Util::combo("Debug mode", &obj.material.debug, Config::LAYERED_ANISO_DEBUG_MODES);
         }
         ImGui::Separator();
         if (ImGui::Button("Destroy")) {

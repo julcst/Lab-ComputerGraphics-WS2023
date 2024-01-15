@@ -49,6 +49,8 @@ struct UB1 {
     glm::vec4 layerSigmaA[Config::MAX_LAYERS];
     glm::vec4 layerSigmaS[Config::MAX_LAYERS];
     float layerG[Config::MAX_LAYERS];
+    float layerAlphaX[Config::MAX_LAYERS];
+    float layerAlphaY[Config::MAX_LAYERS];
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, alphaX, alphaY, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, debug);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, alphaX, alphaY, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, layerAlphaX, layerAlphaY, debug);
 };

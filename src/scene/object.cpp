@@ -74,6 +74,18 @@ void Object::loadPreset(json preset) {
             material.layerG[i] = array[i];
         }
     }
+    if(preset.contains("layerAlphaX")){
+        std::vector<float> array{preset["layerAlphaX"].get<std::vector<float>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerAlphaX[i] = array[i];
+        }
+    }
+    if(preset.contains("layerAlphaY")){
+        std::vector<float> array{preset["layerAlphaY"].get<std::vector<float>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerAlphaY[i] = array[i];
+        }
+    }
     rotate = preset.value("rotate", rotate);
     translation = preset.value("translation", translation);
     rotation = preset.value("rotation", rotation);

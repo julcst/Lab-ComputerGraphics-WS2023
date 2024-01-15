@@ -1,3 +1,5 @@
+#line 2 301
+
 /*
 * Common functions for the implementation of
 * Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
@@ -33,6 +35,13 @@ float roughnessToVariance(float a){
 }
 
 /**
+ * vec2 overload of roughnessToVariance
+ */
+ vec2 roughnessToVariance(vec2 a){
+    return vec2(roughnessToVariance(a.x), roughnessToVariance(a.y));
+ }
+
+/**
  * mapping from linear variance to roughness
  * equation 6 from paper
  * 
@@ -42,6 +51,13 @@ float roughnessToVariance(float a){
 float varianceToRoughness(float sigma){
     return pow((sigma / (1.0 + sigma)),(1.0/1.1));
 }
+
+/**
+ * vec2 overload of varianceToRoughness
+ */
+ vec2 varianceToRoughness(vec2 sigma){
+    return vec2(varianceToRoughness(sigma.x), varianceToRoughness(sigma.y));
+ }
 
 /**
  * roughness scale factor for fake transmission

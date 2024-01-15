@@ -26,8 +26,8 @@ const std::string SCENE_DIR = APP_DIR + "scenes/";
 const std::string COMPOSED_SHADER_DIR = "@CMAKE_SOURCE_DIR@/composed/";
 
 const std::vector<std::string> MODEL_FILES = {@MODEL_FILES@};
-const std::vector<std::string> SHADER_FILES = {"shared/debug.frag", "shared/lambert.frag", "shared/ggx.frag", "shared/ggx_aniso.frag", "glints/glints.frag", "glints/reference.frag", "layered/layered.frag"};
-enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GGX_ANISO, GLINTS, GLINTS_REF, LAYER};
+const std::vector<std::string> SHADER_FILES = {"shared/debug.frag", "shared/lambert.frag", "shared/ggx.frag", "shared/ggx_aniso.frag", "glints/glints.frag", "glints/reference.frag", "layered/layered.frag", "layered/layered_aniso.frag"};
+enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GGX_ANISO, GLINTS, GLINTS_REF, LAYER, LAYER_ANISO};
 const std::vector<std::string> MATERIAL_FILES = {@MATERIAL_FILES@};
 
 const std::vector<std::string> GLINTS_DEBUG_MODES = {
@@ -59,6 +59,30 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
 };
 
 const std::vector<std::string> LAYERED_DEBUG_MODES = {
+    "off",                      // 0
+    "BRDF",                     // 1
+    "Energy of lobe 0",         // 2
+    "D of lobe 0",              // 3
+    "G of lobe 0",              // 4
+    "Alpha input of lobe 0",    // 5
+    "Roughness of layer 0",     // 6
+    "Energy of lobe 1",         // 7
+    "D of lobe 1",              // 8
+    "G of lobe 1",              // 9
+    "Alpha input of lobe 1",    // 10
+    "Roughness of layer 1",     // 11
+    "Energy of lobe 2",         // 12
+    "D of lobe 2",              // 13
+    "G of lobe 2",              // 14
+    "Alpha input of lobe 2",    // 15
+    "Roughness of layer 2",     // 16
+    "Fresnel of layer 0",       // 17
+    "Fresnel of layer 1",       // 18
+    "Fresnel of layer 2",       // 19
+    "Debug",                    // 20
+};
+
+const std::vector<std::string> LAYERED_ANISO_DEBUG_MODES = {
     "off",                      // 0
     "BRDF",                     // 1
     "Energy of lobe 0",         // 2

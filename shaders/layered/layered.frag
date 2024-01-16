@@ -177,7 +177,7 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
             energy_transmitted_12 = (vec3(1.0) + (sigma_s * depth) / cosTheta_T) * exp(-(sigma_t * depth) / cosTheta_T); //from paper, equation 15 and 22
             energy_transmitted_21 = energy_transmitted_12;
             //variance
-            sigma_transmitted_12 = gToVariance(g); //from paper, equation 24
+            sigma_transmitted_12 = gToVariance(g) * average(sigma_s)/average(sigma_t); //from paper, equation 24
             sigma_transmitted_21 = sigma_transmitted_12;
         }else{
             /* off-specular transmission, from the paper Section 4.2 */

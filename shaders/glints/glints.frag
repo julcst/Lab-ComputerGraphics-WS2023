@@ -54,7 +54,7 @@ void main() {
 
     // Extend the distribution term with a stochastic microfacet counting process to account
     // for the microfacet distribution inside the pixel footprint
-    float DP = D_glints(D, Dmax, uv, uScreenSpaceScale, uMicrofacetRoughness, uLogMicrofacetDensity, uDensityRandomization);
+    float DP = D_glints(D, Dmax, H, uv, uScreenSpaceScale, uMicrofacetRoughness, uLogMicrofacetDensity, uDensityRandomization);
 
 /////////// Evaluating the rendering equation ///////////
 

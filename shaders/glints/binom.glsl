@@ -16,6 +16,7 @@
  * The inverse error function approximation described in:
  * Giles, Mike. "Approximating the erfinv function." GPU Computing Gems Jade Edition. Morgan Kaufmann, 2012. 109-116.
  */
+// ! This is executed 4*3*4=48 times per sample
 float erfinv(float x) {
     float w, p;
     w = -log((1.0 - x) * (1.0 + x));
@@ -134,6 +135,7 @@ float sampleBinom(float N, float p, vec2 rand) {
  * @param p The probability of success.
  * @param rand Two uniform random vectors in the range [0, 1].
  */
+// ! Performance issue: No vectorization
 vec4 sampleBinom(float N, float p, vec4 randA, vec4 randB) {
     // The probability of having at least one success in a binomial distribution b(N,p)
     float pOneSuccess = 1.0 - pow(1.0 - p, N); // Equation (16)
@@ -143,6 +145,25 @@ vec4 sampleBinom(float N, float p, vec4 randA, vec4 randB) {
     // Approximate the binomial distribution b(N-1,p) by sampling from the normal distribution N(mu,sigma)
     vec4 normalSample = clamp(floor(sampleNormal(mu, sigma, randB)) + 1.0, 1.0, N); // Clamping to ensure valid range
     // Gate the normal sample using a single Bernoulli trial
-    vec4 gated = mix(normalSample, vec4(0.0), lessThan(randA, vec4(pOneSuccess))); // Equation (18)
+    vec4 gated = mix(vec4(0.0), normalSample, lessThan(randA, vec4(pOneSuccess))); // Equation (18)
+    return gated;
+}
+
+/**
+ * Samples 4 binomial distributed random numbers using the Gated Gaussian Binomial Approximation.
+ * Faster version that uses precalculations to avoid redundant computations.
+ *
+ * @param N The number of trials.
+ * @param pOneSuccess The probability of having at least one success in a binomial distribution b(N,p).
+ * @param mu The mean of the normal distribution.
+ * @param sigma The standard deviation of the normal distribution.
+ * @param rand Two uniform random vectors in the range [0, 1].
+ */
+// ! This is executed 4*3=12 times per sample
+vec4 sampleBinom(float N, float pOneSuccess, float mu, float sigma, vec4 randA, vec4 randB) {
+    // Approximate the binomial distribution b(N-1,p) by sampling from the normal distribution N(mu,sigma)
+    vec4 normalSample = clamp(floor(sampleNormal(mu, sigma, randB)) + 1.0, 1.0, N); // Clamping to ensure valid range
+    // Gate the normal sample using a single Bernoulli trial
+    vec4 gated = mix(vec4(0.0), normalSample, lessThan(randA, vec4(pOneSuccess))); // Equation (18)
     return gated;
 }

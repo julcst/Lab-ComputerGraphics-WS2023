@@ -388,7 +388,9 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	vec3 footprintOneHitProba = (1.0 - pow(1.0 - vec3(hitProba), microfacetCountBlended)); // probability of hitting at least one microfacet in footprint
 	vec3 footprintMean = (microfacetCountBlended - 1.0) * vec3(hitProba); // Expected value of number of hits in the footprint given already one hit
 	vec3 footprintSTD = sqrt((microfacetCountBlended - 1.0) * vec3(hitProba) * (1.0 - vec3(hitProba))); // Standard deviation of number of hits in the footprint given already one hit
-	vec3 binomialSmoothWidth = 0.1 * clamp(footprintOneHitProba * 10, 0.0, 1.0) * clamp((1.0 - footprintOneHitProba) * 10, 0.0, 1.0);
+	// soft if 
+	// TODO: uniform to switch between soft and hard
+	vec3 binomialSmoothWidth = 0.1 * clamp(footprintOneHitProba * 10, 0.0, 1.0) * clamp((1.0 - footprintOneHitProba) * 10, 0.0, 1.0); // vec3(0.0)
 
 	// Generate numbers of reflecting microfacets
 	float result0, result1, result2;
@@ -560,7 +562,7 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	vec3 tetraA, tetraB, tetraC, tetraD;
 	GetAnisoCorrectingGridTetrahedron(centerSpecialCase, thetaBinLerp, ratioLerp, lodLerp, tetraA, tetraB, tetraC, tetraD);
 	// ! This is very important to avoid artifacts
-	// ? Why?
+	// ? Why? because in the center case the ground pentagon loses one vertex
 	if (centerSpecialCase == true) // Account for center singularity in barycentric computation
 		thetaBinLerp = Remap01To(thetaBinLerp, 0.0, ratioLerp);
 	vec4 tetraBarycentricWeights = GetBarycentricWeightsTetrahedron(vec3(thetaBinLerp, ratioLerp, lodLerp), tetraA, tetraB, tetraC, tetraD); // Compute barycentric coordinates within chosen tetrahedron
@@ -586,7 +588,6 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	ivec3 iTetraB = ivec3(tetraB);
 	ivec3 iTetraC = ivec3(tetraC);
 	ivec3 iTetraD = ivec3(tetraD);
-	// TODO: Implement this
 	if (centerSpecialCase == true) // Account for center singularity (if center vertex => no rotation)
 	{
 		iTetraA.x = (iTetraA.y == 0) ? 3 : iTetraA.x;

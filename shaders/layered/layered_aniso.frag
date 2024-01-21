@@ -70,7 +70,7 @@ void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SI
     for(int i = 0; i < int(_layerCount); i++) {
         _layerEta[i+1] = getLayerEta(i);
         _layerKappa[i+1] = getLayerKappa(i);
-        _layerAlpha[i+1] = getLayerAlpha(i);
+        _layerAlpha[i+1] = clamp(getLayerAlpha(i), 0.0001, 1);
         _layerDepth[i+1] = getLayerDepth(i);
         _layerSigmaA[i+1] = getLayerSigmaA(i);
         _layerSigmaS[i+1] = getLayerSigmaS(i);
@@ -360,15 +360,17 @@ void main() {
     float debug_G[MAX_LAYERS];
 
     for(int i = 0; i < int(valid_lobes); i++){
-        vec2 alpha = varianceToRoughness(lobes[i].variance);
-        
-        float G =  G2_ggx_aniso(V, L, alpha.x, alpha.y);
-        float D = D_ggx_aniso(H, alpha.x, alpha.y);
+        if(!isZero(lobes[i].energy)){
+            vec2 alpha = varianceToRoughness(lobes[i].variance);
+            
+            float G =  G2_ggx_aniso(V, L, alpha.x, alpha.y);
+            float D = D_ggx_aniso(H, alpha.x, alpha.y);
 
-        BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
+            BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
 
-        debug_D[i] = D;
-        debug_G[i] = G;
+            debug_D[i] = D;
+            debug_G[i] = G;
+        }
     }
 
     vec3 lighting = BRDF * uLightColor * NdotL;

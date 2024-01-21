@@ -333,7 +333,7 @@ void main() {
     // H is the half vector between L and V
     vec3 H = normalize(V + L);
 
-    float cosThetaI = max(dot(N, L), 0.0);
+    float cosThetaI = max(dot(H, L), 0.0);
 
     BsdfLobe lobes[MAX_LAYERS]; 
     uint valid_lobes = 0u;

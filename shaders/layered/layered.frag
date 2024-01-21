@@ -9,15 +9,12 @@ in VertexData {
 };
 out vec3 fragColor;
 
-#define MAX_LAYERS 4
-#define LAYER_ARRAY_SIZE 5
+float debugX = 0.0;
 
 #include "layered/common.glsl"
 #include "shared/uniforms.glsl"
 #include "shared/debug.glsl"
 #include "shared/tangentspace.glsl"
-
-float debugX = 0.0;
 
 /*
 * Implementation of
@@ -54,7 +51,7 @@ float getLayerG(int layerIndex){
     return uLayerG[layerIndex/4][layerIndex%4];
 }
 
-void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SIZE], out vec3 _layerKappa[LAYER_ARRAY_SIZE], out float _layerAlpha[LAYER_ARRAY_SIZE], out float _layerDepth[LAYER_ARRAY_SIZE], out vec3 _layerSigmaA[LAYER_ARRAY_SIZE], out vec3 _layerSigmaS[LAYER_ARRAY_SIZE], out float _layerG[LAYER_ARRAY_SIZE]){
+void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[MAX_LAYERS + 1], out vec3 _layerKappa[MAX_LAYERS + 1], out float _layerAlpha[MAX_LAYERS + 1], out float _layerDepth[MAX_LAYERS + 1], out vec3 _layerSigmaA[MAX_LAYERS + 1], out vec3 _layerSigmaS[MAX_LAYERS + 1], out float _layerG[MAX_LAYERS + 1]){
     //air layer
     _layerEta[0] = vec3(1.0);
     _layerKappa[0] = vec3(0.0);
@@ -112,7 +109,7 @@ struct BsdfLobe {
  * @param BsdfLobe
  * @param valid_lobes
  */
-void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[LAYER_ARRAY_SIZE], vec3 layerKappa[LAYER_ARRAY_SIZE], float layerAlpha[LAYER_ARRAY_SIZE], float layerDepth[LAYER_ARRAY_SIZE], vec3 layerSigmaA[LAYER_ARRAY_SIZE], vec3 layerSigmaS[LAYER_ARRAY_SIZE], float layerG[LAYER_ARRAY_SIZE], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
+void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS + 1], vec3 layerKappa[MAX_LAYERS + 1], float layerAlpha[MAX_LAYERS + 1], float layerDepth[MAX_LAYERS + 1], vec3 layerSigmaA[MAX_LAYERS + 1], vec3 layerSigmaS[MAX_LAYERS + 1], float layerG[MAX_LAYERS + 1], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
     valid_lobes = 0u;
     
     float cosTheta_I = cosThetaI; //incident
@@ -336,13 +333,13 @@ void main() {
     BsdfLobe lobes[MAX_LAYERS]; 
     uint valid_lobes = 0u;
 
-    vec3 layerEta[LAYER_ARRAY_SIZE];
-    vec3 layerKappa[LAYER_ARRAY_SIZE];
-    float layerAlpha[LAYER_ARRAY_SIZE];
-    float layerDepth[LAYER_ARRAY_SIZE];
-    vec3 layerSigmaA[LAYER_ARRAY_SIZE];
-    vec3 layerSigmaS[LAYER_ARRAY_SIZE];
-    float layerG[LAYER_ARRAY_SIZE];
+    vec3 layerEta[MAX_LAYERS + 1];
+    vec3 layerKappa[MAX_LAYERS + 1];
+    float layerAlpha[MAX_LAYERS + 1];
+    float layerDepth[MAX_LAYERS + 1];
+    vec3 layerSigmaA[MAX_LAYERS + 1];
+    vec3 layerSigmaS[MAX_LAYERS + 1];
+    float layerG[MAX_LAYERS + 1];
 
     fillLayerMaterialArrays(uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
 
@@ -352,8 +349,6 @@ void main() {
     vec3 BRDF = vec3(0.0);
     float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
-    float NdotH = max(dot(N, H), 0.0);
-    float HdotV = max(dot(H, V), 0.0);
     float debug_D[MAX_LAYERS];
     float debug_G[MAX_LAYERS];
 

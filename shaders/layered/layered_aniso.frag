@@ -9,21 +9,18 @@ in VertexData {
 };
 out vec3 fragColor;
 
-#define MAX_LAYERS 4
-#define LAYER_ARRAY_SIZE 5
+float debugX = 0.0;
 
 #include "layered/common.glsl"
 #include "shared/uniforms.glsl"
 #include "shared/debug.glsl"
 #include "shared/tangentspace.glsl"
 
-float debugX = 0.0;
-
 /*
 * Implementation of
-* Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
+* [1] Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
 * and
-* Weier, Philippe, and Laurent Belcour. "Rendering layered materials with anisotropic interfaces." Journal of Computer Graphics Techniques (JCGT) 9.2 (2020): 20.
+* [2] Weier, Philippe, and Laurent Belcour. "Rendering layered materials with anisotropic interfaces." Journal of Computer Graphics Techniques (JCGT) 9.2 (2020): 20.
 */
 
 /////////// helper functions ///////////
@@ -56,7 +53,7 @@ float getLayerG(int layerIndex){
     return uLayerG[layerIndex/4][layerIndex%4];
 }
 
-void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[LAYER_ARRAY_SIZE], out vec3 _layerKappa[LAYER_ARRAY_SIZE], out vec2 _layerAlpha[LAYER_ARRAY_SIZE], out float _layerDepth[LAYER_ARRAY_SIZE], out vec3 _layerSigmaA[LAYER_ARRAY_SIZE], out vec3 _layerSigmaS[LAYER_ARRAY_SIZE], out float _layerG[LAYER_ARRAY_SIZE]){
+void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[MAX_LAYERS + 1], out vec3 _layerKappa[MAX_LAYERS + 1], out vec2 _layerAlpha[MAX_LAYERS + 1], out float _layerDepth[MAX_LAYERS + 1], out vec3 _layerSigmaA[MAX_LAYERS + 1], out vec3 _layerSigmaS[MAX_LAYERS + 1], out float _layerG[MAX_LAYERS + 1]){
     //air layer
     _layerEta[0] = vec3(1.0);
     _layerKappa[0] = vec3(0.0);
@@ -97,7 +94,7 @@ struct BsdfLobe {
 
 /**
  * Adding Doubling Algorithm
- * section 5 of the paper
+ * section 5 of the paper [1]
  * implementation without doubling
  *
  * @param N
@@ -114,13 +111,13 @@ struct BsdfLobe {
  * @param BsdfLobe
  * @param valid_lobes
  */
-void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[LAYER_ARRAY_SIZE], vec3 layerKappa[LAYER_ARRAY_SIZE], vec2 layerAlpha[LAYER_ARRAY_SIZE], float layerDepth[LAYER_ARRAY_SIZE], vec3 layerSigmaA[LAYER_ARRAY_SIZE], vec3 layerSigmaS[LAYER_ARRAY_SIZE], float layerG[LAYER_ARRAY_SIZE], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
+void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS + 1], vec3 layerKappa[MAX_LAYERS + 1], vec2 layerAlpha[MAX_LAYERS + 1], float layerDepth[MAX_LAYERS + 1], vec3 layerSigmaA[MAX_LAYERS + 1], vec3 layerSigmaS[MAX_LAYERS + 1], float layerG[MAX_LAYERS + 1], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
     valid_lobes = 0u;
     
     float cosTheta_I = cosThetaI; //incident
     float cosTheta_T; //transmitted
 
-    //start values for global variables (from paper page 8 paragraph Adding-Doubling)
+    //start values for global variables (from paper [1] page 8 paragraph Adding-Doubling)
     // 0 = top surface / stack of layers to layer i  |  i = current layer
     //energy
     vec3 energy_reflected_0i = vec3(0.0);
@@ -173,16 +170,16 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
             //mean doesn't change
             cosTheta_T = cosTheta_I;
 
-            /* volume absorption and scattering, from the paper Section 4.3 and 4.4*/
+            /* volume absorption and scattering, from the paper [1] Section 4.3 and 4.4*/
             //energy
             vec3 sigma_t = sigma_a + sigma_s;
-            energy_transmitted_12 = (vec3(1.0) + (sigma_s * depth) / cosTheta_T) * exp(-(sigma_t * depth) / cosTheta_T); //from paper, equation 15 and 22
+            energy_transmitted_12 = (vec3(1.0) + (sigma_s * depth) / cosTheta_T) * exp(-(sigma_t * depth) / cosTheta_T); //from paper [1], equation 15 and 22
             energy_transmitted_21 = energy_transmitted_12;
             //variance
-            sigma_transmitted_12 = vec2(gToVariance(g) * average(sigma_s)/average(sigma_t)); //from paper, equation 24
+            sigma_transmitted_12 = vec2(gToVariance(g) * average(sigma_s)/average(sigma_t)); //from paper [1], equation 24
             sigma_transmitted_21 = sigma_transmitted_12;
         }else{
-            /* off-specular transmission, from the paper Section 4.2 */
+            /* off-specular transmission, from the paper [1] Section 4.2 */
             float sinTheta_I = sqrt(1.0 - pow(cosTheta_I,2));
             float sinTheta_T = sinTheta_I / n12;
             if(sinTheta_T <= 1.0){
@@ -192,35 +189,35 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
             }
 
             /* reflectance and transmittance terms for variance */
-            sigma_reflected_12 = roughnessToVariance(alpha); //from paper section 4.1
+            sigma_reflected_12 = roughnessToVariance(alpha); //from paper [1] section 4.1
             sigma_reflected_21 = sigma_reflected_12;
 
             //transmissive if not a conductor or total reflection
             bool transmissive = cosTheta_T > 0.0 && isZero(kappaT);
             if(transmissive){
-                //from paper section 4.3, equation 13
-                //TODO: check if equation from paper or equation from supplemental code works better
+                //from paper [1] section 4.3, equation 13
+                //TODO: check if equation from paper [1] or equation from supplemental code works better
                 sigma_transmitted_12 = roughnessToVariance(alpha * s(n12, cosTheta_I, cosTheta_T));
                 sigma_transmitted_21 = roughnessToVariance(alpha * s(1.0/n12, cosTheta_T, cosTheta_I));
                 
                 //sigma_transmitted_12 = roughnessToVariance(alpha * 0.5f * abs(n12 - 1.0)/(n12));
                 //sigma_transmitted_21 = roughnessToVariance(alpha * 0.5f * abs(1.0/n12 - 1.0)/(1.0/n12));
                 
-                //from paper supplemental code, layered_forward.cpp line 171
+                //from paper [1] supplemental code, layered_forward.cpp line 171
                 J12 = (cosTheta_T/cosTheta_I) * n12;
                 J21 = (cosTheta_I/cosTheta_T) / n12;
             }
 
             /* reflectance and transmittance terms for energy */
             //evaluate FGD using modified roughness accounting for top layers
-            vec2 alpha_r = varianceToRoughness(sigma_transmitted_0i + sigma_reflected_12); //from paper section 4.1, equation 9
-            //vec3 FGD = evalFGD(N, L, V, alpha_r, etaI, kappaI, etaT, kappaT); //from paper section 4.1, equation 2
+            vec2 alpha_r = varianceToRoughness(sigma_transmitted_0i + sigma_reflected_12); //from paper [1] section 4.1, equation 9
+            //vec3 FGD = evalFGD(N, L, V, alpha_r, etaI, kappaI, etaT, kappaT); //from paper [1] section 4.1, equation 2
             vec3 FGD = evalFresnel(cosTheta_I, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
-            energy_reflected_12 = FGD; //from paper section 4.1, equation 7 / section 5.1
-            energy_transmitted_12 = 1.0 - FGD; //from paper section 4.2, equation 11 / section 5.1
+            energy_reflected_12 = FGD; //from paper [1] section 4.1, equation 7 / section 5.1
+            energy_transmitted_12 = 1.0 - FGD; //from paper [1] section 4.2, equation 11 / section 5.1
             if(transmissive){
-                energy_reflected_21 = energy_reflected_12; //from paper section 5.1
-                energy_transmitted_21 = energy_transmitted_12; //from paper section 5.1
+                energy_reflected_21 = energy_reflected_12; //from paper [1] section 5.1
+                energy_transmitted_21 = energy_transmitted_12; //from paper [1] section 5.1
             }else{
                 energy_reflected_21 = vec3(0.0);
                 energy_transmitted_21 = vec3(0.0);
@@ -240,10 +237,10 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         vec3 Rr = vec3(0.0);
         vec3 denom = vec3(1.0) - energy_reflected_12 * energy_reflected_i0; 
         if(average(denom) > 0.0){
-            r0i = (energy_transmitted_0i * energy_reflected_12 * energy_transmitted_i0) / denom; //from paper section 5.1, equation 28
-            ri0 = (energy_transmitted_21 * energy_reflected_i0 * energy_transmitted_12) / denom; //from paper section 5.1, equation 30
-            t0i = (energy_transmitted_0i * energy_transmitted_12) / denom; //from paper section 5.1, equation 31
-            ti0 = (energy_transmitted_21 * energy_transmitted_i0) / denom; //from paper section 5.1, equation 29
+            r0i = (energy_transmitted_0i * energy_reflected_12 * energy_transmitted_i0) / denom; //from paper [1] section 5.1, equation 28
+            ri0 = (energy_transmitted_21 * energy_reflected_i0 * energy_transmitted_12) / denom; //from paper [1] section 5.1, equation 30
+            t0i = (energy_transmitted_0i * energy_transmitted_12) / denom; //from paper [1] section 5.1, equation 31
+            ti0 = (energy_transmitted_21 * energy_transmitted_i0) / denom; //from paper [1] section 5.1, equation 29
             Rr = (energy_reflected_12 * energy_reflected_i0) / denom;
         }
 
@@ -261,10 +258,10 @@ void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, ve
         
 
         //multiple scattering equations on variances
-        vec2 sigma_r0i = avg_energy_reflected_0i * sigma_reflected_0i + avg_r0i * (sigma_transmitted_i0 + sigma_transmitted_0i + Ji0 * (sigma_reflected_12 + avg_Rr * sigma_reflected_i0)); //from paper equation 38
-        vec2 sigma_t0i = J12 * sigma_transmitted_0i + sigma_transmitted_12 + J12 * (sigma_reflected_12 + sigma_reflected_i0) * avg_Rr; //from paper equation 49
-        vec2 sigma_ri0 = avg_energy_reflected_21 * sigma_reflected_21 + avg_ri0 * (sigma_transmitted_12 + J12 * (sigma_transmitted_21 + sigma_reflected_i0 + avg_Rr * (sigma_reflected_12 + sigma_reflected_i0))); //from paper equation 51
-        vec2 sigma_ti0 = Ji0 * sigma_transmitted_21 + sigma_transmitted_i0 + Ji0 * (sigma_reflected_12 + sigma_reflected_i0) * avg_Rr; //from paper equation 50
+        vec2 sigma_r0i = avg_energy_reflected_0i * sigma_reflected_0i + avg_r0i * (sigma_transmitted_i0 + sigma_transmitted_0i + Ji0 * (sigma_reflected_12 + avg_Rr * sigma_reflected_i0)); //from paper [1] equation 38
+        vec2 sigma_t0i = J12 * sigma_transmitted_0i + sigma_transmitted_12 + J12 * (sigma_reflected_12 + sigma_reflected_i0) * avg_Rr; //from paper [1] equation 49
+        vec2 sigma_ri0 = avg_energy_reflected_21 * sigma_reflected_21 + avg_ri0 * (sigma_transmitted_12 + J12 * (sigma_transmitted_21 + sigma_reflected_i0 + avg_Rr * (sigma_reflected_12 + sigma_reflected_i0))); //from paper [1] equation 51
+        vec2 sigma_ti0 = Ji0 * sigma_transmitted_21 + sigma_transmitted_i0 + Ji0 * (sigma_reflected_12 + sigma_reflected_i0) * avg_Rr; //from paper [1] equation 50
         //normalize
         if(avg_e_R0i > 0.0){
             sigma_r0i = sigma_r0i/avg_e_R0i;
@@ -338,13 +335,13 @@ void main() {
     BsdfLobe lobes[MAX_LAYERS]; 
     uint valid_lobes = 0u;
 
-    vec3 layerEta[LAYER_ARRAY_SIZE];
-    vec3 layerKappa[LAYER_ARRAY_SIZE];
-    vec2 layerAlpha[LAYER_ARRAY_SIZE];
-    float layerDepth[LAYER_ARRAY_SIZE];
-    vec3 layerSigmaA[LAYER_ARRAY_SIZE];
-    vec3 layerSigmaS[LAYER_ARRAY_SIZE];
-    float layerG[LAYER_ARRAY_SIZE];
+    vec3 layerEta[MAX_LAYERS + 1];
+    vec3 layerKappa[MAX_LAYERS + 1];
+    vec2 layerAlpha[MAX_LAYERS + 1];
+    float layerDepth[MAX_LAYERS + 1];
+    vec3 layerSigmaA[MAX_LAYERS + 1];
+    vec3 layerSigmaS[MAX_LAYERS + 1];
+    float layerG[MAX_LAYERS + 1];
 
     fillLayerMaterialArrays(uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
 
@@ -354,8 +351,6 @@ void main() {
     vec3 BRDF = vec3(0.0);
     float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
-    float NdotH = max(dot(N, H), 0.0);
-    float HdotV = max(dot(H, V), 0.0);
     float debug_D[MAX_LAYERS];
     float debug_G[MAX_LAYERS];
 

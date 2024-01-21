@@ -2,10 +2,14 @@
 
 /*
 * Common functions for the implementation of
-* Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
+* [1] Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
+* and
+* [2] Weier, Philippe, and Laurent Belcour. "Rendering layered materials with anisotropic interfaces." Journal of Computer Graphics Techniques (JCGT) 9.2 (2020): 20.
 */
 
 #include "shared/ggx.glsl"
+
+#define USE_NEW_MAPPING 1
 
 /**
  * check if vec3 == vec3(0.0)
@@ -21,17 +25,26 @@ float average(vec3 v){
     return (v.x + v.y + v.z)/3;
 }
 
+#define CONST_A 1.28809776
+#define CONST_B 1.31699416
+
 /**
  * mapping from roughness to linear variance
- * equation 6 from paper
  * 
  * @param a roughness alpha
  * @return linear variance sigma
  */
 float roughnessToVariance(float a){
-    a = clamp(a, 0.0, 0.99999);
-    float a11 = pow(a, 1.1);
-    return a11 / (1.0 - a11);
+    #if USE_NEW_MAPPING
+        /* improved mapping from paper [2] section 3.3 */
+        float aPow = clamp(pow(a, CONST_A), 0.0, 0.99999);
+        return log(1.0 + (CONST_B * aPow) / (1.0 - aPow));
+    #else
+        /* equation 6 from paper [1] */
+        a = clamp(a, 0.0, 0.99999);
+        float a11 = pow(a, 1.1);
+        return a11 / (1.0 - a11);
+    #endif
 }
 
 /**
@@ -43,13 +56,19 @@ float roughnessToVariance(float a){
 
 /**
  * mapping from linear variance to roughness
- * equation 6 from paper
  * 
  * @param sigma linear variance
  * @return roughness alpha
  */
 float varianceToRoughness(float sigma){
-    return pow((sigma / (1.0 + sigma)),(1.0/1.1));
+    #if USE_NEW_MAPPING
+        /* improved mapping from paper [2] section 3.3 */
+        float c = exp(sigma) - 1.0;
+        return pow(c / (c + CONST_B), (1.0 / CONST_A));
+    #else
+        /* equation 6 from paper [1] */
+        return pow((sigma / (1.0 + sigma)),(1.0/1.1));
+    #endif
 }
 
 /**
@@ -61,7 +80,7 @@ float varianceToRoughness(float sigma){
 
 /**
  * roughness scale factor for fake transmission
- * equation 10 from paper
+ * equation 10 from paper [1]
  * 
  * @param n12 = n1 / n2 IOR
  * @param NdotL
@@ -74,7 +93,7 @@ float s(float n12, float cosTheta_I, float cosTheta_T){
 
 /**
  * mapping from Henyey-Greenstein's anisotropy factor g to variance
- * equation 21 from paper
+ * equation 21 from paper [1]
  * 
  * @param g HG's anisotropy factor
  * @return variance sigma_g
@@ -245,7 +264,7 @@ vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 e
     //microfacet distribution term
     float D = D_ggx(NdotH, alpha);
 
-    //equation 2 from paper
+    //equation 2 from paper [1]
     FGD = F * G * D * NdotL;
     float denom = 4.0 * NdotL * NdotV + 0.0001;
     FGD = FGD / denom;

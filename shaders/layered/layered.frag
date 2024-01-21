@@ -360,11 +360,9 @@ void main() {
     for(int i = 0; i < int(valid_lobes); i++){
         if(!isZero(lobes[i].energy)){
             float alpha = varianceToRoughness(lobes[i].variance);
-            // Remap roughness
-            float k = k_direct(alpha);
 
-            float G =  G_smith_ggx(NdotV, NdotL, k);
-            float D = D_ggx(NdotH, alpha);
+            float G =  G2_ggx_aniso(V, L, alpha, alpha);
+            float D = D_ggx_aniso(H, alpha, alpha);
 
             BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
 

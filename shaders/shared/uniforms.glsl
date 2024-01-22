@@ -1,6 +1,8 @@
 #line 2 111
 #define MAX_LAYERS 4
 
+uniform samplerCube cubemap;
+
 /**
  * UB0 binds at index 0 and stores information about the scene that is only uploaded once per frame
  */
@@ -12,6 +14,7 @@ layout(std140) uniform UB0 {
     vec3 uLightColor;
     float uAmbientStrength;
     vec3 uCameraPosition;
+    bool uUseCubemap;
     mat3 uCameraRotation;
 };
 

@@ -5,6 +5,7 @@
 #include "framework/gl/mesh.hpp"
 #include "framework/gl/program.hpp"
 #include "framework/gl/uniformbuffer.hpp"
+#include "scene/cubemap.hpp"
 #include "scene/object.hpp"
 #include "scene/ub0.hpp"
 #include "scene/ub1.hpp"
@@ -28,6 +29,7 @@ class MainApp : public App {
     UB0 scene;
     UniformBuffer<UB0> ub0;
     UniformBuffer<UB1> ub1;
+    Cubemap cubemap;
     Mesh fullscreenTriangle;
     Program backgroundShader;
     std::vector<Object> objects;

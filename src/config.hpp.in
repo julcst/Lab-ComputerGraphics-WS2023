@@ -17,6 +17,7 @@ namespace Config {
 const std::string SHADER_DIR = "shaders/";
 const std::string MODEL_DIR = "models/";
 const std::string MATERIAL_DIR = "materials/";
+const std::string CUBEMAP_DIR = "cubemaps/";
 const std::string SCENE_DIR = APP_DIR + "scenes/";
 
 #ifndef NDEBUG
@@ -29,6 +30,7 @@ const std::vector<std::string> MODEL_FILES = {@MODEL_FILES@};
 const std::vector<std::string> SHADER_FILES = {"shared/debug.frag", "shared/lambert.frag", "shared/ggx.frag", "shared/ggx_aniso.frag", "glints/glints.frag", "glints/reference.frag", "layered/layered.frag", "layered/layered_aniso.frag"};
 enum class ShaderType : unsigned int { DEBUG, LAMBERT, GGX, GGX_ANISO, GLINTS, GLINTS_REF, LAYER, LAYER_ANISO};
 const std::vector<std::string> MATERIAL_FILES = {@MATERIAL_FILES@};
+const std::vector<std::string> CUBEMAP_NAMES = {@CUBEMAP_NAMES@};
 
 const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "off",              // 0

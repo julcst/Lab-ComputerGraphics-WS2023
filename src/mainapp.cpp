@@ -20,6 +20,7 @@
 #include "framework/gl/program.hpp"
 #include "framework/gl/uniformbuffer.hpp"
 #include "framework/common.hpp"
+#include "scene/cubemap.hpp"
 #include "scene/object.hpp"
 #include "scene/ub0.hpp"
 #include "scene/ub1.hpp"
@@ -82,6 +83,8 @@ void MainApp::render() {
     scene.cameraPosition = cam.getPosition();
     ub0.upload(scene);
 
+    cubemap.bind();
+
     glClear(GL_DEPTH_BUFFER_BIT);
 
     glDepthMask(GL_FALSE);
@@ -131,6 +134,14 @@ void MainApp::buildImGui() {
         ImGui::EndPopup();
     }
     if (ImGui::Button("Clear")) objects.clear();
+    ImGui::Separator();
+    ImGui::Checkbox("Use Cubemap", reinterpret_cast<bool*>(&scene.useCubemap));
+    if(scene.useCubemap){
+        if (Util::combo("Cubemap", &cubemap.id, Config::CUBEMAP_NAMES)) {
+            std::string cubemapName = Config::CUBEMAP_NAMES[cubemap.id];
+            cubemap.load(cubemapName);
+        }
+    }
     ImGui::Separator();
     if (ImGui::Button("Add Object")) {
         Object newObject;

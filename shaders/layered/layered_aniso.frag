@@ -15,6 +15,7 @@ float debugX = 0.0;
 #include "shared/uniforms.glsl"
 #include "shared/debug.glsl"
 #include "shared/tangentspace.glsl"
+#include "shared/lowdiscrepancysequence.glsl"
 
 /*
 * Implementation of
@@ -321,16 +322,21 @@ void main() {
 
     mat3 worldToTangent = calcWorldToTangentMatrix(worldNormal, worldTangent);
 
+    // Normal vector in world space
+    vec3 N_world = worldNormal;
     // Normal vector in tangent space
-    vec3 N = vec3(0.0, 0.0, 1.0);
+    vec3 N_local = vec3(0.0, 0.0, 1.0);
+    //View vector in world space
+    vec3 V_world = normalize(uCameraPosition - worldPosition);
     // View vector in tangent space
-    vec3 V = worldToTangent * normalize(uCameraPosition - worldPosition);
+    vec3 V_local = worldToTangent * V_world;
+    // Light vector in world space
+    vec3 L_world = uLightDir;
     // Light vector in tangent space
-    vec3 L = worldToTangent * uLightDir;
+    vec3 L_local = worldToTangent * L_world;
     // H is the half vector between L and V
-    vec3 H = normalize(V + L);
-
-    float cosThetaI = max(dot(H, L), 0.0);
+    vec3 H_world = normalize(V_world + L_world);
+    vec3 H_local = normalize(V_local + L_local);
 
     BsdfLobe lobes[MAX_LAYERS]; 
     uint valid_lobes = 0u;
@@ -345,33 +351,58 @@ void main() {
 
     fillLayerMaterialArrays(uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
 
-    addingDoubling(N, L, V, cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
+    float cosThetaI = max(dot(H_local, L_local), 0.0);
+    addingDoubling(N_local, L_local, V_local, cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
  
     //eval LayeredBRDF
-    vec3 BRDF = vec3(0.0);
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
+    vec3 I = vec3(0.0);
     float debug_D[MAX_LAYERS];
     float debug_G[MAX_LAYERS];
+    vec3 lighting = vec3(0.0);
 
-    for(int i = 0; i < int(valid_lobes); i++){
-        if(!isZero(lobes[i].energy)){
-            vec2 alpha = varianceToRoughness(lobes[i].variance);
-            
-            float G =  G2_ggx_aniso(V, L, alpha.x, alpha.y);
-            float D = D_ggx_aniso(H, alpha.x, alpha.y);
+    if(uUseCubemap){
+        for(uint s = 0u; s < uIBLSampleCount; s++){
+            vec2 U = hammersley(s, uIBLSampleCount);
+            for(int i = 0; i < int(valid_lobes); i++){
+                if(!isZero(lobes[i].energy)){
+                    vec2 alpha = varianceToRoughness(lobes[i].variance);
 
-            BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
+                    //implementation following Eric Heitz, Sampling the GGX Distribution of Visible Normals, Journal of Computer Graphics Techniques (JCGT), vol. 7, no. 4, 1-13, 2018
+                    H_local = sampleGGXVNDF(V_local, alpha.x, alpha.y, U.x, U.y);
+                    L_local = normalize(2.0 * dot(V_local, H_local) * H_local - V_local);
+                    L_world = transpose(worldToTangent) * L_local;
 
-            debug_D[i] = D;
-            debug_G[i] = G;
+                    vec3 lightSample = texture(cubemap, L_world).rgb;
+
+                    I += lightSample * ((lobes[i].energy * G2_ggx_aniso(V_local, L_local, alpha.x, alpha.y)) / G1_ggx_aniso(V_local, alpha.x, alpha.y));
+                }
+            }
         }
-    }
 
-    vec3 lighting = BRDF * uLightColor * NdotL;
+        lighting = (I/uIBLSampleCount);
+    } else {
+        float NdotV = max(dot(N_local, V_local), 0.0);
+        float NdotL = max(dot(N_local, L_local), 0.0);
+        for(int i = 0; i < int(valid_lobes); i++){
+            if(!isZero(lobes[i].energy)){
+                vec2 alpha = varianceToRoughness(lobes[i].variance);
+                
+                float G =  G2_ggx_aniso(V_local, L_local, alpha.x, alpha.y);
+                float D = D_ggx_aniso(H_local, alpha.x, alpha.y);
+
+                I += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
+
+                debug_D[i] = D;
+                debug_G[i] = G;
+            }
+        }
+
+        lighting = I * uLightColor * NdotL;
+    }
+    
 
     RENDER_VIEW(lighting);
-    DEBUG_VIEW(1, BRDF);
+    DEBUG_VIEW(1, I);
 
     DEBUG_VIEW(2, lobes[0].energy);
     DEBUG_VIEW(3, vec3(debug_D[0]));

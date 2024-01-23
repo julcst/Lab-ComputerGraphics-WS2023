@@ -145,6 +145,7 @@ set(SHADERS
     shaders/shared/ggx.frag
     shaders/shared/ggx.glsl
     shaders/shared/lambert.frag
+    shaders/shared/lowdiscrepancysequence.glsl
     shaders/shared/projection.vert
     shaders/shared/screen.vert
     shaders/shared/tangentspace.glsl

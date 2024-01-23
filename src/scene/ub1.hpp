@@ -39,7 +39,8 @@ struct UB1 {
 
 // Location 11
     unsigned int layerCount = 0;
-    glm::vec3 padding2 = glm::vec3(0.0f);
+    unsigned int iblSampleCount = 8;
+    glm::vec2 padding = glm::vec2(0.0f);
 
 // Location 12-...
     glm::vec4 layerEta[Config::MAX_LAYERS];

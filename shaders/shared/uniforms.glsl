@@ -67,6 +67,7 @@ layout(std140) uniform UB1 {
 
 ////////// Layered parameters //////////
     uint uLayerCount;
+    uint uIBLSampleCount;
     vec4 uLayerEta[MAX_LAYERS];
     vec4 uLayerKappa[MAX_LAYERS];
     vec4 uLayerAlpha[MAX_LAYERS/4];

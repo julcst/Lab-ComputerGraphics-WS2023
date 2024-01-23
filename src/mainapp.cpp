@@ -262,6 +262,8 @@ void MainApp::buildImGui() {
             }
             ImGui::Separator();
             Util::combo("Debug mode", &obj.material.debug, Config::LAYERED_ANISO_DEBUG_MODES);
+            ImGui::Separator();
+            ImGui::SliderInt("IBL Sample Count", (int*)&obj.material.iblSampleCount, 1, 512);
         }
         ImGui::Separator();
         if (ImGui::Button("Destroy")) {

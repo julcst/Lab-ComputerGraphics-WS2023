@@ -1,6 +1,8 @@
 #line 2 111
 #define MAX_LAYERS 4
 
+uniform samplerCube cubemap;
+
 /**
  * UB0 binds at index 0 and stores information about the scene that is only uploaded once per frame
  */
@@ -12,6 +14,7 @@ layout(std140) uniform UB0 {
     vec3 uLightColor;
     float uAmbientStrength;
     vec3 uCameraPosition;
+    bool uUseCubemap;
     mat3 uCameraRotation;
 };
 
@@ -64,6 +67,7 @@ layout(std140) uniform UB1 {
 
 ////////// Layered parameters //////////
     uint uLayerCount;
+    uint uIBLSampleCount;
     vec4 uLayerEta[MAX_LAYERS];
     vec4 uLayerKappa[MAX_LAYERS];
     vec4 uLayerAlpha[MAX_LAYERS/4];
@@ -71,4 +75,6 @@ layout(std140) uniform UB1 {
     vec4 uLayerSigmaA[MAX_LAYERS];
     vec4 uLayerSigmaS[MAX_LAYERS];
     vec4 uLayerG[MAX_LAYERS/4];
+    vec4 uLayerAlphaX[MAX_LAYERS/4];
+    vec4 uLayerAlphaY[MAX_LAYERS/4];
 };

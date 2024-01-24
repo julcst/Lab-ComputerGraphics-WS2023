@@ -153,6 +153,10 @@ float G2_ggx_aniso(vec3 V, vec3 L, float alphaX, float alphaY) {
 return 1 / (1 + Lambda_ggx(V, alphaX, alphaY) + Lambda_ggx(L, alphaX, alphaY));
 }
 
+float G1_ggx_aniso(vec3 V, float alphaX, float alphaY) {
+    return 1 / (1 + Lambda_ggx(V, alphaX, alphaY));
+}
+
 /**
  * Anisotropic GGX BRDF
  * @param N Surface normal in tangent space
@@ -179,4 +183,37 @@ vec3 BRDF_ggx_aniso(vec3 N, vec3 L, vec3 V, vec3 albedo, float metallic, float a
     vec3 diffuse = diffuse(F, albedo, metallic);
 
     return specular + diffuse;
+}
+
+/*
+ * GGX sampling from 
+ * Eric Heitz, Sampling the GGX Distribution of Visible Normals, Journal of Computer Graphics Techniques (JCGT), vol. 7, no. 4, 1-13, 2018
+ *
+ * @param V View direction
+ * @param alphaX rouhgness
+ * @param alphaY rouhgness
+ * @param U1 random number
+ * @param U2 random number
+ * @return normal sampled with PDF D_V(Ne) = G1(V) * max(0, dot(V, Ne)) * D(Ne) / V.z
+ */
+vec3 sampleGGXVNDF(vec3 V, float alphaX, float alphaY, float U1, float U2)
+{
+	// Section 3.2: transforming the view direction to the hemisphere configuration
+	vec3 Vh = normalize(vec3(alphaX * V.x, alphaY * V.y, V.z));
+	// Section 4.1: orthonormal basis (with special case if cross product is zero)
+	float lensq = Vh.x * Vh.x + Vh.y * Vh.y;
+	vec3 T1 = lensq > 0 ? vec3(-Vh.y, Vh.x, 0) / sqrt(lensq) : vec3(1,0,0);
+	vec3 T2 = cross(Vh, T1);
+	// Section 4.2: parameterization of the projected area
+	float r = sqrt(U1);	
+	float phi = 2.0 * PI * U2;	
+	float t1 = r * cos(phi);
+	float t2 = r * sin(phi);
+	float s = 0.5 * (1.0 + Vh.z);
+	t2 = (1.0 - s)*sqrt(1.0 - t1*t1) + s*t2;
+	// Section 4.3: reprojection onto hemisphere
+	vec3 Nh = t1*T1 + t2*T2 + sqrt(max(0.0, 1.0 - t1*t1 - t2*t2))*Vh;
+	// Section 3.4: transforming the normal back to the ellipsoid configuration
+	vec3 Ne = normalize(vec3(alphaX * Nh.x, alphaY * Nh.y, max(0.0, Nh.z)));	
+	return Ne;
 }

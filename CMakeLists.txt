@@ -86,6 +86,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
+#stb_image
+FetchContent_Declare(
+    stb_image
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG master
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+)
+FetchContent_MakeAvailable(stb_image)
+add_library(stb_image INTERFACE)
+target_include_directories(stb_image INTERFACE ${stb_image_SOURCE_DIR})
+
 
 ####################################################################
 # Source files
@@ -93,6 +105,7 @@ set(SRC
     src/main.cpp
     src/mainapp.cpp
     src/util.cpp
+    src/scene/cubemap.cpp
     src/scene/object.cpp
     src/framework/app.cpp
     src/framework/camera.cpp
@@ -123,6 +136,8 @@ set(SHADERS
     shaders/glints/reference.glsl
     shaders/glints/tetra.glsl
     shaders/layered/layered.frag
+    shaders/layered/common.glsl
+    shaders/layered/layered_aniso.frag
     shaders/shared/background.frag
     shaders/shared/debug.frag
     shaders/shared/debug.glsl
@@ -130,6 +145,7 @@ set(SHADERS
     shaders/shared/ggx.frag
     shaders/shared/ggx.glsl
     shaders/shared/lambert.frag
+    shaders/shared/lowdiscrepancysequence.glsl
     shaders/shared/projection.vert
     shaders/shared/screen.vert
     shaders/shared/tangentspace.glsl
@@ -156,6 +172,9 @@ set(MATERIALS
     materials/two_layers.material
     materials/volume_layer.material
 )
+set(CUBEMAPS
+    cubemaps/studio
+)
 set(ICON
     icons/AppIcon.icns
 )
@@ -171,7 +190,7 @@ add_executable(${PROJECT_NAME}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE})
 
-target_link_libraries(${PROJECT_NAME} glad glfw glm imgui_glfw objgl nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} glad glfw glm imgui_glfw objgl nlohmann_json::nlohmann_json stb_image)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/src/)
 
 foreach(model ${MODELS})
@@ -179,6 +198,9 @@ foreach(model ${MODELS})
 endforeach()
 foreach(material ${MATERIALS})
     set(MATERIAL_FILES "${MATERIAL_FILES}\"${material}\",")
+endforeach()
+foreach(cubemap ${CUBEMAPS})
+    set(CUBEMAP_NAMES "${CUBEMAP_NAMES}\"${cubemap}\",")
 endforeach()
 configure_file("src/config.hpp.in" "src/config.hpp")
 

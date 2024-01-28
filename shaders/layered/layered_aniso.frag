@@ -372,7 +372,18 @@ void main() {
                     L_local = normalize(2.0 * dot(V_local, H_local) * H_local - V_local);
                     L_world = transpose(worldToTangent) * L_local;
 
-                    vec3 lightSample = texture(cubemap, L_world).rgb;
+
+                    //eval mipmap level (implementation following https://learnopengl.com/PBR/IBL/Specular-IBL)
+                    float D = D_ggx_aniso(H_local, alpha.x, alpha.y);
+                    float pdf = (D * dot(N_local, H_local) / (4.0 * dot(H_local, V_local))) + 0.0001; 
+
+                    ivec2 resolution = textureSize(cubemap, 0); // resolution of source cubemap (per face)
+                    float saTexel  = 4.0 * PI / (6.0 * resolution.x * resolution.y);
+                    float saSample = 1.0 / (float(uIBLSampleCount) * pdf + 0.0001);
+
+                    float mipLevel = 0.5 * log2(saSample / saTexel) + 1.0; 
+
+                    vec3 lightSample = textureLod(cubemap, L_world, mipLevel).rgb;
 
                     I += lightSample * ((lobes[i].energy * G2_ggx_aniso(V_local, L_local, alpha.x, alpha.y)) / G1_ggx_aniso(V_local, alpha.x, alpha.y));
                 }

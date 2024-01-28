@@ -69,6 +69,7 @@ MainApp::MainApp() :
 void MainApp::init() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS); 
     glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_NICEST);
     glCullFace(GL_BACK);
 }

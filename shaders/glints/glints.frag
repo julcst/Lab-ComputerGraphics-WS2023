@@ -15,6 +15,7 @@ out vec3 fragColor;
 #include "glints/glints.glsl"
 #line 17 204
 
+// ! TODO: This does not converge to GGX
 void main() {
     mat3 worldToTangent = calcWorldToTangentMatrix(worldNormal, worldTangent);
 

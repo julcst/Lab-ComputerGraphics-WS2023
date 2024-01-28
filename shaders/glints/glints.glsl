@@ -12,17 +12,21 @@
 #include "glints/tetra.glsl"
 #line 14 205
 
-// ! This is executed 4*3=12 times per pixel (for each vertex of the tetrahedron)
+// ! This is executed 4*3=12 times per pixel (for each corner of the uv triangle of the vertex of the tetrahedron)
 float sampleAngularBinom(float N, float pOneSuccess, float mu, float sigma, vec2 slope, vec2 rand) {
+    // Randomize the slope
     vec2 randomizedSlope = slope + rand * 4096;
-    vec2 slopeWeight = fract(randomizedSlope);
+
+    // Now discretize the slope plane into a grid and calculate the bilinear weights
     uvec2 slopeCoord = uvec2(floor(randomizedSlope));
+    vec2 slopeWeight = fract(randomizedSlope);
 
     // Draw 2 random numbers (A and B) per slope grid point
     vec4 randA = hash4f(uvec4(slopeCoord.xy, slopeCoord.yx + 4096U));
 	vec4 randB = hash4f(uvec4(slopeCoord.yx + 8192U, slopeCoord.xy + 16384U));
 
     // Sample the binomial distribution per slope grid point and interpolate bilinearly
+    // ! 4*3*4=48 binomial samples per pixel (once for each corner of the slope square per corner of the uv triangle of the vertex of the tetrahedron)
     float sample = bilinear(sampleBinom(N, pOneSuccess, mu, sigma, randA, randB), slopeWeight);
     return sample;
 }
@@ -57,7 +61,7 @@ GDEBUG_uvTriangles(weights);
     // NP is the number of discrete microfacets in the weighted pixel footprint per vertex
     vec3 NP = area * density * weight; // Multiply by weight (Distributed Binomial Law)
 
-    // Calculate pOneSuccess, mu and sigma per vertex
+    // Calculate pOneSuccess, mu and sigma per vertex to make the binomial distibution sampling step faster
     // The probability of having at least one success in a binomial distribution b(N,p)
     vec3 pOneSuccess = 1.0 - pow(vec3(1.0 - p), NP); // Equation (16)
     // Compute the parameters of the normal approximation of the binomial distribution for one less sample, b(N-1,p)
@@ -77,10 +81,8 @@ GDEBUG_uvTriangles(weights);
 
 // ! This is executed 4 times per pixel (for each vertex of the tetrahedron)
 float sampleGridPoint(uint seed, vec3 gridPoint, float weight, vec2 slope, vec2 uv, float targetD, float p) {
-    // The area of the fotprint represented by the gridPoint is anisotropy * minorLength^2
+    // The area of the footprint represented by the gridPoint is anisotropy * minorLength^2
     float area = gridPoint.y * gridPoint.z * gridPoint.z;
-
-GDEBUG_uvGrid(checkerboard(uv, 100.0));
 
     // Transform the uv coordinate to be homogenous
     // Do not rotate the uv coordinate if the gridPoint is in the center case (anisotropy == 1.0)
@@ -90,8 +92,11 @@ GDEBUG_uvGrid(checkerboard(uv, 100.0));
     uv.y /= gridPoint.y;  // Compensate for anisotropy
     uv /= gridPoint.z;    // Compensate for level of detail
 
-GDEBUG_uvGridCompensated(checkerboard(uv));
+    // The resulting uv grid now closely matches 1 texel per 1 pixel
 
+GDEBUG_uvGridCompensated(checkerboard(uv, 0.5));
+
+    // Now sample the footprint using the new compensated uv coordinate
     return sampleFootprint(seed, area, weight, slope, uv, targetD, p);
 }
 
@@ -126,8 +131,6 @@ GDEBUG_major(normalToRGB(normalize(foot.major)));
     // The center case is the case without anisotropy
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
-    // In the center case we limit the theta weight by the anisotropy to account for the vanishing orientation dimension
-    // hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
 
 GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
 GDEBUG_thetaWeight(colorDebug(hepta.thetaWeight));
@@ -139,7 +142,7 @@ GDEBUG0(boolToRGB(hepta.theta0 <= foot.angle && foot.angle <= hepta.thetaH));
 GDEBUG1(boolToRGB(hepta.thetaH <= foot.angle && foot.angle <= hepta.theta1));
 GDEBUG2(boolToRGB(hepta.theta0 < hepta.thetaH && hepta.thetaH < hepta.theta1));
 
-    // FIXME: The barycentric weights contain negative values
+    // TODO: The barycentric weights contain negative values
     // A is negative outside the center case
     // B, C and D are negative inside the center case
     Tetrahedron tetra = tetrifyFootprint(hepta, foot, centerCase);
@@ -164,12 +167,15 @@ GDEBUG_seedA(vec3(mapf(gridSeedA)));
     vec2 slope = H.xy;
     // Make slope symmetric and compensate for microfacet roughness
     slope = abs(slope) / uMicrofacetRoughness;
-    
+
+GDEBUG_uvGrid(checkerboard(uv, 100.0));
+
+    // Now sample the grid points
     float sampleA = sampleGridPoint(gridSeedA, tetra.p0, tetra.weights.x, slope, uv, D, p);
     float sampleB = sampleGridPoint(gridSeedB, tetra.p1, tetra.weights.y, slope, uv, D, p);
     float sampleC = sampleGridPoint(gridSeedC, tetra.p2, tetra.weights.z, slope, uv, D, p);
     float sampleD = sampleGridPoint(gridSeedD, tetra.p3, tetra.weights.w, slope, uv, D, p);
 
-    // The samples are weighted by the barycentric coordinates of the footprint so we can apply the Distributed Binomial Law
+    // The samples are then weighted by the barycentric coordinates of the footprint so we can apply the Distributed Binomial Law
     return (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);
 }

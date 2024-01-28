@@ -14,7 +14,7 @@ float map01(float x, float x0, float x1) {
 }
 
 /**
- * Grid values are in the format vec4(00, 01, 10, 11)
+ * Grid values are in the format vec4(v00, v01, v10, v11)
  */
 float bilinear(vec4 values, vec2 weights) {
     vec2 lerp = mix(values.xy, values.zw, weights.x);

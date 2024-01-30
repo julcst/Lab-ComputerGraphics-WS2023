@@ -2,6 +2,9 @@
 #define MAX_LAYERS 4
 
 uniform samplerCube cubemap;
+uniform sampler2DArray textureLayerEta;
+uniform sampler2DArray textureLayerKappa;
+uniform sampler2DArray textureLayerAlpha;
 
 /**
  * UB0 binds at index 0 and stores information about the scene that is only uploaded once per frame
@@ -77,4 +80,7 @@ layout(std140) uniform UB1 {
     vec4 uLayerG[MAX_LAYERS/4];
     vec4 uLayerAlphaX[MAX_LAYERS/4];
     vec4 uLayerAlphaY[MAX_LAYERS/4];
+    ivec4 uLayerUseEtaTexture[MAX_LAYERS/4];
+    ivec4 uLayerUseKappaTexture[MAX_LAYERS/4];
+    ivec4 uLayerUseAlphaTexture[MAX_LAYERS/4];
 };

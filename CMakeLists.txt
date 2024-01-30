@@ -106,7 +106,9 @@ set(SRC
     src/mainapp.cpp
     src/util.cpp
     src/scene/cubemap.cpp
+    src/scene/layertextureset.cpp
     src/scene/object.cpp
+    src/scene/texture.cpp
     src/framework/app.cpp
     src/framework/camera.cpp
     src/framework/common.cpp

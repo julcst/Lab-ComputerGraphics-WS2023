@@ -106,6 +106,9 @@ void Object::render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, Un
     ub1.upload(material);
 
     shaders[static_cast<int>(shaderIdx)].bind();
+
+    layerTextureSet.bind(shaders[static_cast<int>(shaderIdx)]);
+
     static Query timerQuery;
     timerQuery.begin(Query::Type::TIME_ELAPSED);
     meshes[meshIdx].draw();

@@ -9,7 +9,7 @@ in VertexData {
 };
 out vec3 fragColor;
 
-float debugX = 0.0;
+vec3 debugX = vec3(0.0);
 
 #include "layered/common.glsl"
 #include "shared/uniforms.glsl"
@@ -23,16 +23,42 @@ float debugX = 0.0;
 
 /////////// helper functions ///////////
 
-vec3 getLayerEta(int layerIndex){
-    return uLayerEta[layerIndex].xyz;
+
+
+int getLayerUseEtaTexture(int layerIndex){
+    return uLayerUseEtaTexture[layerIndex/4][layerIndex%4];
 }
 
-vec3 getLayerKappa(int layerIndex){
-    return uLayerKappa[layerIndex].xyz;
+int getLayerUseKappaTexture(int layerIndex){
+    return uLayerUseKappaTexture[layerIndex/4][layerIndex%4];
 }
 
-float getLayerAlpha(int layerIndex){
-    return uLayerAlpha[layerIndex/4][layerIndex%4];
+int getLayerUseAlphaTexture(int layerIndex){
+    return uLayerUseAlphaTexture[layerIndex/4][layerIndex%4];
+}
+
+vec3 getLayerEta(int layerIndex, vec2 texCoords){
+    if(getLayerUseEtaTexture(layerIndex) == 1){
+        return texture(textureLayerEta, vec3(texCoords, layerIndex)).rgb;
+    } else {
+        return uLayerEta[layerIndex].xyz;
+    }
+}
+
+vec3 getLayerKappa(int layerIndex, vec2 texCoords){
+    if(getLayerUseKappaTexture(layerIndex) == 1){
+        return texture(textureLayerKappa, vec3(texCoords, layerIndex)).rgb;
+    } else {
+        return uLayerKappa[layerIndex].xyz;
+    }
+}
+
+float getLayerAlpha(int layerIndex, vec2 texCoords){
+    if(getLayerUseAlphaTexture(layerIndex) == 1){
+        return texture(textureLayerAlpha, vec3(texCoords, layerIndex)).x;
+    } else {
+        return uLayerAlpha[layerIndex/4][layerIndex%4];
+    }
 }
 
 float getLayerDepth(int layerIndex){
@@ -51,7 +77,7 @@ float getLayerG(int layerIndex){
     return uLayerG[layerIndex/4][layerIndex%4];
 }
 
-void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[MAX_LAYERS + 1], out vec3 _layerKappa[MAX_LAYERS + 1], out float _layerAlpha[MAX_LAYERS + 1], out float _layerDepth[MAX_LAYERS + 1], out vec3 _layerSigmaA[MAX_LAYERS + 1], out vec3 _layerSigmaS[MAX_LAYERS + 1], out float _layerG[MAX_LAYERS + 1]){
+void fillLayerMaterialArrays(vec2 texCoords, uint _layerCount, out vec3 _layerEta[MAX_LAYERS + 1], out vec3 _layerKappa[MAX_LAYERS + 1], out float _layerAlpha[MAX_LAYERS + 1], out float _layerDepth[MAX_LAYERS + 1], out vec3 _layerSigmaA[MAX_LAYERS + 1], out vec3 _layerSigmaS[MAX_LAYERS + 1], out float _layerG[MAX_LAYERS + 1]){
     //air layer
     _layerEta[0] = vec3(1.0);
     _layerKappa[0] = vec3(0.0);
@@ -63,9 +89,9 @@ void fillLayerMaterialArrays(uint _layerCount, out vec3 _layerEta[MAX_LAYERS + 1
     //fill with data from uniforms or textures
     //TODO: texture lookup
     for(int i = 0; i < int(_layerCount); i++) {
-        _layerEta[i+1] = getLayerEta(i);
-        _layerKappa[i+1] = getLayerKappa(i);
-        _layerAlpha[i+1] = clamp(getLayerAlpha(i), 0.0001, 1);
+        _layerEta[i+1] = getLayerEta(i, texCoords);
+        _layerKappa[i+1] = getLayerKappa(i, texCoords);
+        _layerAlpha[i+1] = clamp(getLayerAlpha(i, texCoords), 0.0001, 1);
         _layerDepth[i+1] = getLayerDepth(i);
         _layerSigmaA[i+1] = getLayerSigmaA(i);
         _layerSigmaS[i+1] = getLayerSigmaS(i);
@@ -341,7 +367,7 @@ void main() {
     vec3 layerSigmaS[MAX_LAYERS + 1];
     float layerG[MAX_LAYERS + 1];
 
-    fillLayerMaterialArrays(uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
+    fillLayerMaterialArrays(uv, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
 
     addingDoubling(N, L, V, cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
  
@@ -417,6 +443,6 @@ void main() {
     DEBUG_VIEW(19, F);
 
     // nan/inf check
-    DEBUG_VIEW(20, colorDebug(debugX));
+    DEBUG_VIEW(20, debugX);
 
 }

@@ -52,6 +52,9 @@ struct UB1 {
     float layerG[Config::MAX_LAYERS];
     float layerAlphaX[Config::MAX_LAYERS];
     float layerAlphaY[Config::MAX_LAYERS];
+    int layerUseEtaTexture[Config::MAX_LAYERS];
+    int layerUseKappaTexture[Config::MAX_LAYERS];
+    int layerUseAlphaTexture[Config::MAX_LAYERS];
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, alphaX, alphaY, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, layerAlphaX, layerAlphaY, debug);
 };

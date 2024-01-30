@@ -33,5 +33,5 @@ class Object {
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Object, name, meshIdx, shaderIdx, material, rotate, translation, rotation, scale);
 
     unsigned int id;
-    Series<GLuint, Config::NUMBER_OF_MEASUREMENTS> measurements;
+    Series<long, Config::NUMBER_OF_MEASUREMENTS> measurements;
 };

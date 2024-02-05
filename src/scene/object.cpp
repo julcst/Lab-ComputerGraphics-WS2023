@@ -107,7 +107,7 @@ void Object::render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, Un
 
     shaders[static_cast<int>(shaderIdx)].bind();
 
-    layerTextureSet.bind(shaders[static_cast<int>(shaderIdx)]);
+    if(shaderIdx == Config::ShaderType::LAYER || shaderIdx == Config::ShaderType::LAYER_ANISO) layerTextureSet.bind(shaders[static_cast<int>(shaderIdx)]);
 
     static Query timerQuery;
     timerQuery.begin(Query::Type::TIME_ELAPSED);

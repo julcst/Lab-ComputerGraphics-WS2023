@@ -36,4 +36,5 @@ class MainApp : public App {
     std::vector<Mesh> meshes;
     std::vector<Program> shaders;
     std::string scenePath = "";
+    std::vector<std::string> textureFiles;
 };

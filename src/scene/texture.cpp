@@ -12,11 +12,10 @@ Texture::Texture(){
 
 }
 
-Texture::Texture(GLenum textureUnit, int samplerID, std::string samplerName, GLenum format){
+Texture::Texture(GLenum textureUnit, int samplerID, std::string samplerName){
     this->samplerID = samplerID;
     this->samplerName = samplerName;
     this->textureUnit = textureUnit;
-    this->format = format;
     glGenTextures(1, &textureID);
 }
 
@@ -30,14 +29,13 @@ void Texture::load(unsigned int layerIndex){
     if(data)
     {
         if(!loaded || (width != loadedWidth && height != loadedHeight)){
-            GLenum _format = (format == GL_RGB) ? GL_RGB32F : GL_R32F;
-            glTexStorage3D(GL_TEXTURE_2D_ARRAY, 5, _format, width, height, Config::MAX_LAYERS);
+            glTexStorage3D(GL_TEXTURE_2D_ARRAY, 5, GL_RGB32F, width, height, Config::MAX_LAYERS);
             loaded = true;
             loadedHeight = height;
             loadedWidth = width;
-            std::cout << "Initialized Texture: (" << width << "x" << height << ")" << std::endl;
+            std::cout << "Initialized Texture: " << samplerName << " (" << width << "x" << height << ")" << std::endl;
         }
-        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layerIndex, width, height, 1, format, GL_FLOAT, data);
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layerIndex, width, height, 1, GL_RGB, GL_FLOAT, data);
         stbi_image_free(data);
 
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -46,7 +44,7 @@ void Texture::load(unsigned int layerIndex){
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
-        std::cout << "Loaded Texture: " << path[layerIndex] << " (" << width << "x" << height << "x" << nrChannels << ")" << std::endl;
+        std::cout << "Loaded Texture: " << samplerName << " -> " << path[layerIndex] << " (" << width << "x" << height << "x" << nrChannels << ")" << std::endl;
     }
     else
     {

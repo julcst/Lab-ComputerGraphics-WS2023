@@ -64,6 +64,8 @@ MainApp::MainApp() :
         program.bindUBO("UB1", 1);
         shaders.push_back(std::move(program));
     }
+
+    Common::filesInDirectory(Config::TEXTURES_DIR, ".hdr", textureFiles);
 }
 
 void MainApp::init() {
@@ -84,8 +86,10 @@ void MainApp::render() {
     scene.cameraPosition = cam.getPosition();
     ub0.upload(scene);
 
-    cubemap.bind();
-
+    if(scene.useCubemap){
+        cubemap.bind();
+    }
+    
     glClear(GL_DEPTH_BUFFER_BIT);
 
     glDepthMask(GL_FALSE);
@@ -202,9 +206,8 @@ void MainApp::buildImGui() {
                 ImGui::Separator();
                 ImGui::Checkbox("Use Eta Texture##", reinterpret_cast<bool*>(&obj.material.layerUseEtaTexture[l]));
                 if(obj.material.layerUseEtaTexture[l]){
-                    ImGui::InputText("Eta Texture Path##", &obj.layerTextureSet.layerEtaTexture.path[l]);
-                    ImGui::SameLine();
-                    if(ImGui::Button("Load Eta Texture##")) {
+                    if (Util::combo("Eta Texture##", &obj.layerTextureSet.layerEtaTexture.pathID[l], textureFiles)) {
+                        obj.layerTextureSet.layerEtaTexture.path[l] = textureFiles[obj.layerTextureSet.layerEtaTexture.pathID[l]];
                         obj.layerTextureSet.layerEtaTexture.load(l);
                     }
                 }else{
@@ -212,9 +215,8 @@ void MainApp::buildImGui() {
                 }
                 ImGui::Checkbox("Use Kappa Texture##", reinterpret_cast<bool*>(&obj.material.layerUseKappaTexture[l]));
                 if(obj.material.layerUseKappaTexture[l]){
-                    ImGui::InputText("Kappa Texture Path##", &obj.layerTextureSet.layerKappaTexture.path[l]);
-                    ImGui::SameLine();
-                    if(ImGui::Button("Load Kappa Texture##")) {
+                    if (Util::combo("Kappa Texture##", &obj.layerTextureSet.layerKappaTexture.pathID[l], textureFiles)) {
+                        obj.layerTextureSet.layerKappaTexture.path[l] = textureFiles[obj.layerTextureSet.layerKappaTexture.pathID[l]];
                         obj.layerTextureSet.layerKappaTexture.load(l);
                     }
                 }else{
@@ -222,9 +224,8 @@ void MainApp::buildImGui() {
                 }
                 ImGui::Checkbox("Use Alpha Texture##", reinterpret_cast<bool*>(&obj.material.layerUseAlphaTexture[l]));
                 if(obj.material.layerUseAlphaTexture[l]){
-                    ImGui::InputText("Alpha Texture Path##", &obj.layerTextureSet.layerAlphaTexture.path[l]);
-                    ImGui::SameLine();
-                    if(ImGui::Button("Load Alpha Texture##")) {
+                    if (Util::combo("Alpha Texture##", &obj.layerTextureSet.layerAlphaTexture.pathID[l], textureFiles)) {
+                        obj.layerTextureSet.layerAlphaTexture.path[l] = textureFiles[obj.layerTextureSet.layerAlphaTexture.pathID[l]];
                         obj.layerTextureSet.layerAlphaTexture.load(l);
                     }
                 }else{
@@ -261,10 +262,35 @@ void MainApp::buildImGui() {
                 ImGui::PushID(l);
                 ImGui::Separator();
                 ImGui::Text("Layer %d", l);
-                ImGui::DragFloat3("Eta##", value_ptr(obj.material.layerEta[l]), 0.001f);
-                ImGui::DragFloat3("Kappa##", value_ptr(obj.material.layerKappa[l]), 0.001f);
-                ImGui::SliderFloat("AlphaX##", &obj.material.layerAlphaX[l], 0.0f, 1.0f);
-                ImGui::SliderFloat("AlphaY##", &obj.material.layerAlphaY[l], 0.0f, 1.0f);
+                ImGui::Separator();
+                ImGui::Checkbox("Use Eta Texture##", reinterpret_cast<bool*>(&obj.material.layerUseEtaTexture[l]));
+                if(obj.material.layerUseEtaTexture[l]){
+                    if (Util::combo("Eta Texture##", &obj.layerTextureSet.layerEtaTexture.pathID[l], textureFiles)) {
+                        obj.layerTextureSet.layerEtaTexture.path[l] = textureFiles[obj.layerTextureSet.layerEtaTexture.pathID[l]];
+                        obj.layerTextureSet.layerEtaTexture.load(l);
+                    }
+                }else{
+                    ImGui::DragFloat3("Eta##", value_ptr(obj.material.layerEta[l]), 0.001f);
+                }
+                ImGui::Checkbox("Use Kappa Texture##", reinterpret_cast<bool*>(&obj.material.layerUseKappaTexture[l]));
+                if(obj.material.layerUseKappaTexture[l]){
+                    if (Util::combo("Kappa Texture##", &obj.layerTextureSet.layerKappaTexture.pathID[l], textureFiles)) {
+                        obj.layerTextureSet.layerKappaTexture.path[l] = textureFiles[obj.layerTextureSet.layerKappaTexture.pathID[l]];
+                        obj.layerTextureSet.layerKappaTexture.load(l);
+                    }
+                }else{
+                    ImGui::DragFloat3("Kappa##", value_ptr(obj.material.layerKappa[l]), 0.001f);
+                }
+                ImGui::Checkbox("Use Alpha Texture##", reinterpret_cast<bool*>(&obj.material.layerUseAlphaTexture[l]));
+                if(obj.material.layerUseAlphaTexture[l]){
+                    if (Util::combo("Alpha Texture##", &obj.layerTextureSet.layerAlphaTexture.pathID[l], textureFiles)) {
+                        obj.layerTextureSet.layerAlphaTexture.path[l] = textureFiles[obj.layerTextureSet.layerAlphaTexture.pathID[l]];
+                        obj.layerTextureSet.layerAlphaTexture.load(l);
+                    }
+                }else{
+                    ImGui::SliderFloat("AlphaX##", &obj.material.layerAlphaX[l], 0.0f, 1.0f);
+                    ImGui::SliderFloat("AlphaY##", &obj.material.layerAlphaY[l], 0.0f, 1.0f);
+                }
                 ImGui::SliderFloat("Depth##", &obj.material.layerDepth[l], 0.0f, 1.0f);
                 ImGui::DragFloat3("Sigma A##", value_ptr(obj.material.layerSigmaA[l]), 0.001f);
                 ImGui::DragFloat3("Sigma S##", value_ptr(obj.material.layerSigmaS[l]), 0.001f);

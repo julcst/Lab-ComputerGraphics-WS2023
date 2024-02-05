@@ -4,9 +4,9 @@
 #include "framework/gl/program.hpp"
 
 LayerTextureSet::LayerTextureSet(){
-    layerEtaTexture = Texture(GL_TEXTURE0, 0, "textureLayerEta", GL_RGB);
-    layerKappaTexture = Texture(GL_TEXTURE1, 1, "textureLayerKappa", GL_RGB);
-    layerAlphaTexture = Texture(GL_TEXTURE2, 2, "textureLayerAlpha", GL_RED);
+    layerEtaTexture = Texture(GL_TEXTURE1, 1, "textureLayerEta");
+    layerKappaTexture = Texture(GL_TEXTURE2, 2, "textureLayerKappa");
+    layerAlphaTexture = Texture(GL_TEXTURE3, 3, "textureLayerAlpha");
 }
 
 void LayerTextureSet::bind(Program& program){

@@ -8,10 +8,11 @@
 class Texture {
    public:
     Texture();
-    Texture(GLenum textureUnit, int samplerID, std::string samplerName, GLenum format);
+    Texture(GLenum textureUnit, int samplerID, std::string samplerName);
     void load(unsigned int layerIndex);
     void bind(Program& program);
     std::string path[Config::MAX_LAYERS];
+    int pathID[Config::MAX_LAYERS] = {-1};
    private:
     unsigned int textureID;
     GLenum textureUnit;
@@ -20,5 +21,4 @@ class Texture {
     bool loaded = false;
     int loadedWidth;
     int loadedHeight;
-    GLenum format;
 };

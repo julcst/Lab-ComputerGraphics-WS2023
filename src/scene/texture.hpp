@@ -2,6 +2,8 @@
 
 #include <string>
 #include <glad/glad.h>
+#include <nlohmann/json.hpp>
+
 #include "framework/gl/program.hpp"
 #include "config.hpp"
 
@@ -11,6 +13,7 @@ class Texture {
     Texture(GLenum textureUnit, int samplerID, std::string samplerName);
     void load(unsigned int layerIndex);
     void bind(Program& program);
+    void reloadAll();
     std::string path[Config::MAX_LAYERS];
     int pathID[Config::MAX_LAYERS] = {-1};
    private:
@@ -21,4 +24,6 @@ class Texture {
     bool loaded = false;
     int loadedWidth;
     int loadedHeight;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Texture, path, pathID, textureUnit, samplerID, samplerName);
 };

@@ -16,5 +16,5 @@ struct UB0 {
     int useCubemap = 0;
     glm::mat4 cameraRotation = glm::mat4(1.0f);
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB0, lightDir, skyColor, lightColor, ambientStrength);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB0, lightDir, skyColor, lightColor, ambientStrength, useCubemap);
 };

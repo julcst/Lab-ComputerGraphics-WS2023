@@ -333,6 +333,7 @@ bool MainApp::saveScene(std::string path) {
     json jScene;
     jScene["settings"] = scene;
     jScene["objects"] = objects;
+    jScene["cubemap"] = cubemap.id;
     try {
         Common::writeToFile(jScene.dump(4), path);
         return true;
@@ -348,9 +349,24 @@ bool MainApp::loadScene(std::string path) {
 
         auto jSettings = scenedata["settings"].template get<UB0>();
         auto jObjects = scenedata["objects"].template get<std::vector<Object>>();
+        auto jCubemapId = scenedata["cubemap"];
 
         scene = std::move(jSettings);
         objects = std::move(jObjects);
+
+        //load cubemap
+        cubemap.id = jCubemapId;
+        if(cubemap.id != -1){
+            std::string cubemapName = Config::CUBEMAP_NAMES[cubemap.id];
+            std::cout << "Loading Cubemap " << cubemapName << std::endl;
+            cubemap.load(cubemapName);
+        }
+        //load object textures
+        for (Object& obj : objects) {
+            std::cout << "Loading TextureSet of " << obj.name << std::endl;
+            obj.layerTextureSet.reloadAll();
+        }
+
         return true;
     } catch (std::exception& e) {
         return false;

@@ -8,18 +8,24 @@
 #include "framework/gl/program.hpp"
 #include "config.hpp"
 
-Texture::Texture(){
-
+Texture::Texture() {
+    glGenTextures(1, &textureID);
+    for(unsigned int l = 0; l < Config::MAX_LAYERS; l++){
+        pathID[l] = -1;
+    }
 }
 
-Texture::Texture(GLenum textureUnit, int samplerID, std::string samplerName){
+Texture::Texture(GLenum textureUnit, int samplerID, std::string samplerName) {
     this->samplerID = samplerID;
     this->samplerName = samplerName;
     this->textureUnit = textureUnit;
     glGenTextures(1, &textureID);
+    for(unsigned int l = 0; l < Config::MAX_LAYERS; l++){
+        pathID[l] = -1;
+    }
 }
 
-void Texture::load(unsigned int layerIndex){
+void Texture::load(unsigned int layerIndex) {
     glActiveTexture(textureUnit);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
 
@@ -53,8 +59,14 @@ void Texture::load(unsigned int layerIndex){
     }
 }
     
-void Texture::bind(Program& program){
+void Texture::bind(Program& program) {
     glActiveTexture(textureUnit);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
     program.set(program.uniform(samplerName), samplerID);
+}
+
+void Texture::reloadAll() {
+    for(unsigned int l = 0; l < Config::MAX_LAYERS; l++){
+        if(!path[l].empty()) load(l);
+    }
 }

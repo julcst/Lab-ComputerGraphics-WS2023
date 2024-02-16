@@ -30,7 +30,7 @@ class Object {
     glm::vec3 rotation = glm::vec3(0.0f);
     float scale = 1.0f;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Object, name, meshIdx, shaderIdx, material, rotate, translation, rotation, scale);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Object, name, meshIdx, shaderIdx, material, layerTextureSet, rotate, translation, rotation, scale);
 
     unsigned int id;
     Series<long, Config::NUMBER_OF_MEASUREMENTS> measurements;

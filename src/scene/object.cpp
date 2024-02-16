@@ -32,6 +32,7 @@ void Object::loadPreset(json preset) {
     material.alphaX = preset.value("alphaX", material.alphaX);
     material.alphaY = preset.value("alphaY", material.alphaY);
     material.layerCount = preset.value("layerCount", material.layerCount);
+    material.iblSampleCount = preset.value("iblSampleCount", material.iblSampleCount);
     if(preset.contains("layerEta")){
         std::vector<glm::vec4> array{preset["layerEta"].get<std::vector<glm::vec4>>()};
         for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
@@ -85,6 +86,73 @@ void Object::loadPreset(json preset) {
         for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
             material.layerAlphaY[i] = array[i];
         }
+    }
+    if(preset.contains("layerUseAlphaTexture")){
+        std::vector<int> array{preset["layerUseAlphaTexture"].get<std::vector<int>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerUseAlphaTexture[i] = array[i];
+        }
+    }
+    if(preset.contains("layerUseEtaTexture")){
+        std::vector<int> array{preset["layerUseEtaTexture"].get<std::vector<int>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerUseEtaTexture[i] = array[i];
+        }
+    }
+    if(preset.contains("layerUseKappaTexture")){
+        std::vector<int> array{preset["layerUseKappaTexture"].get<std::vector<int>>()};
+        for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+            material.layerUseKappaTexture[i] = array[i];
+        }
+    }
+    if(preset.contains("layerTextureSet")){
+        json jLayerTextureSet = preset["layerTextureSet"];
+        if(jLayerTextureSet.contains("layerAlphaTexture")){
+            json jLayerAlphaTexture = jLayerTextureSet["layerAlphaTexture"];
+            if(jLayerAlphaTexture.contains("path")){
+                std::vector<std::string> array{jLayerAlphaTexture["path"].get<std::vector<std::string>>()};
+                for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+                    layerTextureSet.layerAlphaTexture.path[i] = array[i];
+                }
+            }
+            if(jLayerAlphaTexture.contains("pathID")){
+                std::vector<int> array{jLayerAlphaTexture["pathID"].get<std::vector<int>>()};
+                for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+                    layerTextureSet.layerAlphaTexture.pathID[i] = array[i];
+                }
+            }
+        }
+        if(jLayerTextureSet.contains("layerEtaTexture")){
+            json jLayerEtaTexture = jLayerTextureSet["layerEtaTexture"];
+            if(jLayerEtaTexture.contains("path")){
+                std::vector<std::string> array{jLayerEtaTexture["path"].get<std::vector<std::string>>()};
+                for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+                    layerTextureSet.layerEtaTexture.path[i] = array[i];
+                }
+            }
+            if(jLayerEtaTexture.contains("pathID")){
+                std::vector<int> array{jLayerEtaTexture["pathID"].get<std::vector<int>>()};
+                for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+                    layerTextureSet.layerEtaTexture.pathID[i] = array[i];
+                }
+            }
+        }
+        if(jLayerTextureSet.contains("layerKappaTexture")){
+            json jLayerKappaTexture = jLayerTextureSet["layerKappaTexture"];
+            if(jLayerKappaTexture.contains("path")){
+                std::vector<std::string> array{jLayerKappaTexture["path"].get<std::vector<std::string>>()};
+                for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+                    layerTextureSet.layerKappaTexture.path[i] = array[i];
+                }
+            }
+            if(jLayerKappaTexture.contains("pathID")){
+                std::vector<int> array{jLayerKappaTexture["pathID"].get<std::vector<int>>()};
+                for(unsigned int i = 0; i < material.layerCount && i < array.size(); i++){
+                    layerTextureSet.layerKappaTexture.pathID[i] = array[i];
+                }
+            }
+        }
+        layerTextureSet.reloadAll();
     }
     rotate = preset.value("rotate", rotate);
     translation = preset.value("translation", translation);

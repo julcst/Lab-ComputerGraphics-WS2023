@@ -27,7 +27,7 @@ void Cubemap::load(std::string cubemapName)
         }
         else
         {
-            std::cout << "Cubemap tex failed to load at path: " << cubemapName.append(faces[i]) << std::endl;
+            std::cout << "Cubemap tex failed to load at path: " << cubemapName + faces[i] << std::endl;
             stbi_image_free(data);
         }
     }
@@ -41,6 +41,6 @@ void Cubemap::load(std::string cubemapName)
 } 
 
 void Cubemap::bind(){
-    glActiveTexture(0);
+    glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 }

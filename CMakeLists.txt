@@ -177,10 +177,13 @@ set(MATERIALS
 set(CUBEMAPS
     cubemaps/studio
 )
+foreach(cubemap ${CUBEMAPS})
+    list(APPEND CUBEMAP_FILES ${cubemap}_nx.hdr ${cubemap}_ny.hdr ${cubemap}_nz.hdr ${cubemap}_px.hdr ${cubemap}_py.hdr ${cubemap}_pz.hdr)
+endforeach()
 set(ICON
     icons/AppIcon.icns
 )
-set(RES "${SHADERS};${MODELS};${MATERIALS}")
+set(RES "${SHADERS};${MODELS};${MATERIALS};${CUBEMAP_FILES}")
 set_source_files_properties(${RES} PROPERTIES HEADER_FILE_ONLY True)
 
 ####################################################################

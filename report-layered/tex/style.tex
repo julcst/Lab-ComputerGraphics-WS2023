@@ -1,0 +1,24 @@
+% Fix für strange spacing in left right environments
+\let\originalleft\left
+\let\originalright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
+\renewcommand{\right}{\aftergroup\egroup\originalright}
+
+
+% SI settings
+\ifcurrentbaselanguage{English}{
+    \sisetup{
+        locale = US
+    }
+}{}
+\ifcurrentbaselanguage{German}{
+    \sisetup{
+        locale = DE
+    }
+}{}
+\sisetup{
+    group-digits = true,
+    per-mode = symbol,
+}
+\DeclareSIUnit{\bit}{Bit}
+

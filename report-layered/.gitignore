@@ -1,0 +1,16 @@
+*.aux
+*.bcf
+*.brf
+*.bbl
+*.blg
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.fls
+*.fdb_latexmk
+
+report-layered.pdf
+
+build/*

@@ -320,8 +320,10 @@ void UnpackFloatParallel4(vec4 inputFloat, out vec4 a, out vec4 b)
 void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, out vec4 outGaussian, out vec2 slopeLerp) {
 	ivec2 size = ivec2(4096);
 	vec2 slope2 = abs(slope) / uMicrofacetRoughness;
+GDEBUG_slope(vec3(slope2, 0.0));
 	slope2 = slope2 + (slopeRandOffset * size);
 	slopeLerp = fract(slope2);
+GDEBUG_slopeLerp(vec3(slopeLerp, 0.0));
 	ivec2 slopeCoord = ivec2(floor(slope2)) % size;
 	uvec2 uSlopeCoord = uvec2(slopeCoord);
 
@@ -567,10 +569,10 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 		thetaBinLerp = Remap01To(thetaBinLerp, 0.0, ratioLerp);
 	vec4 tetraBarycentricWeights = GetBarycentricWeightsTetrahedron(vec3(thetaBinLerp, ratioLerp, lodLerp), tetraA, tetraB, tetraC, tetraD); // Compute barycentric coordinates within chosen tetrahedron
 
-	GDEBUG_area(vec3(footprintArea * 4000.0));
+	GDEBUG_area(vec3(footprintArea * 10000.0));
     GDEBUG_theta(angleToRGB(theta * DEG2RAD));
     GDEBUG_aniso(vec3(1.0 / ellipseRatio));
-    GDEBUG_major(normalToRGB(normalize(ellipseMajor)));
+	GDEBUG_lod(vec3(length(ellipseMinor) * halfScreenSpaceScaler * 2.0 * 300.0));
 
 	GDEBUG_grid(vec3(footprintAreaLOD0 * 1000.0, 1.0 / ratio0, thetaBin0 / 360.0));
     GDEBUG_lodWeight(vec3(lodLerp));

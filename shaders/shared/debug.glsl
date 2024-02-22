@@ -14,7 +14,7 @@
 #define GDEBUG_area(v) DEBUG_VIEW(4, v)
 #define GDEBUG_theta(v) DEBUG_VIEW(5, v)
 #define GDEBUG_aniso(v) DEBUG_VIEW(6, v)
-#define GDEBUG_major(v) DEBUG_VIEW(7, v)
+#define GDEBUG_lod(v) DEBUG_VIEW(7, v)
 #define GDEBUG_grid(v) DEBUG_VIEW(8, v)
 #define GDEBUG_lodWeight(v) DEBUG_VIEW(9, v)
 #define GDEBUG_anisoWeight(v) DEBUG_VIEW(10, v)
@@ -29,9 +29,14 @@
 #define GDEBUG_uvGridCompensated(v) DEBUG_VIEW(19, v)
 #define GDEBUG_uvTriangles(v) DEBUG_VIEW(20, v)
 #define GDEBUG_samples(v) DEBUG_VIEW(21, v)
-#define GDEBUG0(v) DEBUG_VIEW(22, v)
-#define GDEBUG1(v) DEBUG_VIEW(23, v)
-#define GDEBUG2(v) DEBUG_VIEW(24, v)
+#define GDEBUG_slopeLerp(v) DEBUG_VIEW(22, v)
+#define GDEBUG_baryCheck2(v) DEBUG_VIEW(23, v)
+#define GDEBUG_baryCheck3(v) DEBUG_VIEW(24, v)
+#define GDEBUG0(v) DEBUG_VIEW(25, v)
+#define GDEBUG1(v) DEBUG_VIEW(26, v)
+#define GDEBUG2(v) DEBUG_VIEW(27, v)
+#define GDEBUG_slope(v) DEBUG_VIEW(28, v)
+#define GDEBUG_H(v) DEBUG_VIEW(29, v)
 
 /**
  * Interprets angle as hue and converts it to RGB.
@@ -72,3 +77,13 @@ vec3 colorDebug(float x) {
     if (x >  1.0) return vec3(0.0, 1.0, 0.0);
     return vec3(x);
 }
+
+vec3 checkBarycentrics(vec4 bary) {
+    if (bary.x < 0.0 || bary.y < 0.0 || bary.z < 0.0 || bary.w < 0.0) return vec3(0.0, 0.0, 1.0);
+    if (bary.x > 1.0 || bary.y > 1.0 || bary.z > 1.0 || bary.w > 1.0) return vec3(1.0, 0.0, 0.0);
+    if (dot(bary, vec4(1.0)) > 1.0) return vec3(1.0, 0.0, 1.0);
+    if (dot(bary, vec4(1.0)) < 1.0) return vec3(0.0, 1.0, 1.0);
+    return vec3(0.0, 1.0, 0.0);
+}
+vec3 checkBarycentrics(vec3 bary) { return checkBarycentrics(vec4(bary, 0.0)); }
+vec3 checkBarycentrics(vec2 bary) { return checkBarycentrics(vec4(bary, 0.0, 0.0)); }

@@ -19,7 +19,9 @@ bool calcPlaneSide(vec3 p, vec3 a, vec3 b, vec3 c) {
  * and the barycentric weights of the current pixel footprint inside the tetrahedron
  */
 struct Tetrahedron {
+    // vertices absolute 
     vec3 p0, p1, p2, p3;
+    // vertices relative to the heptahedron
     vec3 P0, P1, P2, P3;
     vec4 weights;
 };
@@ -187,11 +189,18 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase, vec3 p) {
 }
 
 Tetrahedron tetrifyFootprint(Heptahedron hepta, Footprint foot, bool centerCase) {
-    vec3 p = vec3(foot.angle, foot.ratio, foot.minorLength);
+    // Footprint parametrization absolute
+    // TODO: does this maybe have to be in log space?
+    vec3 p = vec3(foot.theta, foot.aniso, foot.lod);
     Tetrahedron tetra = getTetrahedron(hepta, centerCase, p);
+
     // This fixes almost all artifacts in the center case
     hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
+
+    // Footprint paranetrization relative
     vec3 P = vec3(hepta.thetaWeight, hepta.anisoWeight, hepta.lodWeight);
+
+    // Calculate barycentric weights
     tetra.weights = calcBarycentrics(P, tetra.P0, tetra.P1, tetra.P2, tetra.P3);
     return tetra;
 }

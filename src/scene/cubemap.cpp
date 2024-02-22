@@ -17,6 +17,7 @@ void Cubemap::load(std::string cubemapName)
 
     stbi_set_flip_vertically_on_load(false); 
     int width, height, nrChannels;
+    
     for (unsigned int i = 0; i < faces.size(); i++)
     {
         float *data = stbi_loadf((cubemapName + faces[i]).c_str(), &width, &height, &nrChannels, 0);

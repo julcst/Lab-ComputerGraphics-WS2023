@@ -1,6 +1,35 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\textcite{deliot2023}
-\textcite{giles2012}
-\textcite{jarzynski2020}
+% Motivation
+In computer graphics, a common approach to model complex materials is to approximate them as an idealized reflector permutated by sub-geometric details.
+%
+When these sub-geometric details are macroscopic meaning bigger than a single pixel on the screen, they can be simulated using a normal map.
+%
+On the other hand, details that are significantly smaller than a pixel are called microfacets and are usually stochastically approximated through microfacet models like GGX.
+%
+However, between these two approaches lies the mesoscopic phenomenon of glints, which is important to accurately simulate the glittering effects of snow or flaky car paints.
+%
+This phenomenon can not simply be reproduced using statistical microfacet models because the microfacets are big enough that the viewer can identify individual facets reflecting.
+
+
+% Problem
+This renders two important requirements that a visually plausible glint renderer must meet:
+%
+\begin{itemize}
+    \item Glints must be temporally and spatially coherent (this can be relaxed between different levels of detail)
+    \item With high facet density the result must converge into a smooth microfacet model
+\end{itemize}
+
+
+% TODO: related work
+% Problems:
+%   - unstable performance (anisotropic filtering)
+%   - incorrect blending
+
+
+% Solution
+% Main improvements:
+%   - constant time (independent from anisotropy)
+%   - correct blending (distributed binomial law)
+In the following, we will present an algorithm for simulating mesoscopic glints based on the ideas proposed in \textcite{deliot2023} that seamlessly blends between different levels of details and achieves constant real-time performance for arbitrary anisotropy levels through a special uv-parametrization which avoids the costly counting of individual microfacets.

@@ -1,2 +1,57 @@
 \section{Methodology}
 \label{sec:methodology}
+
+
+\subsection{Shading Model}
+\label{sec:shading}
+
+
+\subsection{Stochastic Counting Process}
+\label{sec:stochastic-counting-process}
+
+
+\subsubsection{Gated Gaussian Binomial Approximation}
+\label{sec:approximation}
+
+
+\subsubsection{Linear Blending}
+
+
+\subsubsection{Distributed Binomial Law Blending}
+\label{sec:blending}
+
+
+\subsection{Anisotropic Parametrization}
+\label{sec:anisotropy}
+
+
+\subsubsection{Simplex Optimisation}
+\label{sec:simplex}
+
+
+\subsection{Implementation}
+\label{sec:implementation}
+
+
+\subsubsection{Algorithm Overview}
+\label{sec:algorithm}
+
+The resulting algorithm as described by \textcite{deliot2023} works as following:
+%
+\todo{Rewrite}
+\begin{enumerate}
+    \item First calculate the footprint of the pixel and parametrize it into the three dimensions: theta (orientation), anisotropy, LOD (level of detail).
+    \item Find the heptahedron in 3D footprint space that contains the current pixels's footprint.
+    \item Find the tetrahedron in this heptahedron that contains the current pixel's footprint and calculate the barycentric coordinates.
+    \item Sample each of the 4 vertices of the tetrahedron and interpolate the result using the Distributed Binomial Law. Each vertex is sampled using the following steps:
+    \begin{enumerate}
+        \item Compensate the uv parametrization of the vertex for its orientation, anisotropy, and LOD.
+        \item In the compensated uv space, find the uv triangle that contains the compensated uv coordinates.
+        \item For each triangle vertex and half vector draw a binomial sample.
+    \end{enumerate}
+\end{enumerate}
+
+% TODO: Figure showing pipeline geometrically and/or visually
+
+\subsubsection{Implementation Details}
+\label{sec:implementation-details}

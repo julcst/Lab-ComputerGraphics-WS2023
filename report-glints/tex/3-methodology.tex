@@ -1,10 +1,117 @@
 \section{Methodology}
 \label{sec:methodology}
-
+%
+In the following, we will use the ideas of \textcite{deliot2023} to derive a fast, stable, and visually convincing glint renderer, that converges to any given configuration of the Cook-Torrance model.
 
 \subsection{Shading Model}
 \label{sec:shading}
+%
+To simulate glinty materials we model the surface as consisting of mesoscopic details covered with normally distributed microfacets.
+% TODO: Add illustrating figure
+%
+% NOTE: Maybe remove "we will refer to"
+Subsequently, we will denote these larger-scale features as \emph{meso-facets}, and we will refer to reflecting meso-facets as \emph{glints}. 
 
+
+% ?: Use we or \parencite{deliot2023}
+We start from the Rendering Equation \parencite{kajiya1986, immel1986}:
+%
+\begin{equation}
+    L_o(\vec{\omega_o}) =
+    \int_{\Omega}
+        \rho_P(\vec{\omega_i}, \vec{\omega_o})~
+        L_i(\vec{\omega_i})~
+        \dotproduct{\vec{\omega_i}}{\vec{n}}~
+    d\vec{\omega_i}.
+\end{equation}
+%
+% NOTE: Maybe write out BRDF
+The amount of light $L_o$ emitted in direction $\vec{\omega_o}$ is the sum over the hemisphere $\Omega$ of incoming light $L_i$ modulated by the BRDF $\rho_P$, whereas $P$ being the pixel footprint and $\vec{n}$ being the surface normal.
+%
+We base $\rho_P$ on a Cook-Torrance model \parencite{cook1982} consisting of the Fresnel reflectance term $F$, the geometrical attenuation term $G$, and the distribution term $D$:
+%
+% NOTE: Maybe clarify that this is the specular component
+\begin{equation}
+    \rho_P(\vec{\omega_i}, \vec{\omega_o}) = \frac{
+        F(\dotproduct{\vec{\omega_i}}{\vec{\omega_h}})~
+        G(\vec{\omega_i}, \vec{\omega_o})~
+        D_P(\vec{\omega_h})
+    }{
+        4~
+        \dotproduct{\vec{\omega_i}}{\vec{n}}~
+        \dotproduct{\vec{\omega_o}}{\vec{n}}
+    },
+\end{equation}
+%
+with the half vector $\vec{\omega_h}=\flatnormalize{\vec{\omega_i} + \vec{\omega_o}}$ describing the surface normal at which perfect reflection would occur and $D_P(\vec{\omega_h})$ as the probability for a microfacet on a meso-facet inside the pixel footprint to be aligned along this half vector $\vec{\omega_h}$ and thereby reflect light.
+%
+This differs from the original distribution term $D(\vec{\omega_h})$ which only represents the probability of a normally distributed microfacet being aligned that way. We get
+%
+\begin{equation}
+\begin{aligned}
+    D_P(\vec{\omega_h})
+    % TODO: Rename probabilities
+    & = && \probability{\mathrm{glint}} && \cdot && \probabilitygiven{\mathrm{micro}}{\mathrm{glint}} \\
+    & = && \frac{b(N(P), p)}{N(P)} && \cdot && D(\vec{n}),
+\end{aligned}
+\end{equation}
+%
+where $b(n, p)$ is a random sampling of the binomial distribution with $n$ trials and a success probability of $p$. $N(P)$ is the number of meso-facets inside the pixel footprint and therefore $b(N(P), p)$ counts the number of glints inside $P$.
+
+We then choose the glint probability $p = \frac{D(\vec{\omega_h})}{D(\vec{n})}$ to ensure $\expectation{D_P(\vec{\omega_h})} = D(\vec{\omega_h})$:
+%
+\begin{equation}
+    \expectation{D_P(\vec{\omega_h})}
+    % = \frac{\E{b(N(P), p)}}{N(P)} D(\vec{n})
+    = \frac{N(P) \, p}{N(P)} D(\vec{n})
+    = \frac{D(\vec{\omega_h})}{D(\vec{n})} D(\vec{n})
+    = D(\vec{\omega_h}).
+\end{equation}
+%
+Furthermore, we introduce an artistic control parameter $R \in (0,1]$ that scales the glint probability and result in:
+%
+\begin{equation}
+    D_P(\vec{\omega_h})=\frac{b(N(P), p)}{N(P)\,R} \cdot D(\vec{n}),\quad
+    p = R~\frac{D(\vec{\omega_h})}{D(\vec{n})}
+\end{equation}
+
+
+$R$ can not directly be linked to a physical quantity but yet can be interpreted as a measure of \emph{meso-facet roughness}: Lowering $R$ results in fewer but brighter glints and thus visually makes the glints less stable.
+
+% Therefore we extend $D(\vec{\omega_h})$ by a stochastic microfacet counting process $c(N(P), D(\vec{\omega_h}))$ 
+%
+% NOTE: "Statistics of the given pixel footprint"
+% To simulate the glinty appearance of the material, the distribution function $D$ is extended to $D_P$ accounting for the statistics of the given pixel footprint $P$:
+%
+% \begin{equation}
+%     D_P(\vec{h}) = \frac{
+%         c(N(P), D(\vec{\omega_h}))
+%     }{
+%         N(P)
+%     },
+% \end{equation}
+%
+% with $N(P)$ as the number of microfacets in the pixel footprint and $D(\vec{h})$ the original distribution function.
+% %
+% Therefore we introduce a stochastic microfacet counting process $c(N(P), D(\vec{\omega_h}))$ based on the random sampling of the binomial distribution:
+%
+
+
+\subsubsection{Convergence}
+\label{sec:convergence-proof}
+
+We observe that for $N(P) \to \infty$
+%
+\begin{equation}
+    \lim_{N(P) \to \infty} D_P(\vec{\omega_h})
+    = \frac{D(\vec{n})}{R} \lim_{N(P) \to \infty} \frac{b(N(P), p)}{N(P)}
+    = D(\vec{\omega_h}),
+\end{equation}
+%
+because, according to the law of large numbers, as $n$ approaches infinity, $\lim_{n \to \infty}b(n,p)=\expectation{b(n,p)}=np$.
+
+
+Hence, we have shown that for large meso-facet count our shading model converges to the chosen base Cook-Torrance microfacet model as desired.
 
 \subsection{Stochastic Counting Process}
 \label{sec:stochastic-counting-process}
@@ -15,17 +122,18 @@
 
 
 \subsubsection{Linear Blending}
+\label{sec:blending-linear}
 
 
-\subsubsection{Distributed Binomial Law Blending}
-\label{sec:blending}
+\subsubsection{Blending Using Distributed Binomial Laws}
+\label{sec:blending-distributed}
 
 
 \subsection{Anisotropic Parametrization}
 \label{sec:anisotropy}
 
 
-\subsubsection{Simplex Optimisation}
+\subsubsection{Simplex Optimization}
 \label{sec:simplex}
 
 
@@ -36,19 +144,19 @@
 \subsubsection{Algorithm Overview}
 \label{sec:algorithm}
 
-The resulting algorithm as described by \textcite{deliot2023} works as following:
+The resulting algorithm as described by \textcite{deliot2023} that integrates all the ideas and insights from the previous chapters works as follows:
 %
 \todo{Rewrite}
 \begin{enumerate}
-    \item First calculate the footprint of the pixel and parametrize it into the three dimensions: theta (orientation), anisotropy, LOD (level of detail).
-    \item Find the heptahedron in 3D footprint space that contains the current pixels's footprint.
+    \item First calculate the footprint of the pixel and parametrize it into the three dimensions: theta (orientation), anisotropy, and level of detail.
+    \item Find the heptahedron in 3D footprint space that contains the current pixel's footprint.
     \item Find the tetrahedron in this heptahedron that contains the current pixel's footprint and calculate the barycentric coordinates.
     \item Sample each of the 4 vertices of the tetrahedron and interpolate the result using the Distributed Binomial Law. Each vertex is sampled using the following steps:
-    \begin{enumerate}
-        \item Compensate the uv parametrization of the vertex for its orientation, anisotropy, and LOD.
-        \item In the compensated uv space, find the uv triangle that contains the compensated uv coordinates.
-        \item For each triangle vertex and half vector draw a binomial sample.
-    \end{enumerate}
+          \begin{enumerate}
+              \item Compensate the uv parametrization of the vertex for its orientation, anisotropy, and level of detail.
+              \item In the compensated uv space, find the uv triangle that contains the compensated uv coordinates.
+              \item For each triangle vertex and half vector draw a binomial sample.
+          \end{enumerate}
 \end{enumerate}
 
 % TODO: Figure showing pipeline geometrically and/or visually

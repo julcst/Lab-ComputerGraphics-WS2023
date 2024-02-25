@@ -17,14 +17,15 @@
 % Norm and absolute value
 \newcommand{\norm}[1]{\ensuremath{\left\Vert#1\right\Vert}}
 \newcommand{\abs}[1]{\ensuremath{\left\vert#1\right\vert}}
+\newcommand{\normalize}[1]{\ensuremath{\frac{#1}{\norm{#1}}}}
+\newcommand{\flatnormalize}[1]{\ensuremath{(#1)\mathbin{/}\norm{#1}}}
 
 
 % Dot product and cross product
 \newcommand{\dynamicvert}[1]{\,\left\vert\vphantom{#1}\right.}
 \newcommand{\dotproduct}[2]{\ensuremath{\left\langle\,#1\,\middle\vert\,#2\,\right\rangle}}
+% \newcommand{\smalldot}[2]{\ensuremath{\langle\,#1\,\vert\,#2\,\rangle}}
 \newcommand{\crossproduct}[2]{\ensuremath{#1\times#2}}
-
-
 
 \newcommand{\order}[1]{\mathcal{O}\left(#1\right)}
 
@@ -89,7 +90,8 @@
 \newcommand{\vecarrow}[1]{\oldvec{#1}}
 
 % Vector and Matrix macros		
-\renewcommand{\vec}[1]{\bm{#1}}
+% \renewcommand{\vec}[1]{\bm{#1}}
+% \renewcommand{\vec}[1]{\oldvec{\bm{#1}}}
 \newcommand{\mat}[1]{\bm{#1}}
 \newcommand{\set}[1]{\mathcal{#1}}
 \newcommand{\neighborhood}[1]{\mathcal{N}(#1)}

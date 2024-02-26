@@ -6,15 +6,15 @@ In the following, we will use the ideas of \textcite{deliot2023} to derive a fas
 \subsection{Shading Model}
 \label{sec:shading}
 %
-To simulate glinty materials we model the surface as consisting of mesoscopic details covered with normally distributed microfacets.
+Similar to \textcite{zirr2016} we model the surface as consisting of normally distributed mesoscopic details covered with normally distributed microscopic details or \emph{microfacets}.
 % TODO: Add illustrating figure
 %
-% NOTE: Maybe remove "we will refer to"
+% NOTE: Maybe remove "we will refer to" for better flow
 Subsequently, we will denote these larger-scale features as \emph{meso-facets}, and we will refer to reflecting meso-facets as \emph{glints}. 
 
 
 % ?: Use we or \parencite{deliot2023}
-We start from the Rendering Equation \parencite{kajiya1986, immel1986}:
+Therefore, we start from the Rendering Equation \parencite{kajiya1986, immel1986}:
 %
 \begin{equation}
     L_o(\vec{\omega_o}) =
@@ -43,6 +43,7 @@ We base $\rho_P$ on a Cook-Torrance model \parencite{cook1982} consisting of the
     },
 \end{equation}
 %
+% TODO: Rewrite this
 with the half vector $\vec{\omega_h}=\flatnormalize{\vec{\omega_i} + \vec{\omega_o}}$ describing the surface normal at which perfect reflection would occur and $D_P(\vec{\omega_h})$ as the probability for a microfacet on a meso-facet inside the pixel footprint to be aligned along this half vector $\vec{\omega_h}$ and thereby reflect light.
 %
 This differs from the original distribution term $D(\vec{\omega_h})$ which only represents the probability of a normally distributed microfacet being aligned that way. We get
@@ -100,7 +101,7 @@ $R$ can not directly be linked to a physical quantity but yet can be interpreted
 \subsubsection{Convergence}
 \label{sec:convergence-proof}
 
-We observe that for $N(P) \to \infty$
+We observe that for large meso-facet count $N(P)$
 %
 \begin{equation}
     \lim_{N(P) \to \infty} D_P(\vec{\omega_h})
@@ -108,10 +109,10 @@ We observe that for $N(P) \to \infty$
     = D(\vec{\omega_h}),
 \end{equation}
 %
-because, according to the law of large numbers, as $n$ approaches infinity, $\lim_{n \to \infty}b(n,p)=\expectation{b(n,p)}=np$.
+because, according to the law of large numbers, as $n$ approaches infinity, $\lim_{n \to \infty}\frac{b(n,p)}{n}=\expectation{\frac{b(n,p)}{n}}=p$.
 
 
-Hence, we have shown that for large meso-facet count our shading model converges to the chosen base Cook-Torrance microfacet model as desired.
+Hence, we have shown that our shading model converges to the chosen base Cook-Torrance microfacet model as desired.
 
 \subsection{Stochastic Counting Process}
 \label{sec:stochastic-counting-process}

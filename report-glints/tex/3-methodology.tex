@@ -6,15 +6,16 @@ In the following, we will use the ideas of \textcite{deliot2023} to derive a fas
 \subsection{Shading Model}
 \label{sec:shading}
 %
-Similar to \textcite{zirr2016} we model the surface as consisting of normally distributed mesoscopic details covered with normally distributed microscopic details or \emph{microfacets}.
+Similar to \textcite{zirr2016}, \textcite{deliot2023} model the surface as consisting of mesoscopic details covered with microscopic details or \emph{microfacets}.
 % TODO: Add illustrating figure
 %
-% NOTE: Maybe remove "we will refer to" for better flow
-Subsequently, we will denote these larger-scale features as \emph{meso-facets}, and we will refer to reflecting meso-facets as \emph{glints}. 
+Subsequently, we will denote these larger-scale features as \emph{meso-facets}, and 
+% we will refer to % NOTE: May flow better
+meso-facets that contribute to the reflectance of light as \emph{glints}. 
 
 
-% ?: Use we or \parencite{deliot2023}
-Therefore, we start from the Rendering Equation \parencite{kajiya1986, immel1986}:
+% ?: Use we or \textcite{deliot2023}
+Therefore, \textcite{deliot2023} start from the Rendering Equation \parencite{kajiya1986, immel1986}:
 %
 \begin{equation}
     L_o(\vec{\omega_o}) =
@@ -26,9 +27,9 @@ Therefore, we start from the Rendering Equation \parencite{kajiya1986, immel1986
 \end{equation}
 %
 % NOTE: Maybe write out BRDF
-The amount of light $L_o$ emitted in direction $\vec{\omega_o}$ is the sum over the hemisphere $\Omega$ of incoming light $L_i$ modulated by the BRDF $\rho_P$, whereas $P$ being the pixel footprint and $\vec{n}$ being the surface normal.
+The outgoing radiance $L_o$ emitted in direction $\vec{\omega_o}$ is the sum over the hemisphere $\Omega$ of incoming radiance $L_i$ modulated by the BRDF $\rho_P$, whereas $P$ being the pixel footprint and $\vec{n}$ being the surface normal.
 %
-We base $\rho_P$ on a Cook-Torrance model \parencite{cook1982} consisting of the Fresnel reflectance term $F$, the geometrical attenuation term $G$, and the distribution term $D$:
+$\rho_P$ is based on a Cook-Torrance model \parencite{cook1982} consisting of the Fresnel reflectance term $F$, the geometrical attenuation term $G$, and the distribution term $D$:
 %
 % NOTE: Maybe clarify that this is the specular component
 \begin{equation}
@@ -51,7 +52,7 @@ This differs from the original distribution term $D(\vec{\omega_h})$ which only 
 \begin{equation}
 \begin{aligned}
     D_P(\vec{\omega_h})
-    % TODO: Rename probabilities
+    % TODO: Rename probabilities / explain probabilities
     & = && \probability{\mathrm{glint}} && \cdot && \probabilitygiven{\mathrm{micro}}{\mathrm{glint}} \\
     & = && \frac{b(N(P), p)}{N(P)} && \cdot && D(\vec{n}),
 \end{aligned}
@@ -62,6 +63,7 @@ where $b(n, p)$ is a random sampling of the binomial distribution with $n$ trial
 We then choose the glint probability $p = \frac{D(\vec{\omega_h})}{D(\vec{n})}$ to ensure $\expectation{D_P(\vec{\omega_h})} = D(\vec{\omega_h})$:
 %
 \begin{equation}
+    % TODO: Rename to D’_P
     \expectation{D_P(\vec{\omega_h})}
     % = \frac{\E{b(N(P), p)}}{N(P)} D(\vec{n})
     = \frac{N(P) \, p}{N(P)} D(\vec{n})
@@ -69,33 +71,16 @@ We then choose the glint probability $p = \frac{D(\vec{\omega_h})}{D(\vec{n})}$ 
     = D(\vec{\omega_h}).
 \end{equation}
 %
-Furthermore, we introduce an artistic control parameter $R \in (0,1]$ that scales the glint probability and result in:
+Furthermore, \textcite{deliot2023} introduce an artistic control parameter $R \in (0,1]$ that scales the glint probability. This leaves us with:
 %
 \begin{equation}
+\label{eqn:glint-distribution-term}
     D_P(\vec{\omega_h})=\frac{b(N(P), p)}{N(P)\,R} \cdot D(\vec{n}),\quad
     p = R~\frac{D(\vec{\omega_h})}{D(\vec{n})}
 \end{equation}
 
 
-$R$ can not directly be linked to a physical quantity but yet can be interpreted as a measure of \emph{meso-facet roughness}: Lowering $R$ results in fewer but brighter glints and thus visually makes the glints less stable.
-
-% Therefore we extend $D(\vec{\omega_h})$ by a stochastic microfacet counting process $c(N(P), D(\vec{\omega_h}))$ 
-%
-% NOTE: "Statistics of the given pixel footprint"
-% To simulate the glinty appearance of the material, the distribution function $D$ is extended to $D_P$ accounting for the statistics of the given pixel footprint $P$:
-%
-% \begin{equation}
-%     D_P(\vec{h}) = \frac{
-%         c(N(P), D(\vec{\omega_h}))
-%     }{
-%         N(P)
-%     },
-% \end{equation}
-%
-% with $N(P)$ as the number of microfacets in the pixel footprint and $D(\vec{h})$ the original distribution function.
-% %
-% Therefore we introduce a stochastic microfacet counting process $c(N(P), D(\vec{\omega_h}))$ based on the random sampling of the binomial distribution:
-%
+$R$ can not directly be linked to a physical quantity but yet can be interpreted as a measure of \emph{meso-facet roughness}: Lowering $R$ results in fewer but brighter glints per meso-facets and thus visually makes the glints less stable.
 
 
 \subsubsection{Convergence}
@@ -112,30 +97,115 @@ We observe that for large meso-facet count $N(P)$
 because, according to the law of large numbers, as $n$ approaches infinity, $\lim_{n \to \infty}\frac{b(n,p)}{n}=\expectation{\frac{b(n,p)}{n}}=p$.
 
 
-Hence, we have shown that our shading model converges to the chosen base Cook-Torrance microfacet model as desired.
+Hence, we have shown that our shading model converges to the chosen base Cook-Torrance microfacet model, and we thereby satisfy the \ref{req:convergence} requirement.
+
 
 \subsection{Stochastic Counting Process}
 \label{sec:stochastic-counting-process}
 
+Now that we formulated our shading model the next step is to sample the number of meso-facets $N(P)$ and the glint count $b(N(P),p)$ in \cref{eqn:glint-distribution-term} in a way which satisfies the \ref{req:coherence} requirement.
 
-\subsubsection{Gated Gaussian Binomial Approximation}
+
+\textcite{deliot2023} treat both of these variables as independently random and following a binomial distribution. $N(P)$ only depends on the pixel footprint $P$.
+%
+$b(N(P),p)$ also depends on the half vector $\vec{\omega_h} \in \mathbb{R}^2$ as for different $\vec{\omega_h}$ different meso-facets become glints.
+
+
+To ensure coherent evaluation of the binomial distribution we have to create a discrete grid of random seeds in each of these dimensions and interpolate the evaluation between the vertices.
+%
+Therefore, we will firstly explore
+
+
+\subsubsection{Discretization}
+\label{sec:discretization}
+
+To discretize the pixel footprint $P$, \textcite{deliot2023} split it into it's shape $\vec{p} \in \mathbb{R}^3$, and it's position $\vec{x}_{\vec{p}} \in \mathbb{R}^2$ on a shape dependent 2D mapping of the object's surface.
+%
+This allows them to map arbitrarily anisotropic footprints to a constant number of texels and thus keep constant runtime.
+
+
+On the other hand \textcite{zirr2016} only relied on the isotropic scale of the surface area covered by the pixel to parametrize the footprint and hence have to do expensive anisotropic filtering to compensate for the other dimensions.
+
+\paragraph{Anisotropic Parametrization}
+%
+The footprint shape can be analyzed by regarding the perspective distortion of the object's texture space $\vec{x}$.
+%
+This distortion is a function $f: \mathbb{R}^2 \to \mathbb{R}^2$ for which we can form a Jacobian matrix $J \in \mathbb{R}^{2 \times 2}$ consisting of the two screen-space derivatives $\derivative{\vec{x}}{x}$ and $\derivative{\vec{x}}{y}$.
+%
+We then calculate an Eigendecomposition of the symmetric matrix $M=J^\transposed J$, the existence of which is guaranteed by the Spectral theorem.
+%
+The orthogonal eigenvectors can then be interpreted as the major and minor axes $\vec{v_0}$ and $\vec{v_1}$ of the ellipse spanned on the object's surface by the perspective deformation, with the eigenvalues representing the squared lengths of these axes.
+%
+\textcite{deliot2023} use this decomposition to extract and discretize following three dimensions:
+%
+\begin{description}
+    \item[Orientation $\theta$]
+    %
+    The angle $\theta=\arctantwo{\vec{v_0}}$ represents the direction of the major axis, indicating the alignment of anisotropy.
+
+    \item[Anisotropy $r$]
+    %
+    The ratio $r=\flatfrac{\norm{\vec{v_0}}}{\norm{\vec{v_1}}}$ quantifies the amount of anisotropic stretch meaning the extent to which the footprint is stretched in the direction of anisotropy $\theta$.
+    
+    \item[Isotropic Scale $s$]
+    %
+    The length $s=\norm{\vec{v_1}}$ of the minor axis indicates the amount of isotropic stretch applied evenly to the footprint.
+\end{description}
+%
+% TODO: For a visualization of these dimesnions see figure \ref{}
+
+
+The area $A(P)$ needed to count the number of meso-facets $N(P)$ in the footprint can thus be derived as:
+%
+\begin{equation}
+    A(\vec{p})
+    = \norm{\vec{v_0}} \cdot \norm{\vec{v_1}}
+    = \vec{p}_r \cdot \vec{p}_s \cdot \vec{p}_s.
+\end{equation}
+
+Using these parameters we can also obtain the shape dependent surface mapping $\vec{x}_{\vec{p}}$:
+%
+\begin{equation}
+    \vec{x}_{\vec{p}}=\rotate{\vec{p}_{\theta}}{\scale{1,\vec{p}_r}{\scale{\vec{p}_s}{\vec{x}}}}.
+\end{equation}
+
+
+\subsubsection{Binomial Approximation}
 \label{sec:approximation}
 
+As elaborated in \cref{sec:discretization} our algorithm requires $4\times3\times4$ samples of $4\times3$ different parametrizations of the binomial distribution per pixel, therefore an efficient method for drawing these samples is required.
+%
+Unfortunately, common strategies like inversion sampling can not easily be applied to the binomial distribution due to its discrete nature.
 
-\subsubsection{Linear Blending}
+\paragraph{Classical Binomial Approximation}
+%
+\textcite{zirr2016} therefore approximate the binomial distribution for large expectation $\expectation{b(n,p)}=np>5$ with the normal distribution $N(\mu,\sigma)$ with equal mean $\mu=\expectation{b(n,p)}=np$ and variance $\sigma^2=\variance{b(n,p)}=np(1-p)$.
+%
+Then for the normal distribution $N(\mu,\sigma)$ efficient approximations of the inverse cumulative distribution function \parencite[e.g.,][]{giles2012} and even direct sampling methods \parencite[e.g.,][]{box1958} are known.
+%
+
+\paragraph{Gated Gaussian Binomial Approximation}
+%
+To achieve stable performance and to obviate extensive branching \textcite{deliot2023} present a new approach that is likewise based on the normal approximation but splits the evaluation of the binomial distribution into two independent random trials first:
+%
+% TODO: Formalize
+Let $X$ be the total number of successes, $Y=1$, if we have at least one success, $Y=0$ otherwise, and $Z$ the number of successes if we ignore the first successful trial. Then
+%
+\begin{equation}
+    X = Y \cdot (1 + Z)
+\end{equation}
+
+
+\subsubsection{Blending}
+\label{sec:blending}
+
+
+\paragraph{Linear Blending}
 \label{sec:blending-linear}
 
 
-\subsubsection{Blending Using Distributed Binomial Laws}
+\paragraph{Blending Using Distributed Binomial Laws}
 \label{sec:blending-distributed}
-
-
-\subsection{Anisotropic Parametrization}
-\label{sec:anisotropy}
-
-
-\subsubsection{Simplex Optimization}
-\label{sec:simplex}
 
 
 \subsection{Implementation}

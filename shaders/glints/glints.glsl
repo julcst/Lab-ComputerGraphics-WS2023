@@ -13,6 +13,7 @@
 #line 14 205
 
 // ! This is executed 4*3=12 times per pixel (for each corner of the uv triangle of the vertex of the tetrahedron)
+// Note: Sample per halfvector-space vertex
 float sampleAngularBinom(float N, float pOneSuccess, float mu, float sigma, vec2 slope, vec2 rand) {
     // Randomize the slope
     vec2 randomizedSlope = slope + rand * 4096;
@@ -22,7 +23,7 @@ float sampleAngularBinom(float N, float pOneSuccess, float mu, float sigma, vec2
     vec2 slopeWeight = fract(randomizedSlope);
 
     // Draw 2 random numbers (A and B) per slope grid point
-    vec4 randA = hash4f(uvec4(slopeCoord.xy, slopeCoord.yx + 19U)); // TODO: primes would be better
+    vec4 randA = hash4f(uvec4(slopeCoord.xy, slopeCoord.yx + 19U)); // primes for better hashing
 	vec4 randB = hash4f(uvec4(slopeCoord.yx + 47U, slopeCoord.xy + 101U));
 
 GDEBUG_slopeLerp(vec3(slopeWeight, 0.0));
@@ -34,6 +35,7 @@ GDEBUG_slopeLerp(vec3(slopeWeight, 0.0));
 }
 
 // ! This is executed 4 times per pixel (for each vertex of the tetrahedron)
+// NOTE: Sample per uv-space vertex
 float sampleFootprint(uint seed, float area, float weight, vec2 slope, vec2 uv, float targetD, float p) {
     // Skew the uv grid to make the hexagonal glint shapes symmetric
     const mat2 gridToSkewedGrid = mat2(1.0, -0.57735027, 0.0, 1.15470054);
@@ -70,21 +72,23 @@ GDEBUG_uvTriangles(weights);
     vec3 mu = (NP - 1.0) * p;
     vec3 sigma = sqrt((NP - 1.0) * p * (1.0 - p)); // Equation (17)
 
-    // Sample the binomial distribution per vertex
+    // Sample the binomial distribution per simplex vertex
     vec3 samples;
     samples.x = sampleAngularBinom(NP.x, pOneSuccess.x, mu.x, sigma.x, slope, randA.yz);
     samples.y = sampleAngularBinom(NP.y, pOneSuccess.y, mu.y, sigma.y, slope, randB.yz);
     samples.z = sampleAngularBinom(NP.z, pOneSuccess.z, mu.z, sigma.z, slope, randC.yz);
     samples /= NP; // Normalize the samples
-    // TDOD: Debug sampling and mixing in every level
+    // TODO: Debug sampling and mixing in every level
 
 GDEBUG_baryCheck2(checkBarycentrics(weights));
 
-    // Interpolate the samples using the barycentric coordinates (Distributed Binomial Law)
+    // Interpolate the samples using the barycentric coordinates
+    // NOTE: This is not the distributed binomial law because we sample the same binomial distribution thrice with different NP
     return dot(samples, weights);
 }
 
 // ! This is executed 4 times per pixel (for each vertex of the tetrahedron)
+// NOTE: Compensate texture coordinates
 float sampleGridPoint(uint seed, vec3 gridPoint, float weight, vec2 slope, vec2 uv, float targetD, float p) {
     // The area of the footprint represented by the gridPoint is anisotropy * minorLength * minorLength (because majorLength = anisotropy * minorLength)
     float area = gridPoint.y * gridPoint.z * gridPoint.z;
@@ -119,6 +123,7 @@ GDEBUG_uvGridCompensated(checkerboard(uv, 0.5));
  *
  * @return The modified distribution term DP accounting for the mesoscopic microfacet distribution
  */
+// NOTE: Sample per footprint-space vertex
 float D_glints(float D, float Dmax, vec3 H, vec2 uv, float screenSpaceScale, float microfacetRoughness, float logMicrofacetDensity, float densityRandomization) {
 
     // Calculate the pixel footprint
@@ -139,7 +144,7 @@ GDEBUG_lod(vec3(foot.lod) * 300.0);
     bool centerCase = (hepta.aniso0 == 1.0);
 
 GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
-GDEBUG_thetaWeight(colorDebug(hepta.thetaWeight));
+GDEBUG_thetaWeight(colorDebug(centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight));
 GDEBUG_anisoWeight(colorDebug(hepta.anisoWeight));
 GDEBUG_lodWeight(colorDebug(hepta.lodWeight));
 GDEBUG_centerCase(boolToRGB(centerCase));
@@ -188,5 +193,8 @@ GDEBUG_uvGrid(checkerboard(uv, 100.0));
     float sampleD = sampleGridPoint(gridSeedD, tetra.p3, tetra.weights.w, slope, uv, D, p);
 
     // The samples are then summed together
-    return (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);
+    float DP = (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness) * 0.25; // Why 0.25?
+
+//GDEBUG0(vec3(D / DP));
+    return DP;
 }

@@ -36,10 +36,11 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     // The constructor syntax is mat2(column1, column2)
     mat2 J = transpose(mat2(duvdx, duvdy)); // ? This may not be necessary
 
-    mat2 Jinv = inverse(J); // ? This may not be necessary
+    // mat2 Jinv = inverse(J); // ? This may not be necessary
     // Make J symmetric
     // M = (J^{-1})^T J^{-1}
-    mat2 M = Jinv * transpose(Jinv);
+    // mat2 M = Jinv * transpose(Jinv);
+    mat2 M = transpose(J) * J; // without inverse
 
     // Extract entries (GLSL is [column][row])
     float a = M[0][0];
@@ -58,12 +59,20 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     float L2 = mid + dist;
 
     // Eigenvectors
-    vec2 ev1 = normalize(vec2(L1 - d, c)); // major
-    vec2 ev2 = normalize(vec2(L2 - d, c)); // minor
+    // vec2 ev1 = normalize(vec2(L1 - d, c)); // major
+    // vec2 ev2 = normalize(vec2(L2 - d, c)); // minor
 
     // Eigenvalues
-    float ew1 = 1.0 / sqrt(L1); // majorLength
-	float ew2 = 1.0 / sqrt(L2); // minorLength
+    // float ew1 = 1.0 / sqrt(L1); // majorLength
+	// float ew2 = 1.0 / sqrt(L2); // minorLength
+
+    // Eigenvectors without inverse
+    vec2 ev1 = normalize(vec2(L2 - d, c)); // major // without inverse
+    vec2 ev2 = normalize(vec2(L1 - d, c)); // minor // without inverse
+
+    // Eigenvalues without inverse
+    float ew1 = sqrt(L2); // majorLength // without inverse
+	float ew2 = sqrt(L1); // minorLength // without inverse
 
     Footprint footprint;
 

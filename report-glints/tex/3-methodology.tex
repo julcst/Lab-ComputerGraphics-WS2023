@@ -75,7 +75,8 @@ Furthermore, \textcite{deliot2023} introduce an artistic control parameter $R \i
 %
 \begin{equation}
 \label{eqn:glint-distribution-term}
-    D_P(\vec{\omega_h})=\frac{b(N(P), p)}{N(P)\,R} \cdot D(\vec{n}),\quad
+    D_P(\vec{\omega_h})=\frac{b(N(P), p)}{N(P)\,R} \cdot D(\vec{n}),
+    ~\text{with}~
     p = R~\frac{D(\vec{\omega_h})}{D(\vec{n})}
 \end{equation}
 
@@ -136,23 +137,25 @@ We then calculate an Eigendecomposition of the symmetric matrix $M=J^\transposed
 %
 The orthogonal eigenvectors can then be interpreted as the major and minor axes $\vec{v_0}$ and $\vec{v_1}$ of the ellipse spanned on the object's surface by the perspective deformation, with the eigenvalues representing the squared lengths of these axes.
 %
-\textcite{deliot2023} use this decomposition to extract and discretize following three dimensions:
+\textcite{deliot2023} use this decomposition to extract following three dimensions:
 %
 \begin{description}
-    \item[Orientation $\theta$]
+    \item[Orientation $\phi$\label{dim:phi}]
     %
-    The angle $\theta=\arctantwo{\vec{v_0}}$ represents the direction of the major axis, indicating the alignment of anisotropy.
+    The angle $\phi=\arctantwo{\vec{v_0}}$ represents the direction of the major axis, indicating the alignment of anisotropy.
 
-    \item[Anisotropy $r$]
+    \item[Anisotropy $r$\label{dim:aniso}]
     %
-    The ratio $r=\flatfrac{\norm{\vec{v_0}}}{\norm{\vec{v_1}}}$ quantifies the amount of anisotropic stretch meaning the extent to which the footprint is stretched in the direction of anisotropy $\theta$.
+    The ratio $r=\flatfrac{\norm{\vec{v_0}}}{\norm{\vec{v_1}}}$ quantifies the amount of anisotropic stretch meaning the extent to which the footprint is stretched in the direction of anisotropy $\phi$.
     
-    \item[Isotropic Scale $s$]
+    \item[Isotropic Scale $s$\label{dim:scale}]
     %
     The length $s=\norm{\vec{v_1}}$ of the minor axis indicates the amount of isotropic stretch applied evenly to the footprint.
+    %
+    This is equivalent to the level of detail \textcite{zirr2016} use to discretize the pixel footprint.
 \end{description}
 %
-% TODO: For a visualization of these dimesnions see figure \ref{}
+For a visualization of these dimensions see % TODO: \cref{fig:dimensions}.
 
 
 The area $A(P)$ needed to count the number of meso-facets $N(P)$ in the footprint can thus be derived as:
@@ -166,9 +169,20 @@ The area $A(P)$ needed to count the number of meso-facets $N(P)$ in the footprin
 Using these parameters we can also obtain the shape dependent surface mapping $\vec{x}_{\vec{p}}$:
 %
 \begin{equation}
-    \vec{x}_{\vec{p}}=\rotate{\vec{p}_{\theta}}{\scale{1,\vec{p}_r}{\scale{\vec{p}_s}{\vec{x}}}}.
+    \vec{x}_{\vec{p}}=\rotate{\vec{p}_{\phi}}{\scale{1,\vec{p}_r}{\scale{\vec{p}_s}{\vec{x}}}}.
 \end{equation}
 
+\paragraph{Discretization}
+%
+To distribute discrete random seeds in these dimensions, \textcite{deliot2023} now define three separate grids:
+
+For the pixel footprint shape $\vec{p}$ they apply a logarithmic scale on the \ref{dim:aniso} and the \ref{dim:scale} and define an adaptive grid for the \ref{dim:phi}.
+%
+This adaptation is necessary because the $\phi$-dimension collapses when the footprint becomes isotropic ($r=1$), and the parametrization becomes more sensitive towards changes in $\phi$ with large anisotropy.
+%
+The resulting adaptive grid is shown in \cref{fig:grid}.
+
+\input{figures/grid.tex}
 
 \subsubsection{Binomial Approximation}
 \label{sec:approximation}
@@ -183,6 +197,8 @@ Unfortunately, common strategies like inversion sampling can not easily be appli
 %
 Then for the normal distribution $N(\mu,\sigma)$ efficient approximations of the inverse cumulative distribution function \parencite[e.g.,][]{giles2012} and even direct sampling methods \parencite[e.g.,][]{box1958} are known.
 %
+% TODO: Maybe elaborate more on this
+For $np \le 5$ however, they rely on manually evaluating the binomial distribution which is rather expensive.
 
 \paragraph{Gated Gaussian Binomial Approximation}
 %
@@ -219,7 +235,7 @@ The resulting algorithm as described by \textcite{deliot2023} that integrates al
 %
 \todo{Rewrite}
 \begin{enumerate}
-    \item First calculate the footprint of the pixel and parametrize it into the three dimensions: theta (orientation), anisotropy, and level of detail.
+    \item First calculate the footprint of the pixel and parametrize it into the three dimensions: phi (orientation), anisotropy, and level of detail.
     \item Find the heptahedron in 3D footprint space that contains the current pixel's footprint.
     \item Find the tetrahedron in this heptahedron that contains the current pixel's footprint and calculate the barycentric coordinates.
     \item Sample each of the 4 vertices of the tetrahedron and interpolate the result using the Distributed Binomial Law. Each vertex is sampled using the following steps:

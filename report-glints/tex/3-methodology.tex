@@ -3,6 +3,9 @@
 %
 In the following, we will use the ideas of \textcite{deliot2023} to derive a fast, stable, and visually convincing glint renderer, that converges to any given configuration of the Cook-Torrance model.
 
+
+
+
 \subsection{Shading Model}
 \label{sec:shading}
 %
@@ -45,7 +48,7 @@ $\rho_P$ is based on a Cook-Torrance model \parencite{cook1982} consisting of th
 \end{equation}
 %
 % TODO: Rewrite this
-with the half vector $\vec{\omega_h}=\flatnormalize{\vec{\omega_i} + \vec{\omega_o}}$ describing the surface normal at which perfect reflection would occur and $D_P(\vec{\omega_h})$ as the probability for a microfacet on a meso-facet inside the pixel footprint to be aligned along this half vector $\vec{\omega_h}$ and thereby reflect light.
+with the half-vector $\vec{\omega_h}=\flatnormalize{\vec{\omega_i} + \vec{\omega_o}}$ describing the surface normal at which perfect reflection would occur and $D_P(\vec{\omega_h})$ as the probability for a microfacet on a meso-facet inside the pixel footprint to be aligned along this half-vector $\vec{\omega_h}$ and thereby reflect light.
 %
 This differs from the original distribution term $D(\vec{\omega_h})$ which only represents the probability of a normally distributed microfacet being aligned that way. We get
 %
@@ -74,7 +77,7 @@ We then choose the glint probability $p = \frac{D(\vec{\omega_h})}{D(\vec{n})}$ 
 Furthermore, \textcite{deliot2023} introduce an artistic control parameter $R \in (0,1]$ that scales the glint probability. This leaves us with:
 %
 \begin{equation}
-\label{eqn:glint-distribution-term}
+\label{eq:glint-distribution-term}
     D_P(\vec{\omega_h})=\frac{b(N(P), p)}{N(P)\,R} \cdot D(\vec{n}),
     ~\text{with}~
     p = R~\frac{D(\vec{\omega_h})}{D(\vec{n})}
@@ -101,15 +104,17 @@ because, according to the law of large numbers, as $n$ approaches infinity, $\li
 Hence, we have shown that our shading model converges to the chosen base Cook-Torrance microfacet model, and we thereby satisfy the \ref{req:convergence} requirement.
 
 
+
+
 \subsection{Stochastic Counting Process}
 \label{sec:stochastic-counting-process}
 
-Now that we formulated our shading model the next step is to sample the number of meso-facets $N(P)$ and the glint count $b(N(P),p)$ in \cref{eqn:glint-distribution-term} in a way which satisfies the \ref{req:coherence} requirement.
+Now that we formulated our shading model the next step is to sample the number of meso-facets $N(P)$ and the glint count $b(N(P),p)$ in \cref{eq:glint-distribution-term} in a way which satisfies the \ref{req:coherence} requirement.
 
 
 \textcite{deliot2023} treat both of these variables as independently random and following a binomial distribution. $N(P)$ only depends on the pixel footprint $P$.
 %
-$b(N(P),p)$ also depends on the half vector $\vec{\omega_h} \in \mathbb{R}^2$ as for different $\vec{\omega_h}$ different meso-facets become glints.
+$b(N(P),p)$ also depends on the half-vector $\vec{\omega_h} \in \mathbb{R}^3$ as for different $\vec{\omega_h}$ different meso-facets become glints.
 
 
 To ensure coherent evaluation of the binomial distribution we have to create a discrete grid of random seeds in each of these dimensions and interpolate the evaluation between the vertices.
@@ -166,9 +171,11 @@ The area $A(P)$ needed to count the number of meso-facets $N(P)$ in the footprin
     = \vec{p}_r \cdot \vec{p}_s \cdot \vec{p}_s.
 \end{equation}
 
+% TODO: Visualize the anisotropy compensating surface mapping
 Using these parameters we can also obtain the shape dependent surface mapping $\vec{x}_{\vec{p}}$:
 %
 \begin{equation}
+\label{eq:anisotropy-compensation}
     \vec{x}_{\vec{p}}=\rotate{\vec{p}_{\phi}}{\scale{1,\vec{p}_r}{\scale{\vec{p}_s}{\vec{x}}}}.
 \end{equation}
 
@@ -176,13 +183,88 @@ Using these parameters we can also obtain the shape dependent surface mapping $\
 %
 To distribute discrete random seeds in these dimensions, \textcite{deliot2023} now define three separate grids:
 
+
+\paragraph{Footprint Grid}
+\label{sec:footprint-grid}
+%
+% TODO: use hyperref[dim:aniso]{anisotropy dimension} instead of ref
 For the pixel footprint shape $\vec{p}$ they apply a logarithmic scale on the \ref{dim:aniso} and the \ref{dim:scale} and define an adaptive grid for the \ref{dim:phi}.
 %
 This adaptation is necessary because the $\phi$-dimension collapses when the footprint becomes isotropic ($r=1$), and the parametrization becomes more sensitive towards changes in $\phi$ with large anisotropy.
 %
-The resulting adaptive grid is shown in \cref{fig:grid}.
+The resulting adaptive grid is shown in \cref{fig:footprint-grid}.
 
-\input{figures/grid.tex}
+\input{figures/footprint-grid.tex}
+
+As illustrated each cell in this grid is a heptahedron with 10 vertices, so a naive implementation would require evaluating the following sample steps ten times, which is quite expensive.
+%
+To minimize these costs, \textcite{deliot2023} reduce the vertices of each cell by further splitting it up until they arrive at the simplest possible cell shape in this space, the tetrahedron.
+
+
+They do so by firstly triangulating the base pentagon on the $\phi r$\nobreakdash-plane and subsequently dividing the resulting three prisms into three tetrahedra each.
+
+
+In practice this can be efficiently implemented by initially testing against two hyperplanes to find the prism containing $\vec{p}$ and then performing another two nested hyperplane tests:
+%
+The first splits the prism into a pyramid and a tetrahedron and the second cuts the pyramid in half to finally obtain the tetrahedron including $\vec{p}$.
+
+
+One may notice that in the special case where the angular dimension collapses, the cell looses one face and becomes hexahedral, though this does not fundamentally alter our discretization process:
+%
+Instead of dividing the cell into three prisms we can then just divide it into two and the following steps remain unchanged.
+
+
+% TODO: Visualize branching
+% One could also argue that the hierarchical division process results in extensive branching, which negatively impacts the performance when executed on highly parallel processors like GPUs, but as we observe in \cref{fig:} the branching is locally coherent for regular meshes and thus better parallelizable.
+
+
+\paragraph{Surface Grid}
+%
+Let $\left\{\hat{p_0},\hat{p_1},\hat{p_2},\hat{p_3}\right\}$ denote the discrete tetrahedron containing the footprint shape $\vec{p}$.
+%
+For each of the vertices we calculate the anisotropy compensated surface position with \cref{eq:anisotropy-compensation}: We get $\vec{x}_{\hat{p_0}}, \vec{x}_{\hat{p_1}}, \vec{x}_{\hat{p_2}}, \vec{x}_{\hat{p_3}} \in \mathbb{R}^2$.
+
+
+Instead of simply relying on square grids to discretize these two-dimensional spaces, \textcite{deliot2023} again chose simplex grid cells, not only to reduce the vertex count from 4 to 3, but also because it alters the appearance of the glint shapes which become hexagonal.
+%
+% TODO: Visualize different glint shapes
+This, they believe to be a more natural choice as it reproduces the round shapes often encountered in nature better than a square grid does \parencite{deliot2023}.
+%
+They further skew the grid to make the glint shapes symmetrical (see \cref{fig:surface-grid}).
+
+\input{figures/surface-grid.tex}
+
+Such simplex grids have previously been explored, among others, by \textcite{perlin2001} in his definition of simplex noise.
+
+
+\paragraph{Half-Vector Grid}
+%
+As stated before the number of glints $b(N(P),p)$ does not only vary with the position and anisotropy of the pixel footprint $P$, but also between changes in the half-vector which occur for example when the light source is moved.
+%
+The half-vector $\vec{\omega_h} \in \mathbb{R}^3$ is a unit vector on the hemisphere in tangent space.
+%
+Therefore, the orthographic projection of $\vec{\omega_h}$ onto the tangent plane is bijective.
+
+\input{figures/halfvector-grid.tex}
+
+\textcite{deliot2023} distribute random seeds in the tangent plane using a square grid with $\flatfrac{1}{R}$ cells per unit (see \cref{fig:halfvector-grid}).
+%
+Thereby they allow for low meso-facet roughness to reduce the angular lifespan of a glint, which simulates rough surfaces being more sensitive to changes in the half-vector because the meso-facet normals are more widely distributed.
+%
+The orthographic projection further has a similar effect than the adaptive angular grid used to discretize the footprint shape: 
+%
+The grid becomes less dense for steep half-vectors and more seeds are distributed between shallow half-vectors of the same angles.
+%
+This emulates the vanishing angular dimension of flat meso-facets.
+
+
+They also considered using simplex grids in this space but found the performance gain to be negligible due to the added complexity.
+
+
+\paragraph{Summary}
+%
+
+
 
 \subsubsection{Binomial Approximation}
 \label{sec:approximation}
@@ -190,6 +272,7 @@ The resulting adaptive grid is shown in \cref{fig:grid}.
 As elaborated in \cref{sec:discretization} our algorithm requires $4\times3\times4$ samples of $4\times3$ different parametrizations of the binomial distribution per pixel, therefore an efficient method for drawing these samples is required.
 %
 Unfortunately, common strategies like inversion sampling can not easily be applied to the binomial distribution due to its discrete nature.
+
 
 \paragraph{Classical Binomial Approximation}
 %
@@ -199,6 +282,7 @@ Then for the normal distribution $N(\mu,\sigma)$ efficient approximations of the
 %
 % TODO: Maybe elaborate more on this
 For $np \le 5$ however, they rely on manually evaluating the binomial distribution which is rather expensive.
+
 
 \paragraph{Gated Gaussian Binomial Approximation}
 %
@@ -224,6 +308,8 @@ Let $X$ be the total number of successes, $Y=1$, if we have at least one success
 \label{sec:blending-distributed}
 
 
+
+
 \subsection{Implementation}
 \label{sec:implementation}
 
@@ -242,7 +328,7 @@ The resulting algorithm as described by \textcite{deliot2023} that integrates al
           \begin{enumerate}
               \item Compensate the uv parametrization of the vertex for its orientation, anisotropy, and level of detail.
               \item In the compensated uv space, find the uv triangle that contains the compensated uv coordinates.
-              \item For each triangle vertex and half vector draw a binomial sample.
+              \item For each triangle vertex and half-vector draw a binomial sample.
           \end{enumerate}
 \end{enumerate}
 

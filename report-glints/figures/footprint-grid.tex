@@ -1,7 +1,7 @@
-\begin{figure}
+\begin{figure}[h!]
     \tdplotsetmaincoords{65}{20}
     \centering
-    \begin{tikzpicture}[tdplot_main_coords]
+    \begin{tikzpicture}[tdplot_main_coords, scale=1.0]
 
         % Dimensions
         \draw[thick,->] (0, 0, 0) -- (4.5, 0, 0) node[anchor=west]{$\log(r)$};
@@ -77,6 +77,6 @@
     \vspace{-5pt}
     \caption{
         The footprint shape $\vec{p}$ is discretized using logarithmic steps along the $r$ and $s$ dimension and adaptive step sizes along the angular $\phi$ dimension. As a result, the grid cells take on a heptahedral shape (violet).
-        \label{fig:grid}
+        \label{fig:footprint-grid}
     }
 \end{figure}

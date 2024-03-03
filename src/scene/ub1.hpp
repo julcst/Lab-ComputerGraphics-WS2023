@@ -56,5 +56,8 @@ struct UB1 {
     int layerUseKappaTexture[Config::MAX_LAYERS];
     int layerUseAlphaTexture[Config::MAX_LAYERS];
 
+    bool distributeBinomialsOnSurfaceMapping = false;
+    bool hardBinomialGating = false;
+
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, alphaX, alphaY, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, layerAlphaX, layerAlphaY, debug, iblSampleCount, layerUseEtaTexture, layerUseKappaTexture, layerUseAlphaTexture);
 };

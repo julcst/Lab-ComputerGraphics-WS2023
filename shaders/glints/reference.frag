@@ -73,7 +73,7 @@ void main() {
     lighting += uSkyColor * uAlbedo * uAmbientStrength;
 
     RENDER_VIEW(lighting);
-    GDEBUG_D(vec3(D));
+    GDEBUG_D(colorDebug(D));
     GDEBUG_Dmax(vec3(Dmax));
-    GDEBUG_DP(vec3(DP));
+    GDEBUG_DP(colorDebug(DP));
 }

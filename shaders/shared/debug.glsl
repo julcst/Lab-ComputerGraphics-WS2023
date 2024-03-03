@@ -72,6 +72,14 @@ vec3 colorDebug(float x) {
     if (isnan(x)) return vec3(1.0, 0.0, 1.0);
     if (isinf(x)) return vec3(1.0, 0.0, 0.0);
     if (x <  0.0) return vec3(0.0, 0.0, 1.0);
+    if (x >  1.0) return vec3(0.0, 1.0, 0.0);
+    return vec3(x);
+}
+
+vec3 colorDebugEdges(float x) {
+    if (isnan(x)) return vec3(1.0, 0.0, 1.0);
+    if (isinf(x)) return vec3(1.0, 0.0, 0.0);
+    if (x <  0.0) return vec3(0.0, 0.0, 1.0);
     if (x == 0.0) return vec3(0.0, 0.0, 0.1);
     if (x == 1.0) return vec3(0.9, 1.0, 0.9);
     if (x >  1.0) return vec3(0.0, 1.0, 0.0);

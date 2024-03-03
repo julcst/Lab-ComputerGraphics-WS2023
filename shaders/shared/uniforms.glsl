@@ -83,4 +83,8 @@ layout(std140) uniform UB1 {
     ivec4 uLayerUseEtaTexture[MAX_LAYERS/4];
     ivec4 uLayerUseKappaTexture[MAX_LAYERS/4];
     ivec4 uLayerUseAlphaTexture[MAX_LAYERS/4];
+
+///////// Uniform switches /////////
+    bool uDistributeBinomialsOnSurfaceMapping;
+    bool uHardBinomialGating;
 };

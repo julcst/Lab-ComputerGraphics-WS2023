@@ -40,7 +40,8 @@ struct UB1 {
 // Location 11
     unsigned int layerCount = 0;
     unsigned int iblSampleCount = 8;
-    glm::vec2 padding = glm::vec2(0.0f);
+    unsigned int flags = 0;
+    unsigned int padding = 0;
 
 // Location 12-...
     glm::vec4 layerEta[Config::MAX_LAYERS];
@@ -55,9 +56,6 @@ struct UB1 {
     int layerUseEtaTexture[Config::MAX_LAYERS];
     int layerUseKappaTexture[Config::MAX_LAYERS];
     int layerUseAlphaTexture[Config::MAX_LAYERS];
-
-    bool distributeBinomialsOnSurfaceMapping = false;
-    bool hardBinomialGating = false;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB1, albedo, roughness, metallic, screenSpaceScale, logMicrofacetDensity, microfacetRoughness, densityRandomization, alphaX, alphaY, layerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, layerAlphaX, layerAlphaY, debug, iblSampleCount, layerUseEtaTexture, layerUseKappaTexture, layerUseAlphaTexture);
 };

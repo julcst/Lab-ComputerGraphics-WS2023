@@ -69,3 +69,13 @@ bool Util::combo(const char* label, int* curr, const std::vector<std::string>& i
 bool Util::combo(const char* label, unsigned int* curr, const std::vector<std::string>& items) {
     return Util::combo(label, reinterpret_cast<int*>(curr), items);
 }
+
+bool Util::flagCheckbox(const char* label, unsigned int* flags, unsigned int flagBitIndex) {
+    bool flag = (*flags & (1 << flagBitIndex)) != 0;
+    bool changed = ImGui::Checkbox(label, &flag);
+    if (changed) {
+        if (flag) *flags |= (1 << flagBitIndex);
+        else *flags &= ~(1 << flagBitIndex);
+    }
+    return changed;
+}

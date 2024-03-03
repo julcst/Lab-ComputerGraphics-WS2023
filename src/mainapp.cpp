@@ -198,8 +198,8 @@ void MainApp::buildImGui() {
             ImGui::SliderFloat("Density Randomization", &obj.material.densityRandomization, 0.0f, 10.0f);
             ImGui::SliderFloat("Microfacet Roughness", &obj.material.microfacetRoughness, 0.001f, 1.0f);
             Util::combo("Debug mode", &obj.material.debug, Config::GLINTS_DEBUG_MODES);
-            ImGui::Checkbox("Distribute Binomials On Surface Mapping", &obj.material.distributeBinomialsOnSurfaceMapping);
-            ImGui::Checkbox("Hard Binomial Gating", &obj.material.hardBinomialGating);
+            Util::flagCheckbox("Distribute Binomials On Surface Mapping", &obj.material.flags, 0);
+            Util::flagCheckbox("Use Hard Binomial", &obj.material.flags, 1);
         } else if (obj.shaderIdx == Config::ShaderType::LAYER) {
             for(unsigned int l = 0; l < obj.material.layerCount; l++) {
                 ImGui::PushID(l);

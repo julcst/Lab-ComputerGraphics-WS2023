@@ -71,6 +71,7 @@ layout(std140) uniform UB1 {
 ////////// Layered parameters //////////
     uint uLayerCount;
     uint uIBLSampleCount;
+    uint uFlags;
     vec4 uLayerEta[MAX_LAYERS];
     vec4 uLayerKappa[MAX_LAYERS];
     vec4 uLayerAlpha[MAX_LAYERS/4];
@@ -83,8 +84,7 @@ layout(std140) uniform UB1 {
     ivec4 uLayerUseEtaTexture[MAX_LAYERS/4];
     ivec4 uLayerUseKappaTexture[MAX_LAYERS/4];
     ivec4 uLayerUseAlphaTexture[MAX_LAYERS/4];
-
-///////// Uniform switches /////////
-    bool uDistributeBinomialsOnSurfaceMapping;
-    bool uHardBinomialGating;
 };
+
+bool uDistributeBinomialsOnSurfaceMapping = (uFlags & 1U) == 1U;
+bool uHardBinomialGating = (uFlags & 2U) == 2U;

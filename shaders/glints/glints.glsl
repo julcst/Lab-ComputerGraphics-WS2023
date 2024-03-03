@@ -63,20 +63,21 @@ GDEBUG_uvTriangles(weights);
     vec3 logDensityRand = clamp(sampleNormal(uLogMicrofacetDensity, uDensityRandomization, vec3(randA.x, randB.x, randC.x)), 0.0, 50.0);
     vec3 density = exp(logDensityRand);
     // NP is the number of discrete microfacets in the weighted pixel footprint per vertex
-    vec3 NP = area * density * weight; // Multiply by weight (Distributed Binomial Law)
+    vec3 NP = max(vec3(0.0), area * density);
+    vec3 NPblended = max(vec3(0.0), NP * weight); // Multiply by weight (Distributed Binomial Law)
 
     // Calculate pOneSuccess, mu and sigma per vertex to make the binomial distibution sampling step faster
     // The probability of having at least one success in a binomial distribution b(N,p)
-    vec3 pOneSuccess = 1.0 - pow(vec3(1.0 - p), NP); // Equation (16)
+    vec3 pOneSuccess = 1.0 - pow(vec3(1.0 - p), NPblended); // Equation (16)
     // Compute the parameters of the normal approximation of the binomial distribution for one less sample, b(N-1,p)
-    vec3 mu = (NP - 1.0) * p;
-    vec3 sigma = sqrt((NP - 1.0) * p * (1.0 - p)); // Equation (17)
+    vec3 mu = (NPblended - 1.0) * p;
+    vec3 sigma = sqrt((NPblended - 1.0) * p * (1.0 - p)); // Equation (17)
 
     // Sample the binomial distribution per simplex vertex
     vec3 samples;
-    samples.x = sampleAngularBinom(NP.x, pOneSuccess.x, mu.x, sigma.x, slope, randA.yz);
-    samples.y = sampleAngularBinom(NP.y, pOneSuccess.y, mu.y, sigma.y, slope, randB.yz);
-    samples.z = sampleAngularBinom(NP.z, pOneSuccess.z, mu.z, sigma.z, slope, randC.yz);
+    samples.x = sampleAngularBinom(NPblended.x, pOneSuccess.x, mu.x, sigma.x, slope, randA.yz);
+    samples.y = sampleAngularBinom(NPblended.y, pOneSuccess.y, mu.y, sigma.y, slope, randB.yz);
+    samples.z = sampleAngularBinom(NPblended.z, pOneSuccess.z, mu.z, sigma.z, slope, randC.yz);
     samples /= NP; // Normalize the samples
     // TODO: Debug sampling and mixing in every level
 
@@ -193,7 +194,7 @@ GDEBUG_uvGrid(checkerboard(uv, 100.0));
     float sampleD = sampleGridPoint(gridSeedD, tetra.p3, tetra.weights.w, slope, uv, D, p);
 
     // The samples are then summed together
-    float DP = (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness) * 0.25; // Why 0.25?
+    float DP = (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);// * 0.25; // Why 0.25?
 
 //GDEBUG0(vec3(D / DP));
     return DP;

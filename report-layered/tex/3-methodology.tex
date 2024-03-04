@@ -1,5 +1,105 @@
 \section{Methodology}
 \label{sec:methodology}
 
-\subsection{Statistics}
-\label{sec:statistics}
+\subsection{Statistics of an Interface}
+\label{sec:interface_statistics}
+
+\begin{itemize}
+    \item Estimate directional statistics
+    \item energy, mean and variance
+    \item bijective mapping between BSDF parameters and statistics
+    \item parametrization using orthographic projection
+    \item isotropic ggx approximately circular shape
+    \item 1D variance
+    \item mapping from ggx roughness to linear variance
+    \item explain rendering equation / GGX BRDF
+\end{itemize}
+
+\subsubsection{Rough reflection}
+\label{sec:rough_reflection}
+
+\begin{itemize}
+    \item energy: FDG texture, approximated by just the Fresnel term (Fresnel for dielectrics and conductors), (energy conservation by integrating scale factor in FGD texture precomputation.)
+    \item mean: simply reflect it, shift towards normal ignored
+    \item variance: increasing w.r.t roughness but using mapping to linear variance
+\end{itemize}
+
+\subsubsection{Rough refraction}
+\label{sec:rough_refraction}
+
+\begin{itemize}
+    \item energy: 1-FDG
+    \item mean: the mean of the transmitted lobe is not equal to the refracted incident direction. Its roughness and IOR dependent. However refracted direction is a good approximation.
+    \item variance: variance is scaled by IOR and roughness, approximation by treating transmission as reflection from underneath and scaling variance
+\end{itemize}
+
+\subsubsection{Absorption and forward scattering}
+\label{sec:absorption_scattering}
+
+Absorption:
+\begin{itemize}
+    \item energy: scaled radiance depending on optical depth and transmittance sigma
+    \item mean: impact negligible
+    \item variance: impact negligible
+\end{itemize}
+
+Scattering:
+\begin{itemize}
+    \item only single scattering taken into account
+    \item energy: scale radiance depending on optical depth and transmittance sigma
+    \item mean: impact negligible
+    \item variance: roughness increases width of phase function, mapping from GGX roughness for HG phase function 
+\end{itemize}
+
+\subsection{Statistics of multiple layers}
+\label{sec:layered_statistics}
+
+\begin{itemize}
+    \item Aggregation of many light paths
+    \item Adding-Doubling Algorithm
+    \item applied only on energy and variance
+    \item express radiative transfer in plane parallel media using a discrete form
+    \item reflection and transmission coefficients of radiance
+    \item TR+T paths
+    \item analytic form of arithmetic series
+    \item Doubling: homogenous medium of any depth through stacking the same layer multiple times
+    \item defining the coefficients
+    \item variance of the interaction has affine form and the variance of a weighted sum of distributions sharing the same mean is the weighted arithmetic mean of the individual variances
+    \item separation into geometric and arithmetico-geometric series
+    \item defining initial values
+    \item iteratively pass on coefficients 
+\end{itemize}
+
+\subsection{BSDF}
+\label{sec:bsdf}
+
+\begin{itemize}
+    \item Evaluate Adding-Doubling for the stack of layers
+    \item output is a vector of statistics
+    \item for each layer a GGX lobe is instantiated using the computed statistics with the inverse mapping
+    \item Importance Sampling 
+\end{itemize}
+
+\subsection{Anisotropic Interfaces}
+\label{sec:anisotropic_interfaces}
+
+\begin{itemize}
+    \item GGX lobes projected to the unit disc in tangent space the distribution is aligned with the anisotropy axis
+    \item Evaluate variance along each axis independently
+    \item scalar variance changes to a two-component vector
+    \item image-based lighting for anisotropic case
+    \item reduced applicability for real-time rendering
+    \item possibility to rotate tangent vector field by tracking 2x2 covariance matrix instead of vec2
+    \item 
+\end{itemize}
+
+\subsection{Implementation}
+\label{sec:implementation}
+
+\begin{itemize}
+    \item OpenGL real-time rendering engine
+    \item implementation without precomputation
+    \item implemented texturing
+    \item using vec2 for anisotropic case
+    \item using Monte Carlo integration for image-based lighting with importance sampling of visual normal distribution function
+\end{itemize}

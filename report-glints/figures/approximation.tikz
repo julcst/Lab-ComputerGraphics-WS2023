@@ -1,0 +1,784 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkgreen}{RGB}{0,100,0}
+\definecolor{darkorange}{RGB}{255,140,0}
+\definecolor{darkslateblue10251153}{RGB}{102,51,153}
+\definecolor{green}{RGB}{0,128,0}
+\definecolor{orange}{RGB}{255,165,0}
+\definecolor{purple}{RGB}{128,0,128}
+
+\begin{groupplot}[group style={group size=7 by 2}]
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.8587299,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.817838);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.165196);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.015945);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.000978);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,4.2e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,1e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.817785);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.176594);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.005617);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,4e-06);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.3962742,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.358006);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.377404);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.188586);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.060086);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.013347);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.002257);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.000273);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,3.8e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,3e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.357675);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.334422);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.221259);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.076723);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.009499);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.000416);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,6e-06);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.29913555,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.121628);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.270672);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.284891);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.190175);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.089547);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.031737);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.008964);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0.001973);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0.000351);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,5.4e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,7e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,1e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.12153);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.216068);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.249803);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.237395);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.128119);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.039352);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0.006957);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0.000719);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,5.7e-05);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.2559123,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.038528);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.136709);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.228956);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.243726);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.181727);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.10295);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.045358);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0.016204);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0.004552);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0.001064);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0.000192);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,3.1e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,3e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.038548);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.113264);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.168867);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.236719);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.222304);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.140138);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0.059421);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0.017083);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0.0032);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0.000413);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,4.2e-05);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,1e-06);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.19059705,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,2.1e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.000182);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.001096);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.004643);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.014673);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.037108);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0.073737);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0.120212);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0.159763);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0.176059);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0.160661);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0.120301);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0.074193);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0.036769);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0.014738);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0.004501);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0.001142);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0.000186);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,1.3e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,2e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,2e-06);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,4.2e-05);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.000265);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.001142);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.004385);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.013676);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0.034388);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0.071324);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0.120244);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0.164035);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0.181521);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0.164221);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0.119287);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0.071442);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0.034324);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0.01387);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0.004395);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0.001147);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0.000253);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,2.9e-05);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,7e-06);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,1e-06);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.30025695,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,2e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,1.1e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,6.3e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0.000364);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0.001924);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0.008738);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0.032122);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0.089529);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0.18991);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0.285959);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0.270063);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0.121315);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,1e-06);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,5.8e-05);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0.000791);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0.007931);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0.044863);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0.146519);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0.268906);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0.284243);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0.173378);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0.060038);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0.013272);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.8585556,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,3e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,4.2e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0.000951);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0.015929);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0.165403);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0.817672);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,1e-05);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0.03074);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0.637877);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0.328358);
+\draw[draw=darkslateblue10251153,fill=purple,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0.003015);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.8587299,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.817838);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.165196);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.015945);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.000978);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,4.2e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,1e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.749269);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.249043);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.001688);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.41246205,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.358006);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.377404);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.188586);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.060086);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.013347);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.002257);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.000273);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,3.8e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,3e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.304168);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.392821);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.240928);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.056877);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.005023);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.000181);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,2e-06);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.3058923,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.121628);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.270672);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.284891);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.190175);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.089547);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.031737);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.008964);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0.001973);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0.000351);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,5.4e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,7e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,1e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.131937);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.22208);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.291326);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.223201);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.100304);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.026709);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0.00403);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0.000398);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,1.5e-05);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.2580984,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.038528);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0.136709);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.228956);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.243726);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.181727);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.10295);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.045358);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0.016204);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0.004552);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0.001064);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0.000192);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,3.1e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,3e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.058463);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0.114754);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.203796);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.245808);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.203517);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.11509);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0.044316);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0.011835);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0.002131);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0.000268);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,2e-05);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,2e-06);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.1852557,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,2.1e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0.000182);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0.001096);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0.004643);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.014673);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.037108);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0.073737);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0.120212);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0.159763);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0.176059);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0.160661);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0.120301);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0.074193);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0.036769);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0.014738);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0.004501);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0.001142);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0.000186);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,1.3e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,2e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,1.3e-05);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,6.2e-05);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0.000318);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0.001462);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0.00511);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0.015121);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0.03694);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0.072292);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0.120065);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0.160496);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0.176434);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0.160647);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0.118966);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0.073177);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0.036848);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0.015038);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0.005157);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0.001427);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0.000355);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,6.7e-05);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,5e-06);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.3056235,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,2e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,1.1e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,6.3e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0.000364);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0.001924);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0.008738);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0.032122);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0.089529);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0.18991);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0.285959);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0.270063);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0.121315);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,1e-06);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,2e-05);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0.000362);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0.004103);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0.026226);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0.100605);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0.222503);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0.29107);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0.223284);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0.131826);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-1.6, xmax=22.6,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=0.8585556,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,3e-06);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,4.2e-05);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0.000951);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0.015929);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0.165403);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0.817672);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:17.5,0) rectangle (axis cs:18.5,0.001804);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:18.5,0) rectangle (axis cs:19.5,0.248249);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:19.5,0) rectangle (axis cs:20.5,0.749947);
+\draw[draw=darkgreen,fill=green,opacity=0.5] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\end{groupplot}
+
+\end{tikzpicture}

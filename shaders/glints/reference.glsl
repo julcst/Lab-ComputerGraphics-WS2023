@@ -388,6 +388,7 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 
 	// Compute binomial properties
 	float hitProba = uMicrofacetRoughness * targetNDF; // probability of hitting desired half vector in NDF distribution
+	GDEBUG_p(colorDebugEdges(hitProba));
 	vec3 footprintOneHitProba = (1.0 - pow(1.0 - vec3(hitProba), microfacetCountBlended)); // probability of hitting at least one microfacet in footprint
 	vec3 footprintMean = (microfacetCountBlended - 1.0) * vec3(hitProba); // Expected value of number of hits in the footprint given already one hit
 	vec3 footprintSTD = sqrt((microfacetCountBlended - 1.0) * vec3(hitProba) * (1.0 - vec3(hitProba))); // Standard deviation of number of hits in the footprint given already one hit

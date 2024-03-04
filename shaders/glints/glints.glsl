@@ -65,6 +65,7 @@ GDEBUG_uvTriangles(weights);
     // NP is the number of discrete microfacets in the weighted pixel footprint per vertex
     vec3 NP = max(vec3(0.0), area * density);
     vec3 NPblended = max(vec3(0.0), NP * weight); // Multiply by weight (Distributed Binomial Law)
+    if (uDistributeBinomialsOnSurfaceMapping) NPblended *= weights;
 
     // Calculate pOneSuccess, mu and sigma per vertex to make the binomial distibution sampling step faster
     // The probability of having at least one success in a binomial distribution b(N,p)
@@ -85,7 +86,7 @@ GDEBUG_baryCheck2(checkBarycentrics(weights));
 
     // Interpolate the samples using the barycentric coordinates
     // NOTE: This is not the distributed binomial law because we sample the same binomial distribution thrice with different NP
-    return dot(samples, weights);
+    return dot(samples, uDistributeBinomialsOnSurfaceMapping ? vec3(1.0) : weights); 
 }
 
 // ! This is executed 4 times per pixel (for each vertex of the tetrahedron)
@@ -176,6 +177,7 @@ GDEBUG_seedA(vec3(mapf(gridSeedA)));
 
     // p is the probability of a microfacet being reflecting
     float p = microfacetRoughness * D / Dmax;
+GDEBUG_p(colorDebugEdges(p));
 
     // Project H onto the tangent plane
     vec2 slope = H.xy;

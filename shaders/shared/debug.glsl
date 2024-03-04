@@ -37,6 +37,7 @@
 #define GDEBUG2(v) DEBUG_VIEW(27, v)
 #define GDEBUG_slope(v) DEBUG_VIEW(28, v)
 #define GDEBUG_H(v) DEBUG_VIEW(29, v)
+#define GDEBUG_p(v) DEBUG_VIEW(30, v)
 
 /**
  * Interprets angle as hue and converts it to RGB.

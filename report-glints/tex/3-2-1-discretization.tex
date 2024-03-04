@@ -11,7 +11,7 @@ $b(N(P),p)$ also depends on the half-vector $\vec{\omega_h} \in \mathbb{R}^3$ as
 
 To ensure coherent evaluation of the binomial distribution we have to create a discrete grid of random seeds in each of these dimensions and interpolate the evaluation between the vertices.
 %
-Therefore, we will firstly explore
+Therefore, we will firstly explore how to find a discretization which efficiently maps to a constant number of seeds for every level of anisotropy, then we will look into interpolation schemes for binomial distributions, and finally describe a fast approximation to generate these samples.
 
 
 \subsubsection{Discretization}
@@ -153,7 +153,11 @@ This emulates the vanishing angular dimension of flat meso-facets.
 They also considered using simplex grids in this space but found the performance gain to be negligible due to the added complexity.
 
 
+\textcite{zirr2016} use a similar discretization approach in their paper by applying a paraboloid mapping to the half-vector, but also integrate the size of the light cone into their step size.
+
+
 \paragraph{Summary}
 %
-
-
+Using these three nested discretization processes \textcite{deliot2023} result in $4\times3$ different meso-facet counts $N_{ij}$, one for each of the three vertices of the simplex cells of the four anisotropy compensating mappings $\vec{x}_{\hat{p_0}}, \vec{x}_{\hat{p_1}}, \vec{x}_{\hat{p_2}}, \vec{x}_{\hat{p_3}}$ belonging to the four vertices of the tetrahedron containing the footprint shape $\vec{p}$. 
+%
+For each of theses meso-facet counts the binomial $b(N_{ij}, p)$ is then evaluated four times, once for each half-vector seed.

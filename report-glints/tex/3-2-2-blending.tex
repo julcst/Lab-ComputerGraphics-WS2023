@@ -1,0 +1,78 @@
+\subsubsection{Blending}
+\label{sec:blending}
+
+Given $\vec{p}$ and $\vec{x}$.
+%
+Let $\left\{\hat{p_0},\hat{p_1},\hat{p_2},\hat{p_3}\right\}$ be the simplex cell enclosing the footprint shape $\vec{p}$ with barycentric weights $\vec{a} \in \interval{0}{1}^4$.
+%
+Then for each grid point $\hat{p_i}$ let $N_{ij}$ denote the meso-facet counts attached to the vertices $\hat{x}_{ij}$ surrounding $\vec{x}_{\hat{p_i}}$ with barycentric weights $\vec{b_i} \in \interval{0}{1}^3$.
+
+
+% Wrong, when also binomially distributed
+% Therefore,
+% %
+% \begin{equation}
+%     N = \sum_{i=0}^{3} a_i \sum_{j=0}^{2} b_{ij} N_{ij}
+% \end{equation}
+% %
+% is the blended meso-facet count inside the pixel footprint.
+
+
+We want to blend the number of glints between random seeds $\theta_{ijk}$ that we attach to each vertex $\hat{\omega}_k$ framing the half vector $\vec{\omega_h}$ on the tangent plane grid with the bilinear weights being $\vec{c_{ij}} \in \interval{0}{1}^4$.
+%
+Therefore, we will compare two different blending approaches.
+
+\input{figures/blending.tex}
+
+\paragraph{Linear Blending}
+\label{sec:blending-linear}
+%
+\textcite{zirr2016} linearly blend the results of evaluations of the binomial distribution between different levels of detail, to obtain a glint count for intermediate level footprint sizes.
+%
+In the one-dimensional case with one weight $w$ and two edges $N_0$ and $N_1$, such that $N=w \, N_0 + (1-w) \, N_1$ this equals:
+%
+\begin{equation}
+    b(N, p) = w \cdot b(N_0, p) + (1-w) \cdot b(N_1, p).
+\end{equation}
+%
+As illustrated in \cref{fig:blending-linear} this does preserve the expected value but not the variance of the truly blended distribution and thus leads to ghosting artifacts.
+
+% TODO: Maybe calculate expectation and variance
+% \begin{equation}
+%     \begin{aligned}
+%         \expectation{w \cdot b(N_0, p) + (1-w) \cdot b(N_1, p)}\\
+%         = w \cdot \expectation{b(N_0, p)} + (1-w) \cdot \expectation{b(N_1, p)}\\
+%         = (w \cdot N_0 + (1-w) \cdot N_1) \cdot p = Np = \expectation{b(N, p)}
+%     \end{aligned}
+% \end{equation}
+
+
+\paragraph{Distributed Blending}
+\label{sec:blending-distributed}
+%
+To preserve the statistics of the blended binomial distribution \textcite{deliot2023} choose to blend the \emph{parameters} of the edge distributions instead of the \emph{results}.
+%
+In the one-dimensional case with one weight $w$ and two edges $N_0$ and $N_1$, such that $N=w \, N_0 + (1-w) \, N_1$ this equals:
+%
+\begin{equation}
+    b(N, p) = b(w \cdot N_0, p) + b((1-w) \cdot N_1, p),
+\end{equation}
+%
+but can be extended analogical to more dimensions.
+%
+This is a special case of the Poisson binomial distribution with equal probabilities and one can easily observe that it equals the truly blended binomial distribution $b(N, p)$ in expectation, variance and probability function as illustrated in \cref{fig:blending-distributed}.
+
+Intuitively the equivalence can be interpreted in the following manner:
+%
+Because the probability $p$ is the same for every binomial distribution we can model each of the samples as drawing balls from the same urn with two ball colors in the proportion $p$ and replacing them after each trial.
+%
+Now the resulting number of successes when drawing $N$ balls in one session is equivalently distributed to the summed number of successes over two different sessions in which we respectively draw $w \, N_0$ and $(1-w) \, N_1$ balls from the same urn with $w \, N_0 + (1-w) \, N_1=N$.
+
+
+As this blending method prevents artifacts, we choose it to blend the discrete samples of the glint count $b(N(P),p)$:
+%
+\begin{equation}
+    b(N(P),p) = \sum_{i=0}^{3} \sum_{j=0}^{2} \sum_{k=0}^{3} c_{ijk} \cdot b_{\theta_{ijk}}\left(N_{ij} \cdot a_{i} \cdot b_{ij}, p\right).
+\end{equation}
+%
+Nevertheless, \textcite{deliot2023} decided not to use distributed blending in the surface domain in their implementation, which gives the individual facets a blurrier appearance.

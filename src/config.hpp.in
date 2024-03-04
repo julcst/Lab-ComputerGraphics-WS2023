@@ -64,6 +64,7 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "2",                // 27
     "slope",            // 28
     "H",                // 29
+    "p",                // 30
 };
 
 const std::vector<std::string> LAYERED_DEBUG_MODES = {

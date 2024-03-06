@@ -29,7 +29,7 @@ void Common::filesInDirectory(const std::string& directoryPath, const std::strin
         for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
             if (std::filesystem::is_regular_file(entry.status())) {
                 if(entry.path().extension() == extension) {
-                    filenames.push_back(entry.path().relative_path());
+                    filenames.push_back(entry.path().relative_path().string());
                 }
             } 
         }

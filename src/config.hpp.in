@@ -2,8 +2,11 @@
 
 #include <string>
 #include <vector>
-#include <unistd.h>
-#include <pwd.h>
+
+#ifdef __APPLE__
+    #include <unistd.h>
+    #include <pwd.h>
+#endif
 
 namespace Config {
 

@@ -346,6 +346,7 @@ float GenerateAngularBinomialValueForSurfaceCell(vec4 randB, vec4 randG, vec2 sl
 
 	vec4 gauss = randG * footprintSTD + footprintMean;
 	gauss = clamp(floor(gauss), 0, microfacetCount);
+	if (!uEnableBinomialOvershooting) gauss = clamp(floor(gauss), 0, microfacetCount - 1);
 	vec4 results = gating * (1.0 + gauss);
 	float result = BilinearLerp(results, slopeLerp);
 	return result;
@@ -384,7 +385,7 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	vec3 logDensityRand = clamp(sampleNormalDistribution(vec3(rand0.x, rand1.x, rand2.x), uLogMicrofacetDensity, uDensityRandomization), 0.0, 50.0); // TODO : optimize sampleNormalDist
 	vec3 microfacetCount = max(vec3(0.0), vec3(footprintArea) * exp(logDensityRand));
 	vec3 microfacetCountBlended = microfacetCount * gridWeight;
-	if (uDistributeBinomialsOnSurfaceMapping) microfacetCountBlended = microfacetCount * gridWeight * barycentrics; // alternative
+	if (!uEnableSurfaceDomainLinearBlending) microfacetCountBlended = microfacetCount * gridWeight * barycentrics; // alternative
 
 	// Compute binomial properties
 	float hitProba = uMicrofacetRoughness * targetNDF; // probability of hitting desired half vector in NDF distribution
@@ -396,7 +397,7 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	// TODO: uniform to switch between soft and hard binomial
 	// soft if
 	vec3 binomialSmoothWidth = 0.1 * clamp(footprintOneHitProba * 10, 0.0, 1.0) * clamp((1.0 - footprintOneHitProba) * 10, 0.0, 1.0);
-	if (uHardBinomialGating) binomialSmoothWidth = vec3(0.0);
+	if (uEnableSoftBinomialGating) binomialSmoothWidth = vec3(0.0);
 
 	// Generate numbers of reflecting microfacets
 	float result0, result1, result2;
@@ -407,7 +408,7 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	// Interpolate result for glint grid cell
 	vec3 results = vec3(result0, result1, result2) / microfacetCount.xyz;
 	float result = dot(results, barycentrics);
-	if (uDistributeBinomialsOnSurfaceMapping) result = dot(results, vec3(1.0)); // alternative // ! Why not Distributed Binomial Law
+	if (!uEnableSurfaceDomainLinearBlending) result = dot(results, vec3(1.0)); // alternative // ! Why not Distributed Binomial Law
 	return result;
 }
 															   // ! weird

@@ -13,8 +13,8 @@ void main() {
     vec3 rayDir = normalize(viewDir);
     if (uUseCubemap) {
         fragColor = texture(cubemap,rayDir).rgb;
-    } else{
-        vec3 sky = exp(-abs(rayDir.y) / uSkyColor);
+    } else {
+        vec3 sky = uFlatSky ? uSkyColor : exp(-abs(rayDir.y) / uSkyColor);
         float sun = pow(max(0.0, dot(rayDir, uLightDir)), 1000);
         fragColor = sky + sun * vec3(1.0);
     }

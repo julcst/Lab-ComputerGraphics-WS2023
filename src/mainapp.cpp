@@ -86,7 +86,7 @@ void MainApp::render() {
     scene.cameraPosition = cam.getPosition();
     ub0.upload(scene);
 
-    if(scene.useCubemap){
+    if(scene.flags & 1U){
         cubemap.bind();
     }
     
@@ -121,6 +121,7 @@ void MainApp::buildImGui() {
     ImGui::SetNextWindowPos(ImVec2(0, 50), ImGuiCond_Once);
     ImGui::Begin("Scene", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::ColorEdit3("Sky Color", value_ptr(scene.skyColor), ImGuiColorEditFlags_Float);
+    Util::flagCheckbox("Flat Sky", &scene.flags, 1);
     ImGui::SliderFloat("Fake Ambient Strength", &scene.ambientStrength, 0.0f, 1.0f);
     ImGui::ColorEdit3("Light Color", value_ptr(scene.lightColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
     Util::sphericalSlider("Light Direction", scene.lightDir);
@@ -140,8 +141,8 @@ void MainApp::buildImGui() {
     }
     if (ImGui::Button("Clear")) objects.clear();
     ImGui::Separator();
-    ImGui::Checkbox("Use Cubemap", reinterpret_cast<bool*>(&scene.useCubemap));
-    if(scene.useCubemap){
+    Util::flagCheckbox("Use Cubemap", &scene.flags, 0);
+    if(scene.flags & 1U){
         if (Util::combo("Cubemap", &cubemap.id, Config::CUBEMAP_NAMES)) {
             std::string cubemapName = Config::CUBEMAP_NAMES[cubemap.id];
             cubemap.load(cubemapName);
@@ -194,12 +195,15 @@ void MainApp::buildImGui() {
             ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.001f, 1.0f);
             ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
             ImGui::SliderFloat("Screen Space Scale", &obj.material.screenSpaceScale, 1.0f, 10.0f);
-            ImGui::SliderFloat("Log Microfacet Density", &obj.material.logMicrofacetDensity, -10.0f, 50.0f);
+            ImGui::SliderFloat("Log Microfacet Density", &obj.material.logMicrofacetDensity, 1.0f, 50.0f);
             ImGui::SliderFloat("Density Randomization", &obj.material.densityRandomization, 0.0f, 10.0f);
             ImGui::SliderFloat("Microfacet Roughness", &obj.material.microfacetRoughness, 0.001f, 1.0f);
             Util::combo("Debug mode", &obj.material.debug, Config::GLINTS_DEBUG_MODES);
-            Util::flagCheckbox("Distribute Binomials On Surface Mapping", &obj.material.flags, 0);
-            Util::flagCheckbox("Use Hard Binomial", &obj.material.flags, 1);
+            Util::flagCheckbox("Enable Surface Domain Linear Blending", &obj.material.flags, 0);
+            ImGui::BeginDisabled(obj.shaderIdx == Config::ShaderType::GLINTS);
+            Util::flagCheckbox("Enable Soft Binomial Gating", &obj.material.flags, 1);
+            ImGui::EndDisabled();
+            Util::flagCheckbox("Enable Binomial Overshooting", &obj.material.flags, 2);
         } else if (obj.shaderIdx == Config::ShaderType::LAYER) {
             for(unsigned int l = 0; l < obj.material.layerCount; l++) {
                 ImGui::PushID(l);
@@ -340,6 +344,7 @@ bool MainApp::saveScene(std::string path) {
         Common::writeToFile(jScene.dump(4), path);
         return true;
     } catch (std::exception& e) {
+        std::cerr << "Error saving " << path << ": " << e.what() << std::endl;
         return false;
     }
 }
@@ -371,6 +376,7 @@ bool MainApp::loadScene(std::string path) {
 
         return true;
     } catch (std::exception& e) {
+        std::cerr << "Error loading " << path << ": " << e.what() << std::endl;
         return false;
     }
 }

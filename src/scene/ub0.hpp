@@ -13,8 +13,8 @@ struct UB0 {
     glm::vec3 lightColor = glm::vec3(1.0f);
     float ambientStrength = 0.08f;
     glm::vec3 cameraPosition = glm::vec3(0.0f);
-    int useCubemap = 0;
+    uint flags = 0U;
     glm::mat4 cameraRotation = glm::mat4(1.0f);
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(UB0, lightDir, skyColor, lightColor, ambientStrength, useCubemap);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(UB0, lightDir, skyColor, lightColor, ambientStrength, flags);
 };

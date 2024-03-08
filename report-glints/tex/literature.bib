@@ -4,14 +4,15 @@
   author = {Atanasov, Asen and Koylazov, Vladimir},
   date = {2016-07-24},
   pages = {1--2},
-  publisher = {{ACM}},
-  location = {{Anaheim California}},
+  publisher = {ACM},
+  location = {Anaheim California},
   doi = {10.1145/2897839.2927391},
   url = {https://dl.acm.org/doi/10.1145/2897839.2927391},
   urldate = {2024-02-24},
   eventtitle = {{{SIGGRAPH}} '16: {{Special Interest Group}} on {{Computer Graphics}} and {{Interactive Techniques Conference}}},
   isbn = {978-1-4503-4282-7},
-  langid = {english}
+  langid = {english},
+  keywords = {offline,stochastic}
 }
 
 @article{atanasov2021,
@@ -34,7 +35,7 @@
 
 @unpublished{bowles,
   title = {Sparkly but Not Too Sparkly!},
-  author = {Bowles, Huw and Beibei, Wang},
+  author = {Bowles, Huw and Wang, Beibei},
   url = {https://inria.hal.science/hal-01252637/file/siggraph15_sparkly.pdf},
   eventtitle = {Siggraph 2015 {{Advances}} in {{Realtime Rendering}} in {{Games}} (2015)},
   langid = {english},
@@ -135,7 +136,7 @@
   date = {2021},
   journaltitle = {Eurographics Symposium on Rendering - DL-only Track},
   pages = {9 pages},
-  publisher = {{The Eurographics Association}},
+  publisher = {The Eurographics Association},
   issn = {1727-3463},
   doi = {10.2312/SR.20211289},
   url = {https://diglib.eg.org/handle/10.2312/sr20211289},
@@ -166,7 +167,7 @@
 
 @online{deliot2023,
   title = {Real-{{Time Rendering}} of {{Glinty Appearances}} Using {{Distributed Binomial Laws}} on {{Anisotropic Grids}}},
-  author = {Deliot and Thomas and Belcour and Laurent},
+  author = {Deliot, Thomas and Belcour, Laurent},
   date = {2023-06-08},
   eprint = {2306.05051},
   eprinttype = {arxiv},
@@ -178,6 +179,15 @@
   pubstate = {preprint},
   keywords = {68U05,Computer Science - Graphics,I.3,Important},
   file = {/Users/julianstamm/Zotero/storage/C2DF9AK6/Deliot et al. - 2023 - Real-Time Rendering of Glinty Appearances using Di.pdf;/Users/julianstamm/Zotero/storage/DJW8ZU4A/2306.html}
+}
+
+@unpublished{deliot2023a,
+  title = {Real {{Time Rendering}} of {{Glinty Appearance}} Using {{Distributed Binomial Laws}} on {{Anisotropic Grids}}},
+  author = {Deliot},
+  date = {2023-07-09},
+  url = {https://www.youtube.com/watch?v=EB7qa4aL_XI},
+  urldate = {2024-02-21},
+  abstract = {Real Time Rendering of Glinty Appearance using Distributed Binomial Laws on Anisotropic Grids Thomas Deliot, Laurent Belcour Paper Session: Primitives, Surfaces \& Appearance Modeling - HPG 2023 - Day 2}
 }
 
 @article{deng2022,
@@ -196,6 +206,25 @@
   abstract = {The detailed glinty appearance from complex surface microstructures enhances the level of realism but is both - and time-consuming to render, especially when viewed from far away (large spatial coverage) and/or illuminated by area lights (large angular coverage). In this article, we formulate the glinty appearance rendering process as a spatio-angular range query problem of the Normal Distribution Functions (NDFs), and introduce an efficient spatio-angular prefiltering solution to it. We start by exhaustively precomputing all possible NDFs with differently sized positional coverages. Then we compress the precomputed data using tensor rank decomposition, which enables accurate and fast angular range queries. With our spatio-angular prefiltering scheme, we are able to solve both the storage and performance issues at the same time, leading to efficient rendering of glinty appearance with both constant storage and constant performance, regardless of the range of spatio-angular queries. Finally, we demonstrate that our method easily applies to practical rendering applications that were traditionally considered difficult. For example, efficient bidirectional reflection distribution function evaluation accurate NDF importance sampling, fast global illumination between glinty objects, high-frequency preserving rendering with environment lighting, and tile-based synthesis of glinty appearance.},
   langid = {english},
   file = {/Users/julianstamm/Zotero/storage/DNWAFG5L/Deng et al. - 2022 - Constant-Cost Spatio-Angular Prefiltering of Glinty Appearance Using Tensor Decomposition.pdf}
+}
+
+@article{dupuy2013,
+  title = {Linear Efficient Antialiased Displacement and Reflectance Mapping},
+  author = {Dupuy, Jonathan and Heitz, Eric and Iehl, Jean-Claude and Poulin, Pierre and Neyret, Fabrice and Ostromoukhov, Victor},
+  date = {2013-11},
+  journaltitle = {ACM Transactions on Graphics},
+  shortjournal = {ACM Trans. Graph.},
+  volume = {32},
+  number = {6},
+  pages = {1--11},
+  issn = {0730-0301, 1557-7368},
+  doi = {10.1145/2508363.2508422},
+  url = {https://dl.acm.org/doi/10.1145/2508363.2508422},
+  urldate = {2024-03-07},
+  abstract = {We present Linear Efficient Antialiased Displacement and Reflectance (LEADR) mapping, a reflectance filtering technique for displacement mapped surfaces. Similarly to LEAN mapping, it employs two mipmapped texture maps, which store the first two moments of the displacement gradients. During rendering, the projection of this data over a pixel is used to compute a noncentered anisotropic Beckmann distribution using only simple, linear filtering operations. The distribution is then injected in a new, physically based, rough surface microfacet BRDF model, that includes masking and shadowing effects for both diffuse and specular reflection under directional, point, and environment lighting. Furthermore, our method is compatible with animation and deformation, making it extremely general and flexible. Combined with an adaptive meshing scheme, LEADR mapping provides the very first seamless and hardware-accelerated multi-resolution representation for surfaces. In order to demonstrate its effectiveness, we render highly detailed production models in real time on a commodity GPU, with quality matching supersampled ground-truth images.},
+  langid = {english},
+  keywords = {New},
+  file = {/Users/julianstamm/Zotero/storage/AHWR933H/Dupuy et al. - 2013 - Linear efficient antialiased displacement and reflectance mapping.pdf}
 }
 
 @article{gamboa2018,
@@ -223,8 +252,8 @@
   date = {2012-01-01},
   series = {Applications of {{GPU Computing Series}}},
   pages = {109--116},
-  publisher = {{Morgan Kaufmann}},
-  location = {{Boston}},
+  publisher = {Morgan Kaufmann},
+  location = {Boston},
   doi = {10.1016/B978-0-12-385963-1.00010-1},
   url = {https://www.sciencedirect.com/science/article/pii/B9780123859631000101},
   urldate = {2024-02-21},
@@ -260,8 +289,8 @@
   date = {2017},
   volume = {10700},
   pages = {51--68},
-  publisher = {{Springer International Publishing}},
-  location = {{Cham}},
+  publisher = {Springer International Publishing},
+  location = {Cham},
   doi = {10.1007/978-3-319-72323-5_4},
   url = {http://link.springer.com/10.1007/978-3-319-72323-5_4},
   urldate = {2024-02-21},
@@ -269,13 +298,31 @@
   file = {/Users/julianstamm/Zotero/storage/YPNUK36E/Golla and Klein - 2017 - An Efficient Statistical Data Representation for Real-Time Rendering of Metallic Effect Car Paints.pdf}
 }
 
-@unpublished{high-performancegraphics2023,
-  title = {Real {{Time Rendering}} of {{Glinty Appearance}} Using {{Distributed Binomial Laws}} on {{Anisotropic Grids}}},
-  author = {{High-Performance Graphics}},
-  date = {2023-07-09},
-  url = {https://www.youtube.com/watch?v=EB7qa4aL_XI},
-  urldate = {2024-02-21},
-  abstract = {Real Time Rendering of Glinty Appearance using Distributed Binomial Laws on Anisotropic Grids Thomas Deliot, Laurent Belcour Paper Session: Primitives, Surfaces \& Appearance Modeling - HPG 2023 - Day 2}
+@thesis{heckbert1989,
+  title = {Fundamentals of {{Texture Mapping}} and {{Image Wrapping}}},
+  author = {Heckbert, Paul},
+  date = {1989-06-17},
+  institution = {University of California},
+  location = {Berkley, CA 94720},
+  url = {https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=cfcaae349544212c93e3cb8ad16e95351048bfc9},
+  pagetotal = {88},
+  keywords = {New},
+  file = {/Users/julianstamm/Zotero/storage/6VLHWZG2/document.pdf}
+}
+
+@article{https://doi.org/10.1111/cgf.14448,
+  title = {Real-Time Microstructure Rendering with {{MIP-Mapped}} Normal Map Samples},
+  author = {Tan, Haowen and Zhu, Junqiu and Xu, Yanning and Meng, Xiangxu and Wang, Lu and Yan, Ling-Qi},
+  date = {2022},
+  journaltitle = {Computer Graphics Forum},
+  volume = {41},
+  number = {1},
+  eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1111/cgf.14448},
+  pages = {495--506},
+  doi = {10.1111/cgf.14448},
+  url = {https://onlinelibrary.wiley.com/doi/pdf/10.1111/cgf.14448},
+  abstract = {Abstract Normal map-based microstructure rendering can generate both glint and scratch appearance accurately. However, the extra high-resolution normal map that defines every microfacet normal may incur high storage and computation costs. We present an example-based real-time rendering method for arbitrary microstructure materials, which significantly reduces the required storage space. Our method takes a small-size normal map sample as input. We implicitly synthesize a high-resolution normal map from the normal map sample and construct MIP-mapped 4D position-normal Gaussian lobes. Based on the above MIP-mapped 4D lobes and a LUT (lookup table) data structure for the synthesized high-resolution normal map, an efficient Gaussian query method is presented to evaluate -NDFs (position-normal distribution functions) for shading. We can render complex scenes with glint and scratch surfaces in real time (30 fps) with a full high-definition resolution, and the space required for each microstructure material is decreased to 30 MB.},
+  keywords = {glints,MIP-map,New,real-time,rendering,surface microstructure}
 }
 
 @inproceedings{immel1986,
@@ -284,7 +331,7 @@
   author = {Immel, David S. and Cohen, Michael F. and Greenberg, Donald P.},
   date = {1986-08-31},
   pages = {133--142},
-  publisher = {{ACM}},
+  publisher = {ACM},
   doi = {10.1145/15922.15901},
   url = {https://dl.acm.org/doi/10.1145/15922.15901},
   urldate = {2024-02-24},
@@ -317,9 +364,14 @@
   title = {Hash {{Functions}} for {{GPU Rendering}}},
   author = {Jarzynski, Mark and Olano, Marc},
   date = {2020-11-20T19:43:37Z},
-  publisher = {{Journal of Computer Graphics Techniques (JCGT)}},
+  journaltitle = {Journal of Computer Graphics Techniques (JCGT)},
+  shortjournal = {JCGT},
+  volume = {9},
+  number = {3},
+  pages = {21--38},
+  publisher = {Journal of Computer Graphics Techniques (JCGT)},
   issn = {2331-7418},
-  url = {http://hdl.handle.net/11603/20126},
+  url = {http://jcgt.org/published/0009/03/02/},
   urldate = {2024-02-21},
   abstract = {In many graphics applications, a deterministic random hash provides the best source of random numbers. We evaluate a range of existing hash functions for random number quality using the TestU01 test suite, and GPU execution speed through benchmarking. We analyze the hash functions on the Pareto frontier to make recommendations on which hash functions offer the best quality/speed trade-off for the range of needs, from high-performance/low-quality to high-quality/low-performance. We also present a new class of hash tuned for multidimensional input and output that performs well at the high-quality end of this spectrum. We provide a supplemental document with test results and code for all hashes.},
   langid = {american},
@@ -334,8 +386,8 @@
   date = {1986-08-31},
   series = {{{SIGGRAPH}} '86},
   pages = {143--150},
-  publisher = {{Association for Computing Machinery}},
-  location = {{New York, NY, USA}},
+  publisher = {Association for Computing Machinery},
+  location = {New York, NY, USA},
   doi = {10.1145/15922.15902},
   url = {https://dl.acm.org/doi/10.1145/15922.15902},
   urldate = {2024-02-23},
@@ -343,6 +395,58 @@
   isbn = {978-0-89791-196-2},
   keywords = {Important},
   file = {/Users/julianstamm/Zotero/storage/WZRDDU9X/Kajiya - 1986 - The rendering equation.pdf}
+}
+
+@article{loubet2020,
+  title = {Slope-Space Integrals for Specular next Event Estimation},
+  author = {Loubet, Guillaume and Zeltner, Tizian and Holzschuch, Nicolas and Jakob, Wenzel},
+  date = {2020-12-31},
+  journaltitle = {ACM Transactions on Graphics},
+  shortjournal = {ACM Trans. Graph.},
+  volume = {39},
+  number = {6},
+  pages = {1--13},
+  issn = {0730-0301, 1557-7368},
+  doi = {10.1145/3414685.3417811},
+  url = {https://dl.acm.org/doi/10.1145/3414685.3417811},
+  urldate = {2024-03-07},
+  abstract = {Monte Carlo light transport simulations often lack robustness in scenes containing specular or near-specular materials. Widely used uni- and bidirectional sampling strategies tend to find light paths involving such materials with insufficient probability, producing unusable images that are contaminated by significant variance.             This article addresses the problem of sampling a light path connecting two given scene points via a single specular reflection or refraction, extending the range of scenes that can be robustly handled by unbiased path sampling techniques. Our technique enables efficient rendering of challenging transport phenomena caused by such paths, such as underwater caustics or caustics involving glossy metallic objects.             We derive analytic expressions that predict the total radiance due to a single reflective or refractive triangle with a microfacet BSDF and we show that this reduces to the well known Lambert boundary integral for irradiance. We subsequently show how this can be leveraged to efficiently sample connections on meshes comprised of vast numbers of triangles.             Our derivation builds on the theory of off-center microfacets and involves integrals in the space of surface slopes.             Our approach straightforwardly applies to the related problem of rendering glints with high-resolution normal maps describing specular microstructure. Our formulation alleviates problems raised by singularities in filtering integrals and enables a generalization of previous work to perfectly specular materials. We also extend previous work to the case of GGX distributions and introduce new techniques to improve accuracy and performance.},
+  langid = {english},
+  file = {/Users/julianstamm/Zotero/storage/VNS5FRF4/Loubet et al. - 2020 - Slope-space integrals for specular next event estimation.pdf}
+}
+
+@inproceedings{michels2015,
+  title = {Labs {{R}}\&{{D}}: Rendering Techniques in Rise of the {{Tomb Raider}}},
+  shorttitle = {Labs {{R}}\&{{D}}},
+  booktitle = {{{ACM SIGGRAPH}} 2015 {{Talks}}},
+  author = {Michels, Anton Kai and Sikachev, Peter and Delmont, Samuel and Doyon, Uriel and Maheux, Francis and Bucci, Jean-Normand and Gallardo, David},
+  date = {2015-07-31},
+  pages = {1--1},
+  publisher = {ACM},
+  location = {Los Angeles California},
+  doi = {10.1145/2775280.2792529},
+  url = {https://dl.acm.org/doi/10.1145/2775280.2792529},
+  urldate = {2024-03-07},
+  eventtitle = {{{SIGGRAPH}} '15: {{Special Interest Group}} on {{Computer Graphics}} and {{Interactive Techniques Conference}}},
+  isbn = {978-1-4503-3636-9},
+  langid = {english}
+}
+
+@inproceedings{olano2010,
+  title = {{{LEAN}} Mapping},
+  booktitle = {Proceedings of the 2010 {{ACM SIGGRAPH}} Symposium on {{Interactive 3D Graphics}} and {{Games}}},
+  author = {Olano, Marc and Baker, Dan},
+  date = {2010-02-19},
+  pages = {181--188},
+  publisher = {ACM},
+  location = {Washington D.C.},
+  doi = {10.1145/1730804.1730834},
+  url = {https://dl.acm.org/doi/10.1145/1730804.1730834},
+  urldate = {2024-03-07},
+  eventtitle = {{{I3D}} '10: {{Symposium}} on {{Interactive 3D Graphics}} and {{Games}}},
+  isbn = {978-1-60558-939-8},
+  langid = {english},
+  keywords = {New}
 }
 
 @inproceedings{perlin2001,
@@ -378,7 +482,7 @@
   author = {Rump, Martin and Sarlette, Ralf and Klein, Reinhard},
   date = {2009},
   pages = {11--18},
-  publisher = {{Citeseer}},
+  publisher = {Citeseer},
   url = {https://cg.cs.uni-bonn.de/backend/v1/files/publications/rump-vmv-09.pdf},
   file = {/Users/julianstamm/Zotero/storage/VZWZFSVG/Rump et al. - 2009 - Efficient Resampling, Compression and Rendering of.pdf}
 }
@@ -401,7 +505,7 @@
   date = {2016},
   journaltitle = {Eurographics Symposium on Rendering - Experimental Ideas \& Implementations},
   pages = {6 pages},
-  publisher = {{The Eurographics Association}},
+  publisher = {The Eurographics Association},
   issn = {1727-3463},
   doi = {10.2312/SRE.20161209},
   url = {https://diglib.eg.org/handle/10.2312/sre20161209},
@@ -465,6 +569,25 @@
   file = {/Users/julianstamm/Zotero/storage/WBLW359T/Wang et al. - 2020 - Example-Based Microstructure Rendering with Constant Storage.pdf}
 }
 
+@article{werner2017,
+  title = {Scratch Iridescence: Wave-Optical Rendering of Diffractive Surface Structure},
+  shorttitle = {Scratch Iridescence},
+  author = {Werner, Sebastian and Velinov, Zdravko and Jakob, Wenzel and Hullin, Matthias B.},
+  date = {2017-12-31},
+  journaltitle = {ACM Transactions on Graphics},
+  shortjournal = {ACM Trans. Graph.},
+  volume = {36},
+  number = {6},
+  pages = {1--14},
+  issn = {0730-0301, 1557-7368},
+  doi = {10.1145/3130800.3130840},
+  url = {https://dl.acm.org/doi/10.1145/3130800.3130840},
+  urldate = {2024-03-07},
+  abstract = {The surface of metal, glass and plastic objects is often characterized by microscopic scratches caused by manufacturing and/or wear. A closer look onto such scratches reveals iridescent colors with a complex dependency on viewing and lighting conditions. The physics behind this phenomenon is well understood; it is caused by diffraction of the incident light by surface features on the order of the optical wavelength. Existing analytic models are able to reproduce spatially unresolved microstructure such as the iridescent appearance of compact disks and similar materials. Spatially resolved scratches, on the other hand, have proven elusive due to the highly complex wave-optical light transport simulations needed to account for their appearance. In this paper, we propose a wave-optical shading model based on non-paraxial scalar diffraction theory to render this class of effects. Our model expresses surface roughness as a collection of line segments. To shade a point on the surface, the individual diffraction patterns for contributing scratch segments are computed analytically and superimposed coherently. This provides natural transitions from localized glint-like iridescence to smooth BRDFs representing the superposition of many reflections at large viewing distances. We demonstrate that our model is capable of recreating the overall appearance as well as characteristic detail effects observed on real-world examples.},
+  langid = {english},
+  keywords = {New}
+}
+
 @article{yan2014,
   title = {Rendering Glints on High-Resolution Normal-Mapped Specular Surfaces},
   author = {Yan, Ling-Qi and Hašan, Miloš and Jakob, Wenzel and Lawrence, Jason and Marschner, Steve and Ramamoorthi, Ravi},
@@ -484,14 +607,33 @@
   file = {/Users/julianstamm/Zotero/storage/6THWU7PJ/Yan et al. - 2014 - Rendering glints on high-resolution normal-mapped specular surfaces.pdf}
 }
 
+@article{zhu2022,
+  title = {Recent Advances in Glinty Appearance Rendering},
+  author = {Zhu, Junqiu and Zhao, Sizhe and Xu, Yanning and Meng, Xiangxu and Wang, Lu and Yan, Ling-Qi},
+  date = {2022-12},
+  journaltitle = {Computational Visual Media},
+  shortjournal = {Comp. Visual Media},
+  volume = {8},
+  number = {4},
+  pages = {535--552},
+  issn = {2096-0433, 2096-0662},
+  doi = {10.1007/s41095-022-0280-x},
+  url = {https://link.springer.com/10.1007/s41095-022-0280-x},
+  urldate = {2024-03-07},
+  abstract = {Abstract             The interaction between light and materials is key to physically-based realistic rendering. However, it is also complex to analyze, especially when the materials contain a large number of details and thus exhibit “glinty” visual effects. Recent methods of producing glinty appearance are expected to be important in next-generation computer graphics. We provide here a comprehensive survey on recent glinty appearance rendering. We start with a definition of glinty appearance based on microfacet theory, and then summarize research works in terms of representation and practical rendering. We have implemented typical methods using our unified platform and compare them in terms of visual effects, rendering speed, and memory consumption. Finally, we briefly discuss limitations and future research directions. We hope our analysis, implementations, and comparisons will provide insight for readers hoping to choose suitable methods for applications, or carry out research.},
+  langid = {english},
+  keywords = {New},
+  file = {/Users/julianstamm/Zotero/storage/RT9JQS3Y/Zhu et al. - 2022 - Recent advances in glinty appearance rendering.pdf}
+}
+
 @inproceedings{zirr2016,
   title = {Real-Time Rendering of Procedural Multiscale Materials},
   booktitle = {Proceedings of the 20th {{ACM SIGGRAPH Symposium}} on {{Interactive 3D Graphics}} and {{Games}}},
   author = {Zirr, Tobias and Kaplanyan, Anton S.},
   date = {2016-02-27},
   pages = {139--148},
-  publisher = {{ACM}},
-  location = {{Redmond Washington}},
+  publisher = {ACM},
+  location = {Redmond Washington},
   doi = {10.1145/2856400.2856409},
   url = {https://dl.acm.org/doi/10.1145/2856400.2856409},
   urldate = {2024-02-24},

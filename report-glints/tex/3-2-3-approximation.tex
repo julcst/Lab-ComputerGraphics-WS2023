@@ -7,6 +7,7 @@ As elaborated in \cref{sec:discretization} our algorithm requires $4\times3\time
 %
 Unfortunately, common strategies like inversion sampling can not easily be applied to the binomial distribution due to its discrete nature.
 
+\input{figures/approximation.tex}
 
 \paragraph{Classical Binomial Approximation}
 %
@@ -37,11 +38,13 @@ Therefore, $H(\theta_0 - \probability{X>0})$ with $\probability{X>0}=1-\probabil
 %     X = Y \cdot (1 + Z)
 % \end{equation}
 
-This however remains only an approximation as shown in \cref{fig:approximation} and can even overshoot the number of successes to $N+1$, but as it ensures correct probability $\probability{X=0}$ for getting zero successes it performs significantly better than a normal distribution approximation for very small probability of success $p$ which is commonly occurs in our shading model for low roughness.
+This however remains only an approximation as shown in \cref{fig:approximation} and can even overshoot the number of successes to $N+1$, but as it ensures correct probability $\probability{X=0}$ for getting zero successes it performs significantly better than a normal distribution approximation for very small probability of success $p$, which commonly occurs in our shading model for low roughness.
 % TODO: Maybe add figure
 %
-The main advantage over the approximation by \textcite{zirr2016} though is the avoidance of loops and branches which makes this method easily parallelizable and results in stable performance.
+The overshooting behavior may even be desirable, as it makes the material appear glintier, but it breaks the law of energy conservation, which is already violated anyway though because we count stochastically and thus the sum over the energy is randomly distributed.
+%
+The main advantage over the approximation by \textcite{zirr2016} however is the avoidance of loops and branches which makes this method easily parallelizable and results in stable performance.
 
 Additionally, \textcite{deliot2023} modify the gating in their implementation from a hard Heaviside function to a slightly sloped step function to make the glints' appearance smoother.
 
-\input{figures/approximation.tex}
+To efficiently draw uniform random numbers and seeds on the GPU we use the recommendations by \textcite{jarzynski2020} in our implementation.

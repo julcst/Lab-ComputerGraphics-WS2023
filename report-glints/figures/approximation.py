@@ -14,7 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tikzplotlib
 
-rng = np.random.default_rng(seed=42);
+rng = np.random.default_rng(seed=42)
 
 samples = 1000000
 N = 20
@@ -23,7 +23,7 @@ density = True
 
 p = np.array([0.01, 0.05, 0.1, 0.15, 0.5, 0.9, 0.99])
 
-fig, axs = plt.subplots(2, p.size, figsize=(22, 5));
+fig, axs = plt.subplots(2, p.size, figsize=(22, 5))
 
 for i in range(p.size):
   # Generate samples from the binomial distributions

@@ -14,7 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tikzplotlib
 
-rng = np.random.default_rng(seed=42);
+rng = np.random.default_rng(seed=42)
 
 p = 0.5
 samples = 10000

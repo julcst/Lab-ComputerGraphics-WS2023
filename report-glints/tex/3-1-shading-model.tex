@@ -36,8 +36,8 @@ $\rho_P$ is based on a Cook-Torrance model \parencite{cook1982} consisting of th
 \begin{equation}
     \rho_P(\vec{\omega_i}, \vec{\omega_o}) = \frac{
         F(\dotproduct{\vec{\omega_i}}{\vec{\omega_h}})~
-        G(\vec{\omega_i}, \vec{\omega_o})~
-        D_P(\vec{\omega_h})
+        D_P(\vec{\omega_h})~
+        G(\vec{\omega_i}, \vec{\omega_o})
     }{
         4~
         \dotproduct{\vec{\omega_i}}{\vec{n}}~
@@ -48,7 +48,7 @@ $\rho_P$ is based on a Cook-Torrance model \parencite{cook1982} consisting of th
 % TODO: Rewrite this
 with the half-vector $\vec{\omega_h}=\flatnormalize{\vec{\omega_i} + \vec{\omega_o}}$ describing the surface normal at which perfect reflection would occur and $D_P(\vec{\omega_h})$ as the probability for a microfacet on a meso-facet inside the pixel footprint to be aligned along this half-vector $\vec{\omega_h}$ and thereby reflect light.
 %
-This differs from the original distribution term $D(\vec{\omega_h})$ which only represents the probability of a normally distributed microfacet being aligned that way. We get
+This differs from the original distribution term $D(\vec{\omega_h})$ which only represents the probability of a microfacet being aligned that way. We get
 %
 \begin{equation}
 \begin{aligned}
@@ -61,6 +61,7 @@ This differs from the original distribution term $D(\vec{\omega_h})$ which only 
 %
 where $b(n, p)$ is a random sampling of the binomial distribution with $n$ trials and a success probability of $p$. $N(P)$ is the number of meso-facets inside the pixel footprint and therefore $b(N(P), p)$ counts the number of glints inside $P$.
 
+% TODO: Reference derivation of Zirr and Kaplanyan for p
 We then choose the glint probability $p = \frac{D(\vec{\omega_h})}{D(\vec{n})}$ to ensure $\expectation{D_P(\vec{\omega_h})} = D(\vec{\omega_h})$:
 %
 \begin{equation}

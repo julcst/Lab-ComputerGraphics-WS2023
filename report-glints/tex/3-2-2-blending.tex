@@ -75,4 +75,4 @@ As this blending method prevents artifacts, we choose it to blend the discrete s
     b(N(P),p) = \sum_{i=0}^{3} \sum_{j=0}^{2} \sum_{k=0}^{3} c_{ijk} \cdot b_{\theta_{ijk}}\left(N_{ij} \cdot a_{i} \cdot b_{ij}, p\right).
 \end{equation}
 %
-Nevertheless, \textcite{deliot2023} decided not to use distributed blending in the surface domain in their implementation, which gives the individual facets a blurrier appearance.
+Nevertheless, \textcite{deliot2023} decided not to use distributed blending in the surface domain in their implementation but rely on linear blending, which gives the individual facets a blurrier appearance and prevents some aliasing.

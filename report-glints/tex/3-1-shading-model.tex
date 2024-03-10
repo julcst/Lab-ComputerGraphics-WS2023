@@ -6,13 +6,14 @@ In the following, we will use the ideas of \textcite{deliot2023} to derive a fas
 
 \subsection{Shading Model}
 \label{sec:shading}
+
+\input{figures/mesofacets.tex}
 %
 Similar to \textcite{zirr2016}, \textcite{deliot2023} model the surface as consisting of mesoscopic details covered with microscopic details or \emph{microfacets}.
-% TODO: Add illustrating figure
 %
 Subsequently, we will denote these larger-scale features as \emph{meso-facets}, and 
 % we will refer to % NOTE: May flow better
-meso-facets that contribute to the reflectance of light as \emph{glints}. 
+meso-facets that contribute to the reflectance of light as \emph{glints}.
 
 
 % ?: Use we or \textcite{deliot2023}
@@ -92,6 +93,7 @@ $R$ can not directly be linked to a physical quantity but yet can be interpreted
 We observe that for large meso-facet count $N(P)$
 %
 \begin{equation}
+\label{eq:convergence}
     \lim_{N(P) \to \infty} D_P(\vec{\omega_h})
     = \frac{D(\vec{n})}{R} \lim_{N(P) \to \infty} \frac{b(N(P), p)}{N(P)}
     = D(\vec{\omega_h}),

@@ -145,7 +145,8 @@ GDEBUG_lod(vec3(foot.lod) * 300.0);
     // Then the orientation becomes irrelevant and the heptahedron collapses to a hexahedron
     bool centerCase = (hepta.aniso0 == 1.0);
 
-GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
+//GDEBUG_grid(vec3(hepta.lod0 * 1000.0, 1.0 / hepta.aniso0, hepta.theta0 / DEG180));
+GDEBUG_grid(hash3f(vec3(hepta.theta0, hepta.aniso0, hepta.lod0)));
 GDEBUG_thetaWeight(colorDebug(centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight));
 GDEBUG_anisoWeight(colorDebug(hepta.anisoWeight));
 GDEBUG_lodWeight(colorDebug(hepta.lodWeight));

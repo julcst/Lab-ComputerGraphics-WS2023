@@ -32,11 +32,13 @@ To our knowledge no such normal-mapped glint renderer achieves real-time yet.
 
 On the other hand, several procedural methods reach responsive frame times:
 
-\textcite{zirr2016} derived the fastest model so far, which is likewise to  \textcite{jakob2014} based on counting discrete microfacets.
+\textcite{zirr2016} formulated the most efficient model to date, which is likewise to \textcite{jakob2014} based on counting discrete microfacets.
 %
 However, they relax the physical constraints by estimating the counting process stochastically.
 %
-Furthermore, they manage to simulate anisotropic facets and different sized light sources but are not able to incorporate the industry-standard GGX-BRDF \parencite{walter2007}.
+Although they manage to simulate anisotropic facets and different sized light sources they were not able to incorporate the industry-standard Trowbridge-Reitz (GGX) BRDF \parencite{trowbridge1975, walter2007}.
+%
+In addition, their method suffers from blending artifacts and increased cost for anisotropic surfaces.
 
 Similarly, \textcite{wang2020} count reflecting microfacets in real-time by precomputing a probability function for the microfacet distribution and pre-filtering an environment map.
 %

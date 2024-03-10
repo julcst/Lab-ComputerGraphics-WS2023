@@ -41,6 +41,7 @@ Therefore, $H(\theta_0 - \probability{X>0})$ with $\probability{X>0}=1-\probabil
 This however remains only an approximation as shown in \cref{fig:approximation} and can even overshoot the number of successes to $N+1$, but as it ensures correct probability $\probability{X=0}$ for getting zero successes it performs significantly better than a normal distribution approximation for very small probability of success $p$, which commonly occurs in our shading model for low roughness.
 % TODO: Maybe add figure
 %
+% TODO: No it does not
 The overshooting behavior may even be desirable, as it makes the material appear glintier, but it breaks the law of energy conservation, which is already violated anyway though because we count stochastically and thus the sum over the energy is randomly distributed.
 %
 The main advantage over the approximation by \textcite{zirr2016} however is the avoidance of loops and branches which makes this method easily parallelizable and results in stable performance.

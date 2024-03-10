@@ -92,3 +92,4 @@ layout(std140) uniform UB1 {
 bool uEnableSurfaceDomainLinearBlending = (uFlags & 1U) != 0U;
 bool uEnableSoftBinomialGating = (uFlags & 2U) != 0U;
 bool uEnableBinomialOvershooting = (uFlags & 4U) != 0U;
+bool uEnableAccurateGGX = (uFlags & 8U) != 0U;

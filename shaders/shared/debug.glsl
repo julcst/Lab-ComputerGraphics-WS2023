@@ -77,6 +77,14 @@ vec3 colorDebug(float x) {
     return vec3(x);
 }
 
+vec3 colorDebug(vec3 x) {
+    if (any(isnan(x))) return vec3(1.0, 0.0, 1.0);
+    if (any(isinf(x))) return vec3(1.0, 0.0, 0.0);
+    if (any(lessThan(x, vec3(0.0)))) return vec3(0.0, 0.0, 1.0);
+    if (any(greaterThan(x, vec3(1.0)))) return vec3(0.0, 1.0, 0.0);
+    return x;
+}
+
 vec3 colorDebugEdges(float x) {
     if (isnan(x)) return vec3(1.0, 0.0, 1.0);
     if (isinf(x)) return vec3(1.0, 0.0, 0.0);
@@ -87,9 +95,19 @@ vec3 colorDebugEdges(float x) {
     return vec3(x);
 }
 
+vec3 colorDebugEdges(vec3 x) {
+    if (any(isnan(x))) return vec3(1.0, 0.0, 1.0);
+    if (any(isinf(x))) return vec3(1.0, 0.0, 0.0);
+    if (any(lessThan(x, vec3(0.0)))) return vec3(0.0, 0.0, 1.0);
+    if (any(greaterThan(x, vec3(1.0)))) return vec3(0.0, 1.0, 0.0);
+    if (any(equal(x, vec3(1.0)))) return vec3(0.0, 0.0, 0.1);
+    if (any(equal(x, vec3(0.0)))) return vec3(0.9, 1.0, 0.9);
+    return x;
+}
+
 vec3 checkBarycentrics(vec4 bary) {
-    if (bary.x < 0.0 || bary.y < 0.0 || bary.z < 0.0 || bary.w < 0.0) return vec3(0.0, 0.0, 1.0);
-    if (bary.x > 1.0 || bary.y > 1.0 || bary.z > 1.0 || bary.w > 1.0) return vec3(1.0, 0.0, 0.0);
+    if (any(lessThan(bary, vec4(0.0)))) return vec3(0.0, 0.0, 1.0);
+    if (any(greaterThan(bary, vec4(1.0)))) return vec3(1.0, 0.0, 0.0);
     if (dot(bary, vec4(1.0)) > 1.0) return vec3(1.0, 0.0, 1.0);
     if (dot(bary, vec4(1.0)) < 1.0) return vec3(0.0, 1.0, 1.0);
     return vec3(0.0, 1.0, 0.0);

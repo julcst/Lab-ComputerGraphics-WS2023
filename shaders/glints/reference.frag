@@ -28,27 +28,31 @@ void main() {
     vec3 H = normalize(V + L);
     
     // Calculate dot products
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float NdotH = max(dot(N, H), 0.0);
-    float HdotV = max(dot(H, V), 0.0);
+    float NdotV = V.z; //dot(N, V);
+    float NdotL = L.z; //dot(N, L);
+    float NdotH = H.z; //dot(N, H);
+    float HdotV = dot(H, V);
+    float NcdotV = max(NdotV, 0.0);
+    float NcdotL = max(NdotL, 0.0);
+    float NcdotH = max(NdotH, 0.0);
+    float HcdotV = max(HdotV, 0.0);
 
 /////////// Calculate FGD after GGX microfacet model ///////////
 
     // Remap roughness
     float a = uRoughness * uRoughness;
-    float k = k_direct(a);
+    // float k = k_direct(a);
 
     // F is the Fresnel term
     vec3 F = F_schlick(HdotV, uAlbedo, uMetallic);
     // G is the geometric shadowing term
-    float G = G_smith_ggx(NdotV, NdotL, k);
+    float G = G_TrowbridgeReitz(NdotV, NdotL, a);
     // D is the microfacet distribution term
     // This is the target to which we converge with increasing microfacet count 
-    float D = D_ggx(NdotH, a);
+    float D = D_TrowbridgeReitz(NdotH, a);
     // Dmax is the distribution term at the shading normal
     // This is the maximum possible value for the distribution term and is used to ensure that p remains in [0, 1]
-    float Dmax = D_ggx(1.0, a); // NdotN = 1.0
+    float Dmax = D_TrowbridgeReitz(1.0, a); // NdotN = 1.0
 
 /////////// Glint rendering ///////////
 
@@ -59,7 +63,8 @@ void main() {
 /////////// Evaluating the rendering equation ///////////
 
     // Calculate the specular component with Cook-Torrance model
-    vec3 specular = (F * G * DP) / (4.0 * NdotL * NdotV + 0.0001); // Equation (2)
+    vec3 specular = (F * G * DP) / (4.0 * NdotV * NdotL); // Equation (2)
+    if (any(isnan(specular))) specular = vec3(0.0);
 
     // Calculate the diffuse component with Lambertian model
     vec3 diffuse = (vec3(1.0) - F) * (1.0 - uMetallic) * uAlbedo / 3.14159265359;
@@ -67,7 +72,7 @@ void main() {
     vec3 brdf = specular + diffuse;
 
     // Solve the rendering equation
-    vec3 lighting = brdf * uLightColor * NdotL; // Equation (1)
+    vec3 lighting = brdf * uLightColor * NcdotL; // Equation (1)
 
     // Fake ambient lighting
     lighting += uSkyColor * uAlbedo * uAmbientStrength;

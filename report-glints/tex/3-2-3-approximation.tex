@@ -3,11 +3,16 @@
 
 \input{figures/approximation.tex}
 
-% TODO: Write about sampling of N(P)
-
 As elaborated in \cref{sec:discretization} our algorithm requires $4\times3\times4$ samples of $4\times3$ different parametrizations of the binomial distribution per pixel, therefore an efficient method for drawing these samples is required.
 %
 Unfortunately, common strategies like inversion sampling can not easily be applied to the binomial distribution due to its discrete nature.
+
+% TODO: Important: N(P) uniform or stratified
+As for the sampling of $N(P)$ \textcite{deliot2023} propose a simple approximation by only drawing a \emph{meso-facet density} randomly per surface grid vertex and obtaining the meso-facet count by multiplying with the footprint area (\cref{eq:area}).
+%
+To sample the meso-facet density they draw from a normal distribution in logarithmic space with mean and variance exposed as variables to the user as \emph{logarithmic meso-facet density} and \emph{density randomization}.
+%
+This is sufficient as $N(P)$ is only an intermediate variable, for the meso-facet count a better approximation is needed though.
 
 \paragraph{Classical Binomial Approximation}
 %
@@ -15,7 +20,6 @@ Unfortunately, common strategies like inversion sampling can not easily be appli
 %
 Then for the normal distribution $\mathcal{N}(\mu,\sigma)$ efficient approximations of the inverse cumulative distribution function \parencite[e.g.,][]{giles2012} and even direct sampling methods \parencite[e.g.,][]{box1958} are known.
 %
-% TODO: Maybe elaborate more on this
 For $np \le 5$ however, they rely on manually evaluating the binomial distribution which is rather expensive.
 
 

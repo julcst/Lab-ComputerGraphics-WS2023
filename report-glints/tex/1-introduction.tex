@@ -27,7 +27,7 @@ However, their method introduces two drawbacks: Firstly, they perform anisotropi
 % Main improvements:
 %   - constant time (independent from anisotropy)
 %   - correct blending (distributed binomial law)
-In the following, we will present an algorithm based on the ideas proposed in \textcite{deliot2023} that seamlessly blends between different levels of details (see \cref{sec:blending-distributed}) and achieves constant real-time performance for arbitrary anisotropy levels through a special surface parametrization which avoids costly anisotropic filtering (see \cref{sec:discretization}).
+In the following, we will present our implementation of the method proposed by \textcite{deliot2023} that seamlessly blends between different levels of details (see \cref{sec:blending-distributed}) and achieves constant real-time performance for arbitrary anisotropy levels through a special surface parametrization which avoids costly anisotropic filtering (see \cref{sec:discretization}).
 
 Similarly to \textcite{zirr2016}, \textcite{deliot2023} base their solution on the discrete microfacet model of \textcite{jakob2014} and count reflecting facets stochastically.
 % 

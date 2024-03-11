@@ -38,7 +38,7 @@ This persists a major obstacle to be overcome, as many modern games rely on comp
 %
 A small adjustment to approximate ambient lighting though could be to set $\vec{\omega_h}=\vec{n}$.
 %
-This is by no means physically accurate but can be used to recreate crystalline surfaces like snow and ice (see \cref{fig:snowbunny}).
+This is by no means physically accurate but can be used to recreate bright environments (see \cref{fig:snowbunny}).
 
 \paragraph{Performance}
 %
@@ -54,7 +54,7 @@ As we are able to liberally choose the base BRDF, we also allow for anisotropic 
 %
 But this does not account for the glint shapes which remain isotropic. 
 %
-Anisotropic glints are though not trivially integrated into our model by scaling of the surface parametrization \parencite{chermain2020a,zirr2016}, as our surface mapping is actively compensating for anisotropy and thus not uniformly spread around the object.
+Anisotropic glints are though not trivially integrated into our model by scaling of the surface parametrization \parencite{chermain2020a,zirr2016}, as our surface mapping is actively compensating for anisotropy and thus not uniformly spread around the object (see \cref{fig:anisoglints}).
 %
 Though for that a dedicated scratch model \parencite[e.g.][]{velinov2018} would be better suited.
 

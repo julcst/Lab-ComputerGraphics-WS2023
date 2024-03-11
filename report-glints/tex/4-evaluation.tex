@@ -1,2 +1,34 @@
 \section{Evaluation}
 \label{sec:evaluation}
+
+We implemented the ideas of \textcite{deliot2023} in GLSL using an OpenGL forward renderer written in C++. As a base microfacet model we chose the Trowbridge-Reitz model by \textcite{trowbridge1975, walter2007} with Schlick's approximation of the Fresnel term
+
+\subsection{Performance}
+\label{sec:performance}
+
+\input{figures/performance.tex}
+
+To evaluate the performance of our method we measured the render time for the same object in different resolutions using OpenGL timer queries and compared it to a standard implementation of a smooth microfacet model \parencite{walter2007}.
+%
+We observed a stable performance cost approximately $10\times$ higher than 
+the smooth reference model, which makes our implementation capable of real-time (see \cref{fig:performance}).
+%
+As expected, the performance is roughly proportional to the total pixel area covered by the object and does not vary for different anisotropy or detail levels, as the number of binomial evaluations remains constant (see \cref{sec:discretization}).
+
+% NOTE: May be unnecessary
+On macOS, we experienced dramatically worse performance than on Linux and Windows, but this is likely caused by a faulty GLSL compiler implementation, that does not optimize our highly encapsulated code well.
+
+
+\subsection{Visual Analysis}
+\label{sec:visual-analysis}
+
+\input{figures/anisotropy.tex}
+
+
+
+\subsection{Convergence}
+\label{sec:convergence}
+
+As we already proofed in \cref{sec:convergence-proof} our model successfully converges to any initial smooth microfacet model.
+%
+We also validated this visually in TODO for the Trowbridge-Reitz model \parencite{trowbridge1975, walter2007}.

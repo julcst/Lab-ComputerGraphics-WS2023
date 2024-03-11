@@ -1,0 +1,82 @@
+\begin{figure}[!ht]
+    \tdplotsetmaincoords{65}{20}
+    \centering
+    \begin{tikzpicture}[tdplot_main_coords, scale=1.0]
+
+        % Dimensions
+        \draw[thick,->] (0, 0, 0) -- (4.5, 0, 0) node[anchor=west]{$\log(r)$};
+        \draw[thick,->] (0, 0, 0) -- (0, 0, 2) node[anchor=south]{$\log(s)$};
+        \draw[thick,->] (4, 0, 0) arc (0:90:4) node[midway, anchor=south west]{$\phi$};
+
+        % Adaptive phi grid
+        \begin{scope}[canvas is xy plane at z=0, opacity=0.2]
+            % Arcs
+            \draw (1,0,0) arc (0:90:1);
+            \draw (2,0,0) arc (0:90:2);
+            \draw (3,0,0) arc (0:90:3);
+            % \draw (4,0,0) arc (0:90:4);
+
+            % Level 1
+            \draw (45:1) -- (45:4);
+
+            % Level 2
+            \draw (22.5:2) -- (22.5:4);
+            \draw (67.5:2) -- (67.5:4);
+
+            % Level 3
+            \draw (11.25:3) -- (11.25:4);
+            \draw (33.75:3) -- (33.75:4);
+            \draw (56.25:3) -- (56.25:4);
+            \draw (78.75:3) -- (78.75:4);
+
+            % Axes
+            \draw[->] (0, 0, 0) -- (0, 4.5, 0);
+            % \draw[->] (0, 0, 0) -- (4.5, 0, 0);
+        \end{scope}
+
+        % Heptahedron
+        \begin{scope}[thick, color=violet]
+            % Bottom
+            \begin{scope}[canvas is xy plane at z=0]
+                \draw (45:2) -- (45:3) arc [start angle=45, end angle=67.5, radius=3] -- (67.5:2) arc [start angle=67.5, end angle=45, radius=2];
+                \coordinate (A) at (45:2);
+                \coordinate (B) at (45:3);
+                \coordinate (C) at (56.25:3);
+                \coordinate (D) at (67.5:3);
+                \coordinate (E) at (67.5:2);
+                \coordinate (P0) at (51:2.6);
+            \end{scope}
+
+            \begin{scope}[canvas is xy plane at z=0.2]
+                \coordinate (P) at (51:2.6);
+            \end{scope}
+
+            % Top
+            \begin{scope}[canvas is xy plane at z=0.5]
+                \draw (45:2) -- (45:3) arc [start angle=45, end angle=67.5, radius=3] -- (67.5:2) arc [start angle=67.5, end angle=45, radius=2];
+                \coordinate (F) at (45:2);
+                \coordinate (G) at (45:3);
+                \coordinate (H) at (56.25:3);
+                \coordinate (I) at (67.5:3);
+                \coordinate (J) at (67.5:2);
+                \coordinate (P1) at (51:2.6);
+            \end{scope}
+
+            \draw (A) -- (F);
+            \draw (B) -- (G);
+            \draw (C) -- (H);
+            \draw (D) -- (I);
+            \draw (E) -- (J);
+            \draw (P0) circle (0.02);
+            \draw (P) circle (0.02) node[left, inner sep=1pt]{\tiny$\vec{p}$};
+            \draw (P1) circle (0.02);
+            \draw[thin, densely dotted] (P0) -- (P1);
+        \end{scope}
+    
+    \end{tikzpicture}
+    \vspace{-5pt}
+    \caption{
+        The footprint shape $\vec{p}$ is discretized using logarithmic steps along the $r$ and $s$ dimension and adaptive step sizes along the angular $\phi$ dimension. As a result, the grid cells take on a heptahedral shape (violet).
+        \label{fig:footprint-grid}
+    }
+\end{figure}

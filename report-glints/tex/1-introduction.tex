@@ -1,6 +1,41 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\textcite{deliot2023}
-\textcite{giles2012}
-\textcite{jarzynski2020}
+% Motivation
+In computer graphics, a common approach to model complex materials is to approximate them as an idealized reflector permutated by sub-geometric details.
+%
+When these sub-geometric details are macroscopic meaning bigger than a single pixel on the screen, they can be simulated using a normal map.
+%
+On the other hand, details that are significantly smaller than a pixel are called microfacets and are usually statistically approximated through microfacet models \parencite{cook1982}.
+%
+However, between these two approaches lies the mesoscopic phenomenon of glints, which is important to accurately simulate the glittering effects of snow or flaky car paints.
+%
+This phenomenon can not simply be reproduced using statistical microfacet models as the microfacets are big enough that the viewer can identify individual facets reflecting.
+
+For offline rendering \textcite{jakob2014,yan2014} derived two different approaches, based on procedural particles and high-frequency normal maps respectively, that successfully replicate this effect.
+%
+But as these methods rely on expensive counting or integration of micro-details, it remains a difficult challenge to adapt them to real-time.
+
+Therefore, \textcite{zirr2016} estimate particle counts stochastically to approximate the normal distribution function (NDF) of a microfacet model.
+%
+% Problems:
+%   - unstable performance (anisotropic filtering)
+%   - incorrect blending
+However, their method introduces two drawbacks: Firstly, they perform anisotropic filtering impacting performance for highly anisotropic surfaces negatively, secondly their blending method does not preserve the correct statistics between consecutive levels of detail and thus produces artifacts.
+
+% Solution
+% Main improvements:
+%   - constant time (independent from anisotropy)
+%   - correct blending (distributed binomial law)
+In the following, we will present an algorithm based on the ideas proposed in \textcite{deliot2023} that seamlessly blends between different levels of details (see \cref{sec:blending-distributed}) and achieves constant real-time performance for arbitrary anisotropy levels through a special surface parametrization which avoids costly anisotropic filtering (see \cref{sec:discretization}).
+
+Similarly to \textcite{zirr2016}, \textcite{deliot2023} base their solution on the discrete microfacet model of \textcite{jakob2014} and count reflecting facets stochastically.
+% 
+They therefore relax physical constraints like energy conservation, but preserve following two requirements essential for a visually plausible glint renderer:
+%
+\begin{description}
+    \item[Convergence\label{req:convergence}] With high facet density the result must converge into a smooth microfacet model.
+    \item[Coherence\label{req:coherence}] Glints must be temporally and spatially coherent between adjacent discretization levels.
+\end{description}
+
+Using efficient estimations of the binomial distribution (see \cref{sec:approximation}) they achieve performance capable of real-time application.

@@ -2,8 +2,11 @@
 
 #include <string>
 #include <vector>
-#include <unistd.h>
-#include <pwd.h>
+
+#ifdef __APPLE__
+    #include <unistd.h>
+    #include <pwd.h>
+#endif
 
 namespace Config {
 
@@ -41,7 +44,7 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "foot.area",        // 4
     "foot.theta",       // 5
     "foot.aniso",       // 6
-    "foot.major",       // 7
+    "foot.lod",         // 7
     "grid",             // 8
     "lodWeight",        // 9
     "anisoWeight",      // 10
@@ -56,9 +59,15 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "uvGridCompensated",// 19
     "uvTriangles",      // 20
     "samples",          // 21
-    "0",                // 22
-    "1",                // 23
-    "2",                // 24
+    "baryCheck1",       // 22
+    "baryCheck2",       // 23
+    "baryCheck3",       // 24
+    "0",                // 25
+    "1",                // 26
+    "2",                // 27
+    "slope",            // 28
+    "H",                // 29
+    "p",                // 30
 };
 
 const std::vector<std::string> LAYERED_DEBUG_MODES = {

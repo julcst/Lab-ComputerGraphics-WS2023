@@ -3,44 +3,20 @@
  * Functions to estimate a pixel's footprint on the surface of the rendered object.
  */
 
-struct Footprint {
-    float area; // Unused
-    vec2 major; // Unused
-
-    float angle; // theta
-    float ratio; // anisotropy
-    float minorLength; // lod
-};
-
 /**
- * Calculates the footprint of a pixel by measuring the area of the parallelogram spanned by the two
- * partial derivatives of the uv coordinates.
+ * Three-dimensional parametrization of a pixel footprint ellipse.
  */
-Footprint calcNaivePixelFootprint(vec2 uv, float scale) {
-    vec2 duvdx = scale * dFdx(uv);
-    vec2 duvdy = scale * dFdy(uv);
-    Footprint footprint;
-    // Measured as the area of the parallelogram spanned by the two partial derivatives of the uv coordinates
-    footprint.area = length(cross(vec3(duvdx, 0.0), vec3(duvdy, 0.0)));
-    return footprint;
-}
+struct Footprint {
+    float theta; // x-dimension: theta
+    float aniso; // y-dimension: anisotropy
+    float lod;   // z-dimension: lod or minorLength
 
-Footprint calcWorldPixelFootprint(vec2 uv, vec3 worldPos, float scale) {
-    vec2 duvdx = dFdx(uv);
-    vec3 dpdx = scale * dFdx(worldPos);
-    vec3 dpdy = scale * dFdy(worldPos);
-
-    float Px = dot(dpdx, dpdx);
-    float Py = dot(dpdy, dpdy);
-    float Pmax = max(Px, Py);
-    float Pmin = min(Px, Py);
-
-    Footprint footprint;
-    footprint.area = length(cross(dpdx, dpdy));
-    footprint.angle = atan(duvdx.y, duvdx.x);
-    footprint.ratio = sqrt(Pmax / Pmin);
-    return footprint;
-}
+    // Footprint ellipse can be reconstructed like this:
+    // float majorLength = minorLength * aniso;
+    // float minorLength = lod;
+    // vec2 major = polarToCartesian(theta, majorLength)
+    // float area = majorLength * minorLength
+};
 
 /**
  * Calculates the footprint of a pixel by constructing a footprint ellipse, which major and minor axis
@@ -60,10 +36,11 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     // The constructor syntax is mat2(column1, column2)
     mat2 J = transpose(mat2(duvdx, duvdy)); // ? This may not be necessary
 
-    mat2 Jinv = inverse(J); // ? This may not be necessary
+    // mat2 Jinv = inverse(J); // ? This may not be necessary
     // Make J symmetric
     // M = (J^{-1})^T J^{-1}
-    mat2 M = Jinv * transpose(Jinv);
+    // mat2 M = Jinv * transpose(Jinv);
+    mat2 M = transpose(J) * J; // without inverse
 
     // Extract entries (GLSL is [column][row])
     float a = M[0][0];
@@ -82,23 +59,64 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     float L2 = mid + dist;
 
     // Eigenvectors
-    vec2 ev1 = normalize(vec2(L1 - d, c));
-    vec2 ev2 = normalize(vec2(L2 - d, c));
+    // vec2 ev1 = normalize(vec2(L1 - d, c)); // major
+    // vec2 ev2 = normalize(vec2(L2 - d, c)); // minor
 
     // Eigenvalues
-    float ew1 = 1.0 / sqrt(L1);
-	float ew2 = 1.0 / sqrt(L2);
+    // float ew1 = 1.0 / sqrt(L1); // majorLength
+	// float ew2 = 1.0 / sqrt(L2); // minorLength
+
+    // Eigenvectors without inverse
+    vec2 ev1 = normalize(vec2(L2 - d, c)); // major // without inverse
+    vec2 ev2 = normalize(vec2(L1 - d, c)); // minor // without inverse
+
+    // Eigenvalues without inverse
+    float ew1 = sqrt(L2); // majorLength // without inverse
+	float ew2 = sqrt(L1); // minorLength // without inverse
 
     Footprint footprint;
-    footprint.area = ew1 * ew2;
-    footprint.major = ev1 * ew1;
+
+    // Footprint ellipse can be constructed like this:
+    // footprint.area = ew1 * ew2;
+    // footprint.major = ev1 * ew1;
     // footprint.minor = ev2 * ew2;
-    footprint.minorLength = ew2;
-    //footprint.minorLength = 1.0;
-    //footprint.angle = DEG90; // ! Fixing the angle to 90 degrees makes the barycentric weights stay between 0 and 1
-    footprint.angle = atan(-ev1.x, ev1.y);
-    //footprint.angle = atan(ev1.y, ev1.x);
-    footprint.ratio = ew1 / ew2;
-    //footprint.ratio = 1.0;
+    // footprint.majorLength = ew1;
+    // footprint.minorLength = ew2;
+
+    // footprint.aniso = 1.0; // For debugging purposes
+    // footprint.theta = DEG90; // For debugging purposes
+
+    footprint.theta = atan(-ev1.x, ev1.y); // Matching reference implementation for comparability
+    // footprint.theta = atan(ev1.y, ev1.x); // Alternative
+    footprint.aniso = ew1 / ew2; // majorLength / minorLength
+    footprint.lod = ew2; // minorLength
     return footprint;
 }
+
+/* Alternative implementations for the footprint calculation
+Footprint calcNaivePixelFootprint(vec2 uv, float scale) {
+    vec2 duvdx = scale * dFdx(uv);
+    vec2 duvdy = scale * dFdy(uv);
+    Footprint footprint;
+    // Measured as the area of the parallelogram spanned by the two partial derivatives of the uv coordinates
+    // footprint.area = length(cross(vec3(duvdx, 0.0), vec3(duvdy, 0.0)));
+    return footprint;
+}
+
+Footprint calcWorldPixelFootprint(vec2 uv, vec3 worldPos, float scale) {
+    vec2 duvdx = dFdx(uv);
+    vec3 dpdx = scale * dFdx(worldPos);
+    vec3 dpdy = scale * dFdy(worldPos);
+
+    float Px = dot(dpdx, dpdx);
+    float Py = dot(dpdy, dpdy);
+    float Pmax = max(Px, Py);
+    float Pmin = min(Px, Py);
+
+    Footprint footprint;
+    // footprint.area = length(cross(dpdx, dpdy));
+    // footprint.theta = atan(duvdx.y, duvdx.x);
+    // footprint.aniso = sqrt(Pmax / Pmin);
+    return footprint;
+}
+*/

@@ -320,8 +320,10 @@ void UnpackFloatParallel4(vec4 inputFloat, out vec4 a, out vec4 b)
 void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, out vec4 outGaussian, out vec2 slopeLerp) {
 	ivec2 size = ivec2(4096);
 	vec2 slope2 = abs(slope) / uMicrofacetRoughness;
+GDEBUG_slope(vec3(slope2, 0.0));
 	slope2 = slope2 + (slopeRandOffset * size);
 	slopeLerp = fract(slope2);
+GDEBUG_slopeLerp(vec3(slopeLerp, 0.0));
 	ivec2 slopeCoord = ivec2(floor(slope2)) % size;
 	uvec2 uSlopeCoord = uvec2(slopeCoord);
 
@@ -344,6 +346,7 @@ float GenerateAngularBinomialValueForSurfaceCell(vec4 randB, vec4 randG, vec2 sl
 
 	vec4 gauss = randG * footprintSTD + footprintMean;
 	gauss = clamp(floor(gauss), 0, microfacetCount);
+	if (!uEnableBinomialOvershooting) gauss = clamp(floor(gauss), 0, microfacetCount - 1);
 	vec4 results = gating * (1.0 + gauss);
 	float result = BilinearLerp(results, slopeLerp);
 	return result;
@@ -382,15 +385,19 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	vec3 logDensityRand = clamp(sampleNormalDistribution(vec3(rand0.x, rand1.x, rand2.x), uLogMicrofacetDensity, uDensityRandomization), 0.0, 50.0); // TODO : optimize sampleNormalDist
 	vec3 microfacetCount = max(vec3(0.0), vec3(footprintArea) * exp(logDensityRand));
 	vec3 microfacetCountBlended = microfacetCount * gridWeight;
+	if (!uEnableSurfaceDomainLinearBlending) microfacetCountBlended = microfacetCount * gridWeight * barycentrics; // alternative
 
 	// Compute binomial properties
 	float hitProba = uMicrofacetRoughness * targetNDF; // probability of hitting desired half vector in NDF distribution
+	GDEBUG_p(colorDebugEdges(hitProba));
 	vec3 footprintOneHitProba = (1.0 - pow(1.0 - vec3(hitProba), microfacetCountBlended)); // probability of hitting at least one microfacet in footprint
 	vec3 footprintMean = (microfacetCountBlended - 1.0) * vec3(hitProba); // Expected value of number of hits in the footprint given already one hit
 	vec3 footprintSTD = sqrt((microfacetCountBlended - 1.0) * vec3(hitProba) * (1.0 - vec3(hitProba))); // Standard deviation of number of hits in the footprint given already one hit
-	// soft if 
-	// TODO: uniform to switch between soft and hard
-	vec3 binomialSmoothWidth = 0.1 * clamp(footprintOneHitProba * 10, 0.0, 1.0) * clamp((1.0 - footprintOneHitProba) * 10, 0.0, 1.0); // vec3(0.0)
+	
+	// TODO: uniform to switch between soft and hard binomial
+	// soft if
+	vec3 binomialSmoothWidth = 0.1 * clamp(footprintOneHitProba * 10, 0.0, 1.0) * clamp((1.0 - footprintOneHitProba) * 10, 0.0, 1.0);
+	if (uEnableSoftBinomialGating) binomialSmoothWidth = vec3(0.0);
 
 	// Generate numbers of reflecting microfacets
 	float result0, result1, result2;
@@ -401,6 +408,7 @@ float SampleGlintGridSimplex(vec2 uv, uint gridSeed, vec2 slope, float footprint
 	// Interpolate result for glint grid cell
 	vec3 results = vec3(result0, result1, result2) / microfacetCount.xyz;
 	float result = dot(results, barycentrics);
+	if (!uEnableSurfaceDomainLinearBlending) result = dot(results, vec3(1.0)); // alternative // ! Why not Distributed Binomial Law
 	return result;
 }
 															   // ! weird
@@ -567,10 +575,10 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 		thetaBinLerp = Remap01To(thetaBinLerp, 0.0, ratioLerp);
 	vec4 tetraBarycentricWeights = GetBarycentricWeightsTetrahedron(vec3(thetaBinLerp, ratioLerp, lodLerp), tetraA, tetraB, tetraC, tetraD); // Compute barycentric coordinates within chosen tetrahedron
 
-	GDEBUG_area(vec3(footprintArea * 4000.0));
+	GDEBUG_area(vec3(footprintArea * 10000.0));
     GDEBUG_theta(angleToRGB(theta * DEG2RAD));
     GDEBUG_aniso(vec3(1.0 / ellipseRatio));
-    GDEBUG_major(normalToRGB(normalize(ellipseMajor)));
+	GDEBUG_lod(vec3(length(ellipseMinor) * halfScreenSpaceScaler * 2.0 * 300.0));
 
 	GDEBUG_grid(vec3(footprintAreaLOD0 * 1000.0, 1.0 / ratio0, thetaBin0 / 360.0));
     GDEBUG_lodWeight(vec3(lodLerp));

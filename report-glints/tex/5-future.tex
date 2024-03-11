@@ -1,2 +1,39 @@
 \section{Future Work}
-\label{sec:future_work}
+\label{sec:future-work}
+
+While the model of \textcite{deliot2023} performs generally well and covers many areas of applications some areas of improvement still remain.
+
+\subsection{Limitations}
+\label{sec:limitations}
+% 1. Limitations
+% uv grid
+% cost per light
+% image based lighting
+% anisotropy
+% layered
+
+
+For one, a uniform UV-wrapping is needed to ensure uniformly dense meso-facet distribution, as the calculation of the footprint area is based on screen-space derivatives of the texture coordinates.
+%
+UV-seams can also become visible as the glint shapes are attached to the surface mapping.
+%
+However, this is a constraint they share with many other methods, notably \textcite{zirr2016}, and that can be avoided by using better parametrizations.
+
+Another drawback is the limited physical accuracy, as energy conservation is, due to the stochastic counting of glints, only given in expectation and coherence is only guaranteed between adjacent discretization levels.
+%
+For this, the method by \Textcite[e.g.][]{chermain2020} would be more appropriate.
+
+Moreover, as the method depends on the half-vector, all the calculations have to be repeated once for every light source.
+%
+This could be optimized to a certain degree as the discretization in the footprint and surface domain stays the same for every light source, but the expensive evaluation of the binomial distribution would still be needed to be done per light, hence the cost is linear in the number of lights.
+%
+Similarly, as the counting process occurs inside the integral of the Rendering Equation, Image-Based Lighting and the use of Area Lights remain expensive and methods which incorporate the integral \parencite[e.g.][]{wang2020} would be better suited in this case.
+%
+This persists a major obstacle to be overcome, as many modern games rely on complex lighting setups.
+
+\subsection{Possible Improvements}
+\label{sec:improvements}
+% 2. Possible Improvements
+% Colorized glints?
+% Anisotropy?
+% Image-based lighting or area lighting?

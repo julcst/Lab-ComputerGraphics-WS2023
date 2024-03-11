@@ -22,11 +22,68 @@ vec3 F_schlick(float cosTheta, vec3 albedo, float metallic) {
 }
 
 /**
- * Trowbridge-Reitz GGX approximation of normal distribution function
+ * Trowbridge-Reitz (GGX) approximation of normal distribution function
+ * From: PBR-Book
+ * Returns the differential area of microfacets oriented with the halfway vector w_h.
+ */
+float D_TrowbridgeReitz(float NdotH, float a) {
+    float cosTheta = NdotH;
+    float cos2Theta = cosTheta * cosTheta;
+    float sin2Theta = max(1.0 - cos2Theta, 0.0);
+    // float sinTheta = sqrt(sin2Theta);
+    // float tanTheta = sinTheta / cosTheta;
+    float tan2Theta = sin2Theta / cos2Theta;
+
+    if (isinf(tan2Theta)) return 0.0;
+
+    float cos4Theta = cos2Theta * cos2Theta;
+
+    float a2 = a * a;
+    float e = tan2Theta / a2;
+    return 1.0 / (PI * a2 * cos4Theta * (1.0 + e) * (1.0 + e));
+}
+
+/**
+ * From: PBR-Book
+ * Measures invisible masked microfacet area per visible microfacet area.
+ */
+float Lambda_TrowbridgeReitz(float NdotV, float alpha) {
+    float cosTheta = NdotV;
+    float cos2Theta = cosTheta * cosTheta;
+    float sin2Theta = max(1.0 - cos2Theta, 0.0);
+    float sinTheta = sqrt(sin2Theta);
+    float tanTheta = sinTheta / cosTheta;
+    float absTanTheta = abs(tanTheta);
+
+    if (isinf(absTanTheta)) return 0.0;
+
+    float alpha2Tan2Theta = (alpha * absTanTheta) * (alpha * absTanTheta);
+    return (-1.0 + sqrt(1.0 + alpha2Tan2Theta)) / 2.0;
+}
+
+/**
+ * From: PBR-Book
+ * Returns the fraction of microfacets with normal w_h that are visible from direction V.
+ */
+float G1_TrowbridgeReitz(float NdotV, float a) {
+    return 1.0 / (1.0 + Lambda_TrowbridgeReitz(NdotV, a)); 
+}
+
+/**
+ * From: PBR-Book
+ * Returns the fraction of microfacets that are visible from both view and light direction. 
+ */
+float G_TrowbridgeReitz(float NdotV, float NdotL, float a) {
+    return 1.0 / (1.0 + Lambda_TrowbridgeReitz(NdotV, a) + Lambda_TrowbridgeReitz(NdotL, a)); 
+}
+
+
+/**
+ * Trowbridge-Reitz (GGX) approximation of normal distribution function
  */
 float D_ggx(float NdotH, float a) {
-    float a2     = a*a;
-    float NdotH2 = NdotH*NdotH;
+    float a2     = a * a;
+    float NdotH2 = NdotH * NdotH;
 	
     float nom    = a2;
     float denom  = (NdotH2 * (a2 - 1.0) + 1.0);

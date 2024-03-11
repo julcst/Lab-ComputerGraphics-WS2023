@@ -162,7 +162,9 @@ vec4 sampleBinom(float N, float p, vec4 randA, vec4 randB) {
 // ! This is executed 4*3=12 times per sample
 vec4 sampleBinom(float N, float pOneSuccess, float mu, float sigma, vec4 randA, vec4 randB) {
     // Approximate the binomial distribution b(N-1,p) by sampling from the normal distribution N(mu,sigma)
-    vec4 normalSample = clamp(floor(sampleNormal(mu, sigma, randB)) + 1.0, 1.0, N); // Clamping to ensure valid range
+    vec4 normalSample;
+    if (!uEnableBinomialOvershooting) normalSample = clamp(floor(sampleNormal(mu, sigma, randB)) + 1.0, 1.0, N); // Wrong clamping
+    else normalSample = clamp(floor(sampleNormal(mu, sigma, randB)), 0.0, N) + 1.0; // Why is this clamping correct? normalSample can become N+1
     // Gate the normal sample using a single Bernoulli trial
     vec4 gated = mix(vec4(0.0), normalSample, lessThan(randA, vec4(pOneSuccess))); // Equation (18)
     return gated;

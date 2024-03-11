@@ -17,9 +17,12 @@ layout(std140) uniform UB0 {
     vec3 uLightColor;
     float uAmbientStrength;
     vec3 uCameraPosition;
-    bool uUseCubemap;
+    uint uGlobalFlags;
     mat3 uCameraRotation;
 };
+
+bool uUseCubemap = (uGlobalFlags & 1U) != 0U;
+bool uFlatSky = (uGlobalFlags & 2U) != 0U;
 
 /**
  * UB1 binds at index 1 and stores information about the current object being rendered
@@ -71,6 +74,7 @@ layout(std140) uniform UB1 {
 ////////// Layered parameters //////////
     uint uLayerCount;
     uint uIBLSampleCount;
+    uint uFlags;
     vec4 uLayerEta[MAX_LAYERS];
     vec4 uLayerKappa[MAX_LAYERS];
     vec4 uLayerAlpha[MAX_LAYERS/4];
@@ -84,3 +88,8 @@ layout(std140) uniform UB1 {
     ivec4 uLayerUseKappaTexture[MAX_LAYERS/4];
     ivec4 uLayerUseAlphaTexture[MAX_LAYERS/4];
 };
+
+bool uEnableSurfaceDomainLinearBlending = (uFlags & 1U) != 0U;
+bool uEnableSoftBinomialGating = (uFlags & 2U) != 0U;
+bool uEnableBinomialOvershooting = (uFlags & 4U) != 0U;
+bool uEnableAccurateGGX = (uFlags & 8U) != 0U;

@@ -1,0 +1,157 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkorange}{RGB}{255,140,0}
+\definecolor{orange}{RGB}{255,165,0}
+
+\begin{axis}[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xlabel={Number of Successes},
+xmin=-2.75, xmax=46.75,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={Probability},
+ymin=0, ymax=0.32739,
+ytick style={color=black}
+]
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:-0.5,0) rectangle (axis cs:0.5,0.0135);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:0.5,0) rectangle (axis cs:1.5,0.0915);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:1.5,0) rectangle (axis cs:2.5,0.2428);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:2.5,0) rectangle (axis cs:3.5,0.3118);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:3.5,0) rectangle (axis cs:4.5,0.234);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:4.5,0) rectangle (axis cs:5.5,0.0906);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:5.5,0) rectangle (axis cs:6.5,0.0158);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:13.5,0) rectangle (axis cs:14.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:14.5,0) rectangle (axis cs:15.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:15.5,0) rectangle (axis cs:16.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:16.5,0) rectangle (axis cs:17.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:17.5,0) rectangle (axis cs:18.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:18.5,0) rectangle (axis cs:19.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:19.5,0) rectangle (axis cs:20.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:20.5,0) rectangle (axis cs:21.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:21.5,0) rectangle (axis cs:22.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:22.5,0) rectangle (axis cs:23.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:23.5,0) rectangle (axis cs:24.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:24.5,0) rectangle (axis cs:25.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:25.5,0) rectangle (axis cs:26.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:26.5,0) rectangle (axis cs:27.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:27.5,0) rectangle (axis cs:28.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:28.5,0) rectangle (axis cs:29.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:29.5,0) rectangle (axis cs:30.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:30.5,0) rectangle (axis cs:31.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:31.5,0) rectangle (axis cs:32.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:32.5,0) rectangle (axis cs:33.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:33.5,0) rectangle (axis cs:34.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:34.5,0) rectangle (axis cs:35.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:35.5,0) rectangle (axis cs:36.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:36.5,0) rectangle (axis cs:37.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:37.5,0) rectangle (axis cs:38.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:38.5,0) rectangle (axis cs:39.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:39.5,0) rectangle (axis cs:40.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:40.5,0) rectangle (axis cs:41.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:41.5,0) rectangle (axis cs:42.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:42.5,0) rectangle (axis cs:43.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:43.5,0) rectangle (axis cs:44.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:4.5,0) rectangle (axis cs:5.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:5.5,0) rectangle (axis cs:6.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:6.5,0) rectangle (axis cs:7.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:7.5,0) rectangle (axis cs:8.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:8.5,0) rectangle (axis cs:9.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:9.5,0) rectangle (axis cs:10.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:10.5,0) rectangle (axis cs:11.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:11.5,0) rectangle (axis cs:12.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:12.5,0) rectangle (axis cs:13.5,0);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:13.5,0) rectangle (axis cs:14.5,0.0001);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:14.5,0) rectangle (axis cs:15.5,0.0001);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:15.5,0) rectangle (axis cs:16.5,0.0001);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:16.5,0) rectangle (axis cs:17.5,0.0005);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:17.5,0) rectangle (axis cs:18.5,0.0008);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:18.5,0) rectangle (axis cs:19.5,0.0022);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:19.5,0) rectangle (axis cs:20.5,0.0031);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:20.5,0) rectangle (axis cs:21.5,0.0067);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:21.5,0) rectangle (axis cs:22.5,0.0127);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:22.5,0) rectangle (axis cs:23.5,0.0184);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:23.5,0) rectangle (axis cs:24.5,0.0287);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:24.5,0) rectangle (axis cs:25.5,0.0435);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:25.5,0) rectangle (axis cs:26.5,0.0581);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:26.5,0) rectangle (axis cs:27.5,0.0776);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:27.5,0) rectangle (axis cs:28.5,0.0927);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:28.5,0) rectangle (axis cs:29.5,0.1027);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:29.5,0) rectangle (axis cs:30.5,0.0959);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:30.5,0) rectangle (axis cs:31.5,0.1014);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:31.5,0) rectangle (axis cs:32.5,0.0924);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:32.5,0) rectangle (axis cs:33.5,0.0755);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:33.5,0) rectangle (axis cs:34.5,0.0583);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:34.5,0) rectangle (axis cs:35.5,0.0448);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:35.5,0) rectangle (axis cs:36.5,0.0343);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:36.5,0) rectangle (axis cs:37.5,0.0211);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:37.5,0) rectangle (axis cs:38.5,0.0138);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:38.5,0) rectangle (axis cs:39.5,0.0088);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:39.5,0) rectangle (axis cs:40.5,0.0032);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:40.5,0) rectangle (axis cs:41.5,0.0013);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:41.5,0) rectangle (axis cs:42.5,0.0008);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:42.5,0) rectangle (axis cs:43.5,0.0003);
+\draw[draw=darkorange,fill=orange,opacity=0.3] (axis cs:43.5,0) rectangle (axis cs:44.5,0.0001);
+\draw[draw=darkorange,fill=orange] (axis cs:-0.5,0) rectangle (axis cs:0.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:0.5,0) rectangle (axis cs:1.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:1.5,0) rectangle (axis cs:2.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:2.5,0) rectangle (axis cs:3.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:3.5,0) rectangle (axis cs:4.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:4.5,0) rectangle (axis cs:5.5,0.0004);
+\draw[draw=darkorange,fill=orange] (axis cs:5.5,0) rectangle (axis cs:6.5,0.0023);
+\draw[draw=darkorange,fill=orange] (axis cs:6.5,0) rectangle (axis cs:7.5,0.0064);
+\draw[draw=darkorange,fill=orange] (axis cs:7.5,0) rectangle (axis cs:8.5,0.0167);
+\draw[draw=darkorange,fill=orange] (axis cs:8.5,0) rectangle (axis cs:9.5,0.0322);
+\draw[draw=darkorange,fill=orange] (axis cs:9.5,0) rectangle (axis cs:10.5,0.0662);
+\draw[draw=darkorange,fill=orange] (axis cs:10.5,0) rectangle (axis cs:11.5,0.0957);
+\draw[draw=darkorange,fill=orange] (axis cs:11.5,0) rectangle (axis cs:12.5,0.1285);
+\draw[draw=darkorange,fill=orange] (axis cs:12.5,0) rectangle (axis cs:13.5,0.1496);
+\draw[draw=darkorange,fill=orange] (axis cs:13.5,0) rectangle (axis cs:14.5,0.1558);
+\draw[draw=darkorange,fill=orange] (axis cs:14.5,0) rectangle (axis cs:15.5,0.1315);
+\draw[draw=darkorange,fill=orange] (axis cs:15.5,0) rectangle (axis cs:16.5,0.097);
+\draw[draw=darkorange,fill=orange] (axis cs:16.5,0) rectangle (axis cs:17.5,0.0622);
+\draw[draw=darkorange,fill=orange] (axis cs:17.5,0) rectangle (axis cs:18.5,0.0293);
+\draw[draw=darkorange,fill=orange] (axis cs:18.5,0) rectangle (axis cs:19.5,0.0164);
+\draw[draw=darkorange,fill=orange] (axis cs:19.5,0) rectangle (axis cs:20.5,0.0063);
+\draw[draw=darkorange,fill=orange] (axis cs:20.5,0) rectangle (axis cs:21.5,0.0027);
+\draw[draw=darkorange,fill=orange] (axis cs:21.5,0) rectangle (axis cs:22.5,0.0008);
+\draw[draw=darkorange,fill=orange] (axis cs:22.5,0) rectangle (axis cs:23.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:23.5,0) rectangle (axis cs:24.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:24.5,0) rectangle (axis cs:25.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:25.5,0) rectangle (axis cs:26.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:26.5,0) rectangle (axis cs:27.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:27.5,0) rectangle (axis cs:28.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:28.5,0) rectangle (axis cs:29.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:29.5,0) rectangle (axis cs:30.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:30.5,0) rectangle (axis cs:31.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:31.5,0) rectangle (axis cs:32.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:32.5,0) rectangle (axis cs:33.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:33.5,0) rectangle (axis cs:34.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:34.5,0) rectangle (axis cs:35.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:35.5,0) rectangle (axis cs:36.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:36.5,0) rectangle (axis cs:37.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:37.5,0) rectangle (axis cs:38.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:38.5,0) rectangle (axis cs:39.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:39.5,0) rectangle (axis cs:40.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:40.5,0) rectangle (axis cs:41.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:41.5,0) rectangle (axis cs:42.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:42.5,0) rectangle (axis cs:43.5,0);
+\draw[draw=darkorange,fill=orange] (axis cs:43.5,0) rectangle (axis cs:44.5,0);
+\end{axis}
+
+\end{tikzpicture}

@@ -1,0 +1,26 @@
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[b]{0.32\columnwidth}
+        \resizebox{1\linewidth}{!}{\input{figures/blending-reference.tikz}}
+        \vspace{-5pt}
+        \caption{Reference\label{fig:blending-reference}}
+    \end{subfigure}
+    %
+    \begin{subfigure}[b]{0.32\columnwidth}
+        \resizebox{1\linewidth}{!}{\input{figures/blending-linear.tikz}}
+        \vspace{-5pt}
+        \caption{Linear\label{fig:blending-linear}}
+    \end{subfigure}
+    %
+    \begin{subfigure}[b]{0.32\columnwidth}
+        \resizebox{1\linewidth}{!}{\input{figures/blending-distributed.tikz}}
+        \vspace{-5pt}
+        \caption{Distributed\label{fig:blending-distributed}}
+    \end{subfigure}
+
+    \vspace{-5pt}
+    \caption{
+        Comparison of different methods for blending two binomial distributions ($b(6, 0.5)$, $b(60, 0.5)$) with weight $w=0.4$. The method by \textcite{deliot2023} (\cref{fig:blending-distributed}) accurately reproduces the reference distribution (\cref{fig:blending-reference}). Sample size for each distribution is 10000.
+        \label{fig:blending}
+    }
+\end{figure}

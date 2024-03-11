@@ -16,7 +16,7 @@
 %\usepackage{refcheck}                                      % Display warning on unused references
 %\ignoreunlbld                                              % Ignore equations in "ref-check"
 \setlength{\marginparwidth}{2cm}                            % Fix "todo-notes" warning
-\usepackage{todonotes}                                      % TODO
+\usepackage{todonotes}                                      % Adds TODO notes
 
 \usepackage{lipsum}                                         % Generate random text (ONLY FOR TEST PURPOSES)
 
@@ -63,7 +63,8 @@
             giveninits=true,				% Compress first names
             uniquename=init,				% Compatible with 'giveninits=true'
             isbn=false,                     % Disable ISBN
-            doi=false                       % Disable DOI
+            doi=false,                      % Disable DOI
+            url=false,
            ]{biblatex}
 \usepackage{fancyhdr}                                       % Custom head- and foot-lines
 \usepackage[titles]{tocloft}                                % Spacing in table of contents
@@ -77,6 +78,13 @@
 \usepackage{subcaption}                                     % Figures and captions (side-by-side)
 \usepackage{booktabs}                                       % Improved tables
 \usepackage{multirow}                                       % Multirow
+\usepackage{tikz-3dplot}
+% tikzplotlib requirements
+\usepackage{pgfplots}
+\DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots, dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+\pgfplotsset{compat=newest}
 
 
 \usepackage{pbox}
@@ -102,7 +110,7 @@
 %\newcommand{\reportType}{Lab}
 
 %\title{<Report Title>}
-\title{Stable Realtime Simulation of Mesoscopic Glints}
+\title{Stable Real-Time Simulation of Mesoscopic Glints}
 
 \author{Julian C. Stamm}
 \newcommand{\matrNr}{3398674}
@@ -152,7 +160,7 @@
         \large \@date
     \end{center}
     \vspace{0.3cm}
-    \input{tex/teaser}
+    \input{figures/teaser}
     \vspace{0.8cm}
 ]
 }
@@ -163,7 +171,7 @@
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
-\input{tex/content}
+\input{tex/structure}
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 

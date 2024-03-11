@@ -122,9 +122,6 @@ struct BsdfLobe {
  * section 5 of the paper [1]
  * implementation without doubling
  *
- * @param N
- * @param L
- * @param V
  * @param cosThetaI
  * @param layerCount
  * @param layerIOR
@@ -136,7 +133,7 @@ struct BsdfLobe {
  * @param BsdfLobe
  * @param valid_lobes
  */
-void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS + 1], vec3 layerKappa[MAX_LAYERS + 1], vec2 layerAlpha[MAX_LAYERS + 1], float layerDepth[MAX_LAYERS + 1], vec3 layerSigmaA[MAX_LAYERS + 1], vec3 layerSigmaS[MAX_LAYERS + 1], float layerG[MAX_LAYERS + 1], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
+void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS + 1], vec3 layerKappa[MAX_LAYERS + 1], vec2 layerAlpha[MAX_LAYERS + 1], float layerDepth[MAX_LAYERS + 1], vec3 layerSigmaA[MAX_LAYERS + 1], vec3 layerSigmaS[MAX_LAYERS + 1], float layerG[MAX_LAYERS + 1], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
     valid_lobes = 0u;
     
     float cosTheta_I = cosThetaI; //incident
@@ -375,9 +372,6 @@ void main() {
 
     fillLayerMaterialArrays(uv, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
 
-    float cosThetaI = max(dot(H_local, L_local), 0.0);
-    addingDoubling(N_local, L_local, V_local, cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
- 
     //eval LayeredBRDF
     vec3 I = vec3(0.0);
     float debug_D[MAX_LAYERS];
@@ -385,11 +379,14 @@ void main() {
     vec3 lighting = vec3(0.0);
 
     if(uUseCubemap){
+        float cosThetaI = max(dot(N_local, V_local), 0.0);
+        addingDoubling(cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
+
         for(uint s = 0u; s < uIBLSampleCount; s++){
             vec2 U = hammersley(s, uIBLSampleCount);
             for(int i = 0; i < int(valid_lobes); i++){
                 if(!isZero(lobes[i].energy)){
-                    vec2 alpha = varianceToRoughness(lobes[i].variance);
+                    vec2 alpha = pow(varianceToRoughness(lobes[i].variance), vec2(2.0));
 
                     //implementation following Eric Heitz, Sampling the GGX Distribution of Visible Normals, Journal of Computer Graphics Techniques (JCGT), vol. 7, no. 4, 1-13, 2018
                     H_local = sampleGGXVNDF(V_local, alpha.x, alpha.y, U.x, U.y);
@@ -418,9 +415,12 @@ void main() {
     } else {
         float NdotV = max(dot(N_local, V_local), 0.0);
         float NdotL = max(dot(N_local, L_local), 0.0);
+        float HdotL = max(dot(H_local, L_local), 0.0);
+        addingDoubling(NdotV, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
+        
         for(int i = 0; i < int(valid_lobes); i++){
             if(!isZero(lobes[i].energy)){
-                vec2 alpha = varianceToRoughness(lobes[i].variance);
+                vec2 alpha = pow(varianceToRoughness(lobes[i].variance), vec2(2.0));
                 
                 float G =  G2_ggx_aniso(V_local, L_local, alpha.x, alpha.y);
                 float D = D_ggx_aniso(H_local, alpha.x, alpha.y);
@@ -463,6 +463,7 @@ void main() {
 
 
     //DEBUG F 
+    float cosThetaI = max(dot(N_local, V_local), 0.0);
     vec3 etaI = layerEta[0];
     vec3 kappaI = layerKappa[0];
     vec3 etaT = layerEta[1];

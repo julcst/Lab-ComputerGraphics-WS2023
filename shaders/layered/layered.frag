@@ -121,9 +121,6 @@ struct BsdfLobe {
  * section 5 of the paper
  * implementation without doubling
  *
- * @param N
- * @param L
- * @param V
  * @param cosThetaI
  * @param layerCount
  * @param layerIOR
@@ -135,7 +132,7 @@ struct BsdfLobe {
  * @param BsdfLobe
  * @param valid_lobes
  */
-void addingDoubling(vec3 N, vec3 L, vec3 V, float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS + 1], vec3 layerKappa[MAX_LAYERS + 1], float layerAlpha[MAX_LAYERS + 1], float layerDepth[MAX_LAYERS + 1], vec3 layerSigmaA[MAX_LAYERS + 1], vec3 layerSigmaS[MAX_LAYERS + 1], float layerG[MAX_LAYERS + 1], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
+void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS + 1], vec3 layerKappa[MAX_LAYERS + 1], float layerAlpha[MAX_LAYERS + 1], float layerDepth[MAX_LAYERS + 1], vec3 layerSigmaA[MAX_LAYERS + 1], vec3 layerSigmaS[MAX_LAYERS + 1], float layerG[MAX_LAYERS + 1], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
     valid_lobes = 0u;
     
     float cosTheta_I = cosThetaI; //incident
@@ -354,8 +351,6 @@ void main() {
     // H is the half vector between L and V
     vec3 H = normalize(V + L);
 
-    float cosThetaI = max(dot(H, L), 0.0);
-
     BsdfLobe lobes[MAX_LAYERS]; 
     uint valid_lobes = 0u;
 
@@ -369,7 +364,9 @@ void main() {
 
     fillLayerMaterialArrays(uv, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
 
-    addingDoubling(N, L, V, cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
+    float cosThetaI = max(dot(N, L), 0.0);
+
+    addingDoubling(cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
  
     //eval LayeredBRDF
     vec3 BRDF = vec3(0.0);
@@ -380,7 +377,7 @@ void main() {
 
     for(int i = 0; i < int(valid_lobes); i++){
         if(!isZero(lobes[i].energy)){
-            float alpha = varianceToRoughness(lobes[i].variance);
+            float alpha = pow(varianceToRoughness(lobes[i].variance),2);
 
             float G =  G2_ggx_aniso(V, L, alpha, alpha);
             float D = D_ggx_aniso(H, alpha, alpha);

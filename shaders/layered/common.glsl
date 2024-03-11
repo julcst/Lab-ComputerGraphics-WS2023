@@ -9,6 +9,9 @@
 
 #include "shared/ggx.glsl"
 
+/**
+ * if 1 the mapping from paper [2] is used, else the mapping from paper [1]
+ */
 #define USE_NEW_MAPPING 1
 
 /**
@@ -25,6 +28,9 @@ float average(vec3 v){
     return (v.x + v.y + v.z)/3;
 }
 
+/**
+ * constants used by mapping of paper [2]
+ */
 #define CONST_A 1.28809776
 #define CONST_B 1.31699416
 
@@ -82,7 +88,7 @@ float varianceToRoughness(float sigma){
  * roughness scale factor for fake transmission
  * equation 10 from paper [1]
  * 
- * @param n12 = n1 / n2 IOR
+ * @param n12 IOR
  * @param NdotL
  * @param NdotV 
  * @return scale factor s
@@ -107,7 +113,7 @@ float gToVariance(float g){
  * Fresnel for dielectrics
  * implementation following https://pbr-book.org/3ed-2018/Reflection_Models/Specular_Reflection_and_Transmission
  * 
- * @param cosTheta Theta is the angle between the surface normal and the incident ray
+ * @param cosThetaI Theta is the angle between the surface normal and the incident ray
  * @param etaI IOR of the incident media
  * @param etaT IOR of the transmitted media
  * @return Fresnel reflectance
@@ -153,9 +159,9 @@ vec3 F_dielectric(float cosThetaI, vec3 etaI, vec3 etaT){
 /**
  * complex division
  *
- * @param x1
- * @param x2
- * @return x1 / x2
+ * @param numerator
+ * @param denominator
+ * @return numerator / denominator
  */
  vec2 complexDivide(vec2 numerator, vec2 denominator){
     float a = numerator.x;
@@ -223,56 +229,6 @@ vec3 F_conductor(float cosThetaI, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT
 }
 
 /**
- * Calculates FGD after GGX microfacet model
- * 
- * @param N surface normal
- * @param L light direction (wi)
- * @param V view direction (wo)
- * @param alpha roughness
- * @param etaI real part of complex IOR of the incident media
- * @param etaI imaginary part of complex IOR of the incident media
- * @param etaI real part of complex IOR of the transmitted media
- * @param etaI imaginary part of complex IOR of the transmitted media
- * @return FDG
- */
-vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
-    vec3 FGD = vec3(0.0);
-
-    // H is the half vector between L and V
-    vec3 H = normalize(V + L);
-
-    // Calculate dot products
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float NdotH = max(dot(N, H), 0.0);
-    float HdotV = max(dot(H, V), 0.0);
-
-    //remap roughness
-    float k = k_direct(alpha);
-
-    //fresnel term
-    vec3 F = vec3(0.0);
-    if(isZero(kappaT)){
-        F = F_dielectric(NdotL, etaI, etaT);
-    }else{
-        F = F_conductor(NdotL, etaI, kappaI, etaT, kappaT);
-    }
-    
-    //geometric shadowing term
-    float G = G_smith_ggx(NdotV, NdotL, k);
-
-    //microfacet distribution term
-    float D = D_ggx(NdotH, alpha);
-
-    //equation 2 from paper [1]
-    FGD = F * G * D * NdotL;
-    float denom = 4.0 * NdotL * NdotV + 0.0001;
-    FGD = FGD / denom;
-
-    return FGD;
-}
-
-/**
  * Calculates the Fresnel equation
  * 
  * @param cosTheta_I
@@ -280,7 +236,7 @@ vec3 evalFGD(vec3 N, vec3 L, vec3 V, float alpha, vec3 etaI, vec3 kappaI, vec3 e
  * @param etaI imaginary part of complex IOR of the incident media
  * @param etaI real part of complex IOR of the transmitted media
  * @param etaI imaginary part of complex IOR of the transmitted media
- * @return F
+ * @return F Fresnel reflectance
  */
 vec3 evalFresnel(float cosTheta_I, vec3 etaI, vec3 kappaI, vec3 etaT, vec3 kappaT){
     vec3 F = vec3(0.0);

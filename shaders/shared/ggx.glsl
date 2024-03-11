@@ -225,10 +225,10 @@ vec3 BRDF_ggx_aniso(vec3 N, vec3 L, vec3 V, vec3 albedo, float metallic, float a
     vec3 H = normalize(V + L);
 
     // Calculate dot products
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float HdotV = max(dot(H, V), 0.0);
-
+    float NdotV = V.z; //dot(N, V);
+    float NdotL = L.z; //dot(N, L);
+    float HdotV = dot(H, V);
+    
     vec3 F = F_schlick(HdotV, albedo, metallic);
 
     // Calculate the specular component with GGX

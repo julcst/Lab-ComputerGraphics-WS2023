@@ -87,7 +87,7 @@ void fillLayerMaterialArrays(vec2 texCoords, uint _layerCount, out vec3 _layerEt
     _layerG[0] = 0.0;
     //fill with data from uniforms or textures
     for(int i = 0; i < int(_layerCount); i++) {
-        _layerEta[i+1] = getLayerEta(i, texCoords);
+        _layerEta[i+1] = max(getLayerEta(i, texCoords), 0.0002);
         _layerKappa[i+1] = getLayerKappa(i, texCoords);
         _layerAlpha[i+1] = clamp(getLayerAlpha(i, texCoords), 0.0001, 1);
         _layerDepth[i+1] = getLayerDepth(i);

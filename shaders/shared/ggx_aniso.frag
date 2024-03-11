@@ -24,7 +24,7 @@ void main() {
     vec3 L = worldToTangent * uLightDir;
 
     // Calculate GGX BRDF
-    fragColor = BRDF_ggx_aniso(N, L, V, uAlbedo, uMetallic, uAlphaX, uAlphaY) * uLightColor * max(dot(L, N), 0.0);
+    fragColor = BRDF_ggx_aniso(N, L, V, uAlbedo, uMetallic, pow(uAlphaX,2), pow(uAlphaY,2)) * uLightColor * max(dot(L, N), 0.0);
     // Fake ambient lighting
     fragColor += uSkyColor * uAlbedo * uAmbientStrength;
 }

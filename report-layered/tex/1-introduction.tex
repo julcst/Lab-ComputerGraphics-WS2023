@@ -1,4 +1,20 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Abcdef \textcite{some_paper}
+In physically based rendering elaborate models of scattering at a surface are central for producing realistic images. Common reflectance models are based on a microfacet approach with a diffuse and a specular component. Even though it is possible to render a great variety of surfaces with these models, many man-made objects and biological structures are a lot more complex. To enrich the set of materials, complex layered surface structures can be incorporated into shading models. This makes it possible to achieve for example glazed or coated objects, wet surfaces, car paints, leaves or skin.
+
+%
+
+Layered materials are stacks of layers of scattering and/or absorbing media that are plane-parallel with respect to the shading normal which are separated by rough interfaces. To be able to describe the appearance with geometrical optics, the thickness of the individual layers are assumed to be larger than the wavelengths of visible light. The complexity of evaluating the light paths through such materials increases tremendously because light can bounce many times before exiting as the number of layers can be arbitrary. This is the reason why many proposed models of layered or coated structures are limited to special cases or lack in accuracy.
+
+%
+
+The desirable goal is a realistic model with physical correctness that works with an arbitrary number of layers, accounts for multiple scattering, is energy conserving, allows texturing, supports importance sampling, requires little storage and has a short precomputation time. Additionally, it would be ideal to be able to evaluate the model in real-time. There have been several approaches trying to fulfill some of these goals, a selection of them will be briefly discussed in Section \ref{sec:related_work}.
+
+%
+
+In this work we will present the multi-lobe approach relying on a statistical framework for tracking first order moments of BSDF lobes within the stack of layers of \textcite{belcour2018} in detail as well as our implementation of it. This model is efficient as it requires no precomputation and can be used in offline as well as real-time renderers. Furthermore, the approximation of light transport used results in high accuracy as it accounts multiple scattering for an arbitrary number of layers and only comes with a few limitations. \textcite{belcour2018} introuced a set of operators working on the statistical moments and applied the adding-doubling method to efficiently evaluate multiple scattering. One assumption is that all interfaces consist of specular microfacets following the GGX distribution which results in lower accuracy for high roughness values.
+
+%
+
+The model of \textcite{belcour2018} only allows isotropic interfaces but \textcite{yamaguchi2019} as well as \textcite{weier2020} extended the model to anisotropic interfaces, which we also implemented. For image based lighting of the anisotropic model we used Monte Carlo integration.

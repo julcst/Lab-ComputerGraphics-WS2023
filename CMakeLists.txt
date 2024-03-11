@@ -179,6 +179,8 @@ set(MATERIALS
 )
 set(CUBEMAPS
     cubemaps/studio
+    cubemaps/uffizi
+    cubemaps/white-furnace
 )
 foreach(cubemap ${CUBEMAPS})
     list(APPEND CUBEMAP_FILES ${cubemap}_nx.hdr ${cubemap}_ny.hdr ${cubemap}_nz.hdr ${cubemap}_px.hdr ${cubemap}_py.hdr ${cubemap}_pz.hdr)

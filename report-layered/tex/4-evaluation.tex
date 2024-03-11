@@ -1,10 +1,35 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
+Each layer is parametrized by a three-component complex index of refraction $\eta + i \kappa$, a scalar/two-component roughness $\alpha$, a scalar depth $h$, a three-component absorption cross-section $\sigma_a$, a three-component scattering cross-section $\sigma_s$ and a phase function anisotropy factor $g$. 
+
+%
+
+A lot of the desired goals mentioned in Section \ref{sec:introduction} are actually fulfilled by the presented model and our implementation of it:
 \begin{itemize}
-    \item Material possibilities
-    \item effects possible to model
-    \item render time / performance
-    \item dependencies on layer count/\dots
-    \item check if energy conserving
+    \item the model is physically based because of using the microfacet model following the GGX distribution and because it tries to approximate the physical light transport
+    \item it supports an arbitrary number of layers
+    \item multiple scattering is accounted
+    \item if incorporated in FGD, the model is energy conserving
+    \item texturing and importance sampling is supported
+    \item there is no or only little precomputation and storage needed
+    \item the model can be evaluated in real-time
 \end{itemize}
+
+However, there are some limitations of the general accuracy and regarding the effects the model is able to reproduce. Still, the model is able to convincingly reproduce a variety of complex layered materials. For instance metal foil, metallic paint, frosted metal and clear coating (see Figure ...). Figure ... shows the separation of a layered material and the composed result, detailing how the layers are affected by each other. The scene shown in Figure ... illustrates how the model can be used to represent complex materials using textures for the index of refraction and roughness. Furthermore, Figure ... shows a comparison  between our implementation, the implementation of \textcite{belcour2018} and the reference Belcour used. Effects of absorption and scattering in participating media can be seen in Figure ... . The impact of anisotropy is illustrated in Figure ... .
+
+%
+
+For comparison, we tested using different approximations for FGD. The visual and runtime difference is presented in Figure ... . It can be seen, that using ... is more efficient while the visual impact is negligible.
+
+%
+
+In Figure ... we show a white furnace test. It can be seen that because of just using the Fresnel term as an approximation for FGD instead of incorporating some sort of method to account for multiple scattering our implementation is not energy conserving. However, if for higher $\eta$ values it converges to an energy conserving model.
+
+%
+
+\textit{Performance.} All results are computed on an 8 core Intel i7-1165G7 with 16 GB of RAM and an integrated Mesa Intel Xe Graphics GPU. Render times are reported in Figure ... . It can be seen, as expected, that the runtime is linear in the number of layers, as during evaluating the adding-doubling algorithm we iterate over all layers. Our implementation was written with readability in mind instead of performance optimization. Therefore, the render times could probably be decreased.
+
+%
+
+In Figure ... a comparison of sample counts and render times is displayed for image based lighting using Monte Carlo integration of the anisotropic layered BRDF.

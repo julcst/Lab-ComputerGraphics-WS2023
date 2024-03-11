@@ -1,9 +1,12 @@
 \section{Related Work}
 \label{sec:related_work}
 
-\begin{itemize}
-    \item specialized models for specific layer combination
-    \item tabulated models
-    \item no multiple scattering
-    \item for real-time only two layers and specific precomputations
-\end{itemize}
+\textit{Monte Carlo models.} One of the first works on layered materials accounting for multiple scattering was published by \textcite{hanrahan1993}. Using a Monte Carlo method for computing light transport in the layers and thus having a slow convergence rate it is not usable for real-time. Other models using Monte Carlo methods are for example \parencite{guo2018,gamboa2020}. Even though these are a lot more powerful at constructing light transport paths resulting in higher convergence rates, they are still not applicable in real-time renderers. However, they exceed in the number of supported features and allow for even more complex materials in comparison to the presented approach. \textcite{xia2020} further improved the Monte Carlo efficiency by reducing variance using new sampling strategies, and they showed that their method converges exactly to the ground truth.
+
+\textit{Specialized models.} In order to reduce complexity many approaches are constructed for only specific layer configurations. For instance, weathering of metals \parencite{hanrahan1996}, wet materials \parencite{jensen1999}, coated paint with flakes \parencite{ershov2001} or leaves \parencite{wang2006}. Such specialized models can be efficient, but they lack in generality, as for example no arbitrary number of layers is allowed.
+
+\textit{Simplified light transport models.} To allow more arbitrary layer configurations, some models like \parencite{wilkie2007} use simpler light transport evaluation explicitly ignoring some groups of light paths. However, this results in decreased accuracy, as some important effects in the appearance are missing. \textcite{elek2010} further simplified and optimized the model of \textcite{wilkie2007} restricting it to two layers accomplishing a real-time usable model. 
+
+\textit{Tabulated models.} \textcite{jakob2014} introduced an approach involving tabulating reflectance functions in a Fourier basis. The model accounts for multiple scattering and supports arbitrary layer structures. Unfortunately, precomputation per material is required, it is not memory bound because of the Fourier decomposition, and it is impractical for real-time rendering. \textcite{zeltner2018} extended this approach to support anisotropic interfaces.
+
+\textit{Extensions of the presented model.} The model \parencite{belcour2018} presented in this work supports absorption and scattering in participating media, though it only accounts for forward-scattering. \textcite{xia2020} addressed this limitation using a transfer matrix approach for handling backward scattering. To overcome the limitation of only using GGX interfaces \textcite{belcour2022} extended the model to incorporate Lambertian interfaces. In this work we will not add those extensions, however.

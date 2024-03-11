@@ -1,1 +1,45 @@
-\section{Appendix}
+\section{Adding-doubling forms}
+\label{sec:appendix_a}
+
+\textbf{Energy.}\\
+\textit{Upward reflectance:}
+\begin{equation}
+    r_{13} = r_{12} + \frac{t_{12} r_{23} t_{21}}{1 - r_{23} r_{21}}
+\end{equation}
+\textit{Downward reflectance:}
+\begin{equation}
+    r_{31} = r_{32} + \frac{t_{32} r_{21} t_{23}}{1 - r_{23} r_{21}}
+\end{equation}
+\textit{Upward transmission:}
+\begin{equation}
+    t_{31} = \frac{t_{32} t_{21}}{1 - r_{23} r_{21}}
+\end{equation}
+\textit{Downward transmission:}
+\begin{equation}
+    t_{13} = \frac{t_{12} t_{23}}{1 - r_{23} r_{21}}
+\end{equation}
+\textbf{Variance.}\\
+\textit{Upward reflectance:}
+\begin{equation}
+    \tilde{\sigma}_{13}^R = r_{12} \sigma_{12}^R + \left(\frac{t_{12} r_{23} t_{21}}{1 - r_{23} r_{21}}\right) \left[\sigma_{12}^T + \sigma_{21}^T + J_{12} \left(\sigma_{23}^R + \frac{r_{23} r_{21}}{1 - r_{23} r_{21}}\sigma_{12}^R\right)\right]
+\end{equation}
+\textit{Downward reflectance:}
+\begin{equation}
+    \tilde{\sigma}_{31}^R = r_{31} \sigma_{32}^R + \left(\frac{t_{32} r_{21} t_{23}}{1 - r_{23} r_{21}}\right) \left[\sigma_{23}^T + J_{23} \left(\sigma_{32}^T + \sigma_{21}^R + \left(\sigma_{23}^R + \sigma_{21}^R\right) \left(\frac{r_{23} r_{21}}{1 - r_{23} r_{21}}\sigma_{12}^R\right)\right)\right]
+\end{equation}
+\textit{Downward transmission:}
+\begin{equation}
+    \tilde{\sigma}_{13}^T = \left(\frac{t_{12} t_{23}}{1 - r_{23} r_{21}}\right) \left[J_{23} \sigma_{12}^T + \sigma_{23}^T + J_{23} \left(\sigma_{23}^R + \sigma_{21}^R\right) \left(\frac{r_{23} r_{21}}{1 - r_{23} r_{21}}\right)\right]
+\end{equation}
+The normalized transmitted average variance can be simplified to:
+\begin{equation}
+    \sigma_{13}^T = J_{23} \sigma_{12}^T + \sigma_{23}^T + J_{23} \left(\sigma_{23}^R + \sigma_{21}^R\right) \left(\frac{r_{23} r_{21}}{1 - r_{23} r_{21}}\right)
+\end{equation}
+\textit{Upward transmission:}
+\begin{equation}
+    \tilde{\sigma}_{31}^T = \left(\frac{t_{32} t_{21}}{1 - r_{23} r_{21}}\right) \left[J_{21} \sigma_{32}^T + \sigma_{21}^T + J_{21} \left(\sigma_{23}^R + \sigma_{21}^R\right) \left(\frac{r_{23} r_{21}}{1 - r_{23} r_{21}}\right)\right]
+\end{equation}
+The normalized transmitted average variance can be simplified to:
+\begin{equation}
+    \sigma_{31}^T = J_{21} \sigma_{32}^T + \sigma_{21}^T + J_{21} \left(\sigma_{23}^R + \sigma_{21}^R\right) \left(\frac{r_{23} r_{21}}{1 - r_{23} r_{21}}\right)
+\end{equation}

@@ -1,7 +1,7 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-We implemented the ideas of \textcite{deliot2023} in GLSL using an OpenGL forward renderer written in C++. As a base microfacet model we chose the Trowbridge-Reitz model by \textcite{trowbridge1975, walter2007} with Schlick's approximation of the Fresnel term
+We implemented the ideas of \textcite{deliot2023} in GLSL using an OpenGL 4.4 forward renderer written in C++. As a base microfacet model we chose the Trowbridge-Reitz model by \textcite{trowbridge1975, walter2007} with Schlick's approximation of the Fresnel term
 
 \subsection{Performance}
 \label{sec:performance}
@@ -10,13 +10,14 @@ We implemented the ideas of \textcite{deliot2023} in GLSL using an OpenGL forwar
 
 To evaluate the performance of our method we measured the render time for the same object in different resolutions using OpenGL timer queries and compared it to a standard implementation of a smooth microfacet model \parencite{walter2007}.
 %
+Timings were obtained on an Nvidia RTX 3060 TI for a full screen glinty plane by varying the window resolution.
+%
 We observed a stable performance cost approximately $10\times$ higher than 
 the smooth reference model, which makes our implementation capable of real-time (see \cref{fig:performance}).
 %
 As expected, the performance is roughly proportional to the total pixel area covered by the object and does not vary for different anisotropy or detail levels, as the number of binomial evaluations remains constant (see \cref{sec:discretization}).
 
-% NOTE: May be unnecessary
-On macOS, we experienced dramatically worse performance than on Linux and Windows, but this is likely caused by a faulty GLSL compiler implementation, that does not optimize our highly encapsulated code well.
+On macOS, we experienced dramatically worse performance than on Linux and Windows, but this is likely caused by a faulty GLSL compiler implementation, that does not optimize our highly encapsulated code well, as the performance of other shader is not affected to an equal degree.
 
 
 \subsection{Visual Analysis}
@@ -24,11 +25,17 @@ On macOS, we experienced dramatically worse performance than on Linux and Window
 
 \input{figures/anisotropy.tex}
 
-
+With our implementation we observe smooth blending between different discretization levels even for very high anisotropy (see \cref{fig:anisotropy}).
+%
+This differentiates it from other methods suffering from blending artifacts and limited anisotropy \parencite{chermain2020a,zirr2016}.
 
 \subsection{Convergence}
 \label{sec:convergence}
 
+\input{figures/convergence.tex}
+
 As we already proofed in \cref{sec:convergence-proof} our model successfully converges to any initial smooth microfacet model.
 %
-We also validated this visually in TODO for the Trowbridge-Reitz model \parencite{trowbridge1975, walter2007}.
+We also validated this visually in \cref{fig:convergence} for the Trowbridge-Reitz model \parencite{trowbridge1975, walter2007}.
+
+% TODO: barycentric weights

@@ -1,7 +1,11 @@
 \section{Methodology}
 \label{sec:methodology}
 %
-In the following, we will use the ideas of \textcite{deliot2023} to derive a fast, stable, and visually convincing glint renderer, that converges to any given configuration of the Cook-Torrance model.
+In the following, we will follow the ideas of \textcite{deliot2023} to derive a fast, stable, and visually convincing glint renderer, that converges to any given configuration of the Cook-Torrance model.
+
+We thereby start from a two-level microfacet model where we model larger-scale facets discretely and count reflecting facets using fast approximations of the binomial distribution.
+%
+To do so we attach random seeds to an anisotropy compensating surface and half-vector parametrization and perform statistically correct blending between their respective evaluations.
 
 
 \subsection{Shading Model}
@@ -9,14 +13,14 @@ In the following, we will use the ideas of \textcite{deliot2023} to derive a fas
 
 \input{figures/mesofacets.tex}
 %
-Similar to \textcite{zirr2016}, \textcite{deliot2023} model the surface as consisting of mesoscopic details covered with microscopic details or \emph{microfacets}.
+Similar to \textcite{zirr2016}, \textcite{deliot2023} model the surface as consisting of mesoscopic details covered with microscopic details or \emph{microfacets} (see \cref{fig:mesofacets}).
 %
 Subsequently, we will denote these larger-scale features as \emph{meso-facets}, and 
-% we will refer to % NOTE: May flow better
 meso-facets that contribute to the reflectance of light as \emph{glints}.
+%
+We will further approximate the microfacet distribution analytically and the meso-facet distribution discretely.
 
 
-% ?: Use we or \textcite{deliot2023}
 Therefore, \textcite{deliot2023} start from the Rendering Equation \parencite{kajiya1986, immel1986}:
 %
 \begin{equation}
@@ -28,14 +32,12 @@ Therefore, \textcite{deliot2023} start from the Rendering Equation \parencite{ka
     d\vec{\omega_i}.
 \end{equation}
 %
-% NOTE: Maybe write out BRDF
 The outgoing radiance $L_o$ emitted in direction $\vec{\omega_o}$ is the sum over the hemisphere $\Omega$ of incoming radiance $L_i$ modulated by the BRDF $\rho_P$, whereas $P$ being the pixel footprint and $\vec{n}$ being the surface normal.
 %
-$\rho_P$ is based on a Cook-Torrance model \parencite{cook1982} consisting of the Fresnel reflectance term $F$, the geometrical attenuation term $G$, and the distribution term $D$:
+$\rho_P$ is based on a Cook-Torrance model \parencite{cook1982} with the specular part consisting of the Fresnel reflectance term $F$, the geometrical attenuation term $G$, and the distribution term $D$:
 %
-% NOTE: Maybe clarify that this is the specular component
 \begin{equation}
-    \rho_P(\vec{\omega_i}, \vec{\omega_o}) = \frac{
+    \rho_P^\text{spec}(\vec{\omega_i}, \vec{\omega_o}) = \frac{
         F(\dotproduct{\vec{\omega_i}}{\vec{\omega_h}})~
         D_P(\vec{\omega_h})~
         G(\vec{\omega_i}, \vec{\omega_o})
@@ -46,35 +48,41 @@ $\rho_P$ is based on a Cook-Torrance model \parencite{cook1982} consisting of th
     },
 \end{equation}
 %
-% TODO: Rewrite this
-with the half-vector $\vec{\omega_h}=\flatnormalize{\vec{\omega_i} + \vec{\omega_o}}$ describing the surface normal at which perfect reflection would occur and $D_P(\vec{\omega_h})$ as the probability for a microfacet on a meso-facet inside the pixel footprint to be aligned along this half-vector $\vec{\omega_h}$ and thereby reflect light.
+with the half-vector $\vec{\omega_h}=\flatnormalize{\vec{\omega_i} + \vec{\omega_o}}$ describing the surface normal at which perfect reflection would occur and $D_P(\vec{\omega_h})$ as the probability density function for a microfacet on a meso-facet inside the pixel footprint to be aligned along this half-vector $\vec{\omega_h}$ and thereby reflect light.
 %
-This differs from the original distribution term $D(\vec{\omega_h})$ which only represents the probability of a microfacet being aligned that way. We get
+This differs from the original distribution term $D(\vec{\omega_h})$ as we extend it by the meso-surface distribution.
+%
+We get
 %
 \begin{equation}
 \begin{aligned}
-    D_P(\vec{\omega_h})
-    % TODO: Rename probabilities / explain probabilities
-    & = && \probability{\mathrm{glint}} && \cdot && \probabilitygiven{\mathrm{micro}}{\mathrm{glint}} \\
+    D_P^{R=1}(\vec{\omega_h})
+    & = && p_{\vec{m}}(\vec{\omega_h}) && \cdot && p_{\vec{l} \mid \vec{m} = \vec{\omega_h}}(\vec{\omega_h}) \\
     & = && \frac{b(N(P), p)}{N(P)} && \cdot && D(\vec{n}),
 \end{aligned}
 \end{equation}
 %
-where $b(n, p)$ is a random sampling of the binomial distribution with $n$ trials and a success probability of $p$. $N(P)$ is the number of meso-facets inside the pixel footprint and therefore $b(N(P), p)$ counts the number of glints inside $P$.
+where $p_{\vec{m}}(\vec{\omega_h})$ is the probability mass for a meso-normal $\vec{m}$ to be aligned along the half-vector, and $p_{\vec{l} \mid \vec{m} = \vec{\omega_h}}(\vec{\omega_h})$ the probability mass for a micro-normal to be aligned, given that the meso-facet it lies on is already aligned.
+%
+Thus, $p_{\vec{l} \mid \vec{m} = \vec{\omega_h}}(\vec{\omega_h})=D(\vec{n})$ as we virtually rotate the half-vector and meso-facet onto the macro-surface.
+%
+Further, $b(n, p)$ is a random sampling of the binomial distribution with $n$ trials and a success probability of $p$. $N(P)$ is the number of meso-facets inside the pixel footprint and therefore $b(N(P), p)$ counts the number of glints inside $P$.
 
-% TODO: Reference derivation of Zirr and Kaplanyan for p
 We then choose the glint probability $p = \frac{D(\vec{\omega_h})}{D(\vec{n})}$ to ensure $\expectation{D_P(\vec{\omega_h})} = D(\vec{\omega_h})$:
 %
 \begin{equation}
-    % TODO: Rename to D’_P
-    \expectation{D_P(\vec{\omega_h})}
+    \expectation{D_P^{R=1}(\vec{\omega_h})}
     % = \frac{\E{b(N(P), p)}}{N(P)} D(\vec{n})
     = \frac{N(P) \, p}{N(P)} D(\vec{n})
     = \frac{D(\vec{\omega_h})}{D(\vec{n})} D(\vec{n})
     = D(\vec{\omega_h}).
 \end{equation}
 %
-Furthermore, \textcite{deliot2023} introduce an artistic control parameter $R \in (0,1]$ that scales the glint probability. This leaves us with:
+The work of \textcite{zirr2016} may be consulted for an explicit derivation of this probability.
+
+Furthermore, \textcite{deliot2023} introduce an artistic control parameter $R \in (0,1]$ that scales the glint probability.
+%
+As we restore the expectation to be $D(\vec{\omega_h})$, we get:
 %
 \begin{equation}
 \label{eq:glint-distribution-term}
@@ -84,7 +92,7 @@ Furthermore, \textcite{deliot2023} introduce an artistic control parameter $R \i
 \end{equation}
 
 
-$R$ can not directly be linked to a physical quantity but yet can be interpreted as a measure of \emph{meso-facet roughness}: Lowering $R$ results in fewer but brighter glints per meso-facets and thus visually makes the glints less stable.
+$R$ can not directly be linked to a physical quantity but yet can be interpreted as a measure of \emph{meso-facet roughness}: Lowering $R$ results in fewer but brighter glints per meso-facets and thus visually makes the glints less stable and shortens their angular lifespan.
 
 
 \subsubsection{Convergence}

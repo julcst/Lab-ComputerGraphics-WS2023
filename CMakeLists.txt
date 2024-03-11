@@ -135,6 +135,8 @@ set(SHADERS
     shaders/glints/math.glsl
     shaders/glints/binom.glsl
     shaders/glints/footprint.glsl
+    shaders/glints/glints_ambient.frag
+    shaders/glints/glints_aniso.frag
     shaders/glints/glints.frag
     shaders/glints/glints.glsl
     shaders/glints/hepta.glsl

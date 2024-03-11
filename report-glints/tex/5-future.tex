@@ -3,8 +3,8 @@
 
 While the model of \textcite{deliot2023} performs generally well and covers many areas of applications some areas of improvement still remain.
 
-\subsection{Limitations}
-\label{sec:limitations}
+% \subsection{Limitations}
+% \label{sec:limitations}
 % 1. Limitations
 % uv grid
 % cost per light
@@ -12,17 +12,22 @@ While the model of \textcite{deliot2023} performs generally well and covers many
 % anisotropy
 % layered
 
-
+\paragraph{UV-wrapping}
+%
 For one, a uniform UV-wrapping is needed to ensure uniformly dense meso-facet distribution, as the calculation of the footprint area is based on screen-space derivatives of the texture coordinates.
 %
 UV-seams can also become visible as the glint shapes are attached to the surface mapping.
 %
 However, this is a constraint they share with many other methods, notably \textcite{zirr2016}, and that can be avoided by using better parametrizations.
 
+\paragraph{PBR}
+%
 Another drawback is the limited physical accuracy, as energy conservation is, due to the stochastic counting of glints, only given in expectation and coherence is only guaranteed between adjacent discretization levels.
 %
-For this, the method by \Textcite[e.g.][]{chermain2020} would be more appropriate.
+For this, the method by \Textcite[e.g.][]{chermain2020a} would be more appropriate.
 
+\paragraph{Light integration}
+%
 Moreover, as the method depends on the half-vector, all the calculations have to be repeated once for every light source.
 %
 This could be optimized to a certain degree as the discretization in the footprint and surface domain stays the same for every light source, but the expensive evaluation of the binomial distribution would still be needed to be done per light, hence the cost is linear in the number of lights.
@@ -30,9 +35,31 @@ This could be optimized to a certain degree as the discretization in the footpri
 Similarly, as the counting process occurs inside the integral of the Rendering Equation, Image-Based Lighting and the use of Area Lights remain expensive and methods which incorporate the integral \parencite[e.g.][]{wang2020} would be better suited in this case.
 %
 This persists a major obstacle to be overcome, as many modern games rely on complex lighting setups.
+%
+A small adjustment to approximate ambient lighting though could be to set $\vec{\omega_h}=\vec{n}$.
+%
+This is by no means physically accurate but can be used to recreate bright environments (see \cref{fig:snowbunny}).
 
-\subsection{Possible Improvements}
-\label{sec:improvements}
+\paragraph{Performance}
+%
+Our implementation still remains expensive with the 48 binomial evaluations as the biggest bottleneck.
+%
+Therefore, one could explore the performance benefits of using texture-based hashing, as recommended by \textcite{deliot2023}, instead of the procedural hashing we use \parencite{jarzynski2020}.
+%
+Also, further tests could be made comparing the inversion sampling method we use \parencite[see][]{giles2012} with the Box-Muller \parencite{box1958} or Ziggurat method to obtain normal distributed random numbers.
+
+\paragraph{Anisotropy}
+%
+As we are able to liberally choose the base BRDF, we also allow for anisotropic BRDFs.
+%
+But this does not account for the glint shapes which remain isotropic. 
+%
+Anisotropic glints are though not trivially integrated into our model by scaling of the surface parametrization \parencite{chermain2020a,zirr2016}, as our surface mapping is actively compensating for anisotropy and thus not uniformly spread around the object (see \cref{fig:anisoglints}).
+%
+Though for that a dedicated scratch model \parencite[e.g.][]{velinov2018} would be better suited.
+
+% \subsection{Possible Improvements}
+% \label{sec:improvements}
 % 2. Possible Improvements
 % Colorized glints?
 % Anisotropy?

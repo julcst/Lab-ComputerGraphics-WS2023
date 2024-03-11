@@ -37,7 +37,7 @@ In the one-dimensional case with one weight $w$ and two edges $N_0$ and $N_1$, s
 %
 As illustrated in \cref{fig:blending-linear} this does preserve the expected value but not the variance of the truly blended distribution and thus leads to ghosting artifacts.
 
-% TODO: Maybe calculate expectation and variance
+% NOTE: Maybe calculate expectation and variance
 % \begin{equation}
 %     \begin{aligned}
 %         \expectation{w \cdot b(N_0, p) + (1-w) \cdot b(N_1, p)}\\
@@ -76,3 +76,6 @@ As this blending method prevents artifacts, we choose it to blend the discrete s
 \end{equation}
 %
 Nevertheless, \textcite{deliot2023} decided not to use distributed blending in the surface domain in their implementation but rely on linear blending, which gives the individual facets a blurrier appearance and prevents some aliasing.
+
+% TODO: check
+% One may further notice that we do not explicitly blend the meso-facet count $N(P)$ as this is also assumed to be binomial distributed, but as we 

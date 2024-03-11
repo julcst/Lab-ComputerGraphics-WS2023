@@ -1,13 +1,18 @@
 \subsubsection{Binomial Approximation}
 \label{sec:approximation}
 
-% TODO: Write about sampling of N(P)
+\input{figures/approximation.tex}
 
 As elaborated in \cref{sec:discretization} our algorithm requires $4\times3\times4$ samples of $4\times3$ different parametrizations of the binomial distribution per pixel, therefore an efficient method for drawing these samples is required.
 %
 Unfortunately, common strategies like inversion sampling can not easily be applied to the binomial distribution due to its discrete nature.
 
-\input{figures/approximation.tex}
+% TODO: Important: N(P) uniform or stratified
+As for the sampling of $N(P)$ \textcite{deliot2023} propose a simple approximation by only drawing a \emph{meso-facet density} randomly per surface grid vertex and obtaining the meso-facet count by multiplying with the footprint area (\cref{eq:area}).
+%
+To sample the meso-facet density they draw from a normal distribution in logarithmic space with mean and variance exposed as variables to the user as \emph{logarithmic meso-facet density} and \emph{density randomization}.
+%
+This is sufficient as $N(P)$ is only an intermediate variable, for the meso-facet count a better approximation is needed though.
 
 \paragraph{Classical Binomial Approximation}
 %
@@ -15,7 +20,6 @@ Unfortunately, common strategies like inversion sampling can not easily be appli
 %
 Then for the normal distribution $\mathcal{N}(\mu,\sigma)$ efficient approximations of the inverse cumulative distribution function \parencite[e.g.,][]{giles2012} and even direct sampling methods \parencite[e.g.,][]{box1958} are known.
 %
-% TODO: Maybe elaborate more on this
 For $np \le 5$ however, they rely on manually evaluating the binomial distribution which is rather expensive.
 
 
@@ -31,7 +35,6 @@ thereby $H$ is the Heaviside step function, $\theta_0, \theta_1 \in \interval{0}
 %
 Therefore, $H(\theta_0 - \probability{X>0})$ with $\probability{X>0}=1-\probability{X=0}=1-(1-p)^N$ is a random trial testing for at least one success in the evaluation of $b(N,p)$, and if this test is successful we approximate $b(N,p)$ by $1+b(N-1,p) \approx \lfloor 1 + \mathcal{N}_{\theta_1}(\mu, \sigma) \rfloor$ with $\mu=(N-1) \cdot p$ and $\sigma^2=(N-1) \cdot p \cdot (1-p)$.
 %
-% TODO: Formalize
 % Let $X$ be the total number of successes, $Y=1$, if we have at least one success, $Y=0$ otherwise, and $Z$ the number of successes if we ignore the first successful trial. Then
 % %
 % \begin{equation}
@@ -41,8 +44,8 @@ Therefore, $H(\theta_0 - \probability{X>0})$ with $\probability{X>0}=1-\probabil
 This however remains only an approximation as shown in \cref{fig:approximation} and can even overshoot the number of successes to $N+1$, but as it ensures correct probability $\probability{X=0}$ for getting zero successes it performs significantly better than a normal distribution approximation for very small probability of success $p$, which commonly occurs in our shading model for low roughness.
 % TODO: Maybe add figure
 %
-% TODO: No it does not
-The overshooting behavior may even be desirable, as it makes the material appear glintier, but it breaks the law of energy conservation, which is already violated anyway though because we count stochastically and thus the sum over the energy is randomly distributed.
+% TODO: Maybe add figure
+The overshooting behavior may even be desirable, as it simulates the meso-facets being slightly rougher than the microfacets and thus the material appears glintier.
 %
 The main advantage over the approximation by \textcite{zirr2016} however is the avoidance of loops and branches which makes this method easily parallelizable and results in stable performance.
 

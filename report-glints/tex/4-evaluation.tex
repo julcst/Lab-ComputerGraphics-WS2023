@@ -1,7 +1,7 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-We implemented the ideas of \textcite{deliot2023} in GLSL using an OpenGL 4.1 forward renderer written in C++. As a base microfacet model we chose the Trowbridge-Reitz model by \textcite{trowbridge1975, walter2007} with Schlick's approximation of the Fresnel term.
+We implemented the method proposed by \textcite{deliot2023} in GLSL using an OpenGL 4.1 forward renderer written in C++. As a base microfacet model we chose the Trowbridge-Reitz model by \textcite{trowbridge1975, walter2007} with Schlick's approximation of the Fresnel term.
 
 \subsection{Performance}
 \label{sec:performance}
@@ -28,6 +28,14 @@ On macOS, we experienced dramatically worse performance than on Linux and Window
 With our implementation, we observe smooth blending between different discretization levels even for very high anisotropy (see \cref{fig:anisotropy}).
 %
 This differentiates it from other methods suffering from blending artifacts and limited anisotropy \parencite{chermain2020a,zirr2016}.
+
+Despite our efforts to minimize visual artifacts, our implementation still suffers from slight visual artifacts visible when moving the camera around flat surfaces.
+%
+We originally believed this to be caused by incorrect hyper plane tests during tetrahedralization as some barycentric weights had become negative.
+%
+And although this had been an issue we were later able to resolve, fixing it did not fix the artifacts entirely, and we now suspect issues with the angular discretization to be the cause (see \cref{fig:artifact}).
+%
+However, in most scenarios these artifacts rarely become an issue as the only really become visible on perfectly flat surfaces, and thus they do not render our implementation useless.
 
 \subsection{Convergence}
 \label{sec:convergence}

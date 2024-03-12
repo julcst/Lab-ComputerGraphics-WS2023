@@ -7,13 +7,6 @@ As elaborated in \cref{sec:discretization} our algorithm requires $4\times3\time
 %
 Unfortunately, common strategies like inversion sampling can not easily be applied to the binomial distribution due to its discrete nature.
 
-% TODO: Important: N(P) uniform or stratified
-As for the sampling of $N(P)$ \textcite{deliot2023} propose a simple approximation by only drawing a \emph{meso-facet density} randomly per surface grid vertex and obtaining the meso-facet count by multiplying with the footprint area (\cref{eq:area}).
-%
-To sample the meso-facet density they draw from a normal distribution in logarithmic space with mean and variance exposed as variables to the user as \emph{logarithmic meso-facet density} and \emph{density randomization}.
-%
-This is sufficient as $N(P)$ is only an intermediate variable, for the meso-facet count a better approximation is needed though.
-
 \paragraph{Classical Binomial Approximation}
 %
 \textcite{zirr2016} therefore approximate the binomial distribution for large expectation $\expectation{b(n,p)}=np>5$ with the normal distribution $\mathcal{N}(\mu,\sigma)$ with equal mean $\mu=\expectation{b(n,p)}=np$ and variance $\sigma^2=\variance{b(n,p)}=np(1-p)$.
@@ -44,8 +37,7 @@ Therefore, $H(\theta_0 - \probability{X>0})$ with $\probability{X>0}=1-\probabil
 This however remains only an approximation as shown in \cref{fig:approximation} and can even overshoot the number of successes to $N+1$, but as it ensures correct probability $\probability{X=0}$ for getting zero successes it performs significantly better than a normal distribution approximation for very small probability of success $p$, which commonly occurs in our shading model for low roughness.
 % TODO: Maybe add figure
 %
-% TODO: Maybe add figure
-The overshooting behavior may even be desirable, as it simulates the meso-facets being slightly rougher than the microfacets and thus the material appears glintier.
+The overshooting behavior may even be desirable, as it simulates the glints sometimes being slightly shinier than the smooth base model and thus the material appears glintier (see \cref{fig:overshooting}).
 %
 The main advantage over the approximation by \textcite{zirr2016} however is the avoidance of loops and branches which makes this method easily parallelizable and results in stable performance.
 

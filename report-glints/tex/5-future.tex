@@ -32,7 +32,7 @@ Moreover, as the method depends on the half-vector, all the calculations have to
 %
 This could be optimized to a certain degree as the discretization in the footprint and surface domain stays the same for every light source, but the expensive evaluation of the binomial distribution would still be needed to be done per light, hence the cost is linear in the number of lights.
 %
-Similarly, as the counting process occurs inside the integral of the Rendering Equation, Image-Based Lighting and the use of Area Lights remain expensive and methods which incorporate the integral \parencite[e.g.][]{wang2020} would be better suited in this case.
+Similarly, as the counting process occurs inside the integral of the Rendering Equation, Image-Based Lighting and the use of Area Lights remain expensive and methods that incorporate the integral \parencite[e.g.][]{wang2020} would be better suited in this case.
 %
 This persists a major obstacle to be overcome, as many modern games rely on complex lighting setups.
 %

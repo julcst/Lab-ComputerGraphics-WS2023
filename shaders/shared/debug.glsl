@@ -38,6 +38,7 @@
 #define GDEBUG_slope(v) DEBUG_VIEW(28, v)
 #define GDEBUG_H(v) DEBUG_VIEW(29, v)
 #define GDEBUG_p(v) DEBUG_VIEW(30, v)
+#define GDEBUG_branch(v) DEBUG_VIEW(31, v)
 
 /**
  * Interprets angle as hue and converts it to RGB.
@@ -67,6 +68,25 @@ vec3 normalToRGB(vec2 normal) {
 
 vec3 boolToRGB(bool b) {
     return b ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
+}
+
+vec3 getColor(int i) {
+    switch (i) {
+        case 0: return vec3(0.0, 0.0, 1.0);
+        case 1: return vec3(0.0, 1.0, 0.0);
+        case 2: return vec3(1.0, 0.0, 0.0);
+        case 3: return vec3(1.0, 1.0, 0.0);
+        case 4: return vec3(0.0, 1.0, 1.0);
+        case 5: return vec3(1.0, 0.0, 1.0);
+        case 6: return vec3(1.0, 1.0, 1.0);
+        case 7: return vec3(1.0, 0.5, 0.0);
+        case 8: return vec3(0.0, 1.0, 0.5);
+        case 9: return vec3(0.5, 0.0, 1.0);
+        case 10: return vec3(1.0, 0.0, 0.5);
+        case 11: return vec3(0.5, 1.0, 0.0);
+        case 12: return vec3(0.0, 0.5, 1.0);
+        default: return vec3(0.0);
+    }
 }
 
 vec3 colorDebug(float x) {

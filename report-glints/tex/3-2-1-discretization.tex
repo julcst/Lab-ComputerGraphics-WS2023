@@ -1,23 +1,34 @@
 \subsection{Stochastic Counting Process}
 \label{sec:stochastic-counting-process}
 
-Now that we formulated our shading model the next step is to sample the number of meso-facets $N(P)$ and the glint count $b(N(P),p)$ in \cref{eq:glint-distribution-term} in a way which satisfies the \ref{req:coherence} requirement.
+Now that we have formulated our shading model the next step is to sample the number of meso-facets $N(P)$ and the glint count $b(N(P),p)$ in \cref{eq:glint-distribution-term} in a way which satisfies the \ref{req:coherence} requirement.
 
 
-\textcite{deliot2023} treat both of these variables as independently random and following a binomial distribution. $N(P)$ only depends on the pixel footprint $P$.
+\textcite{deliot2023} treat both of these variables as independently random.
 %
-$b(N(P),p)$ also depends on the half-vector $\vec{\omega_h} \in \mathbb{R}^3$ as for different $\vec{\omega_h}$ different meso-facets become glints.
-
-
-To ensure coherent evaluation of the binomial distribution we have to create a discrete grid of random seeds in each of these dimensions and interpolate the evaluation between the vertices.
+$b(N(P),p)$ is modelled as a binomial trial.
 %
-Therefore, we will firstly explore how to find a discretization which efficiently maps to a constant number of seeds for every level of anisotropy, then we will look into interpolation schemes for binomial distributions, and finally describe a fast approximation to generate these samples.
+Assuming that we uniformly distribute $N$ meso-facets on the total surface area $A$, $N(P)$ could similarly be modeled using a binomial distribution given the footprint area $A(P)$ (\cref{eq:area}): $N(P)=b(N,\flatfrac{A(P)}{A})$.
+%
+But as this is rather difficult to evaluate correctly \textcite{deliot2023} choose to distribute the meso-facets \emph{stratified}.
+%
+Thereby, they set $N(P)=\lfloor A(P) \cdot \flatfrac{N}{A} \rfloor$.
+%
+To introduce randomness, they draw the meso-facet density $\flatfrac{N}{A}$ per surface grid vertex from a normal distribution in logarithmic space with mean and variance exposed as variables to the user as \emph{logarithmic meso-facet density} and \emph{density randomization}.
+
+
+Thus, $N(P)$ only depends on the pixel footprint $P$ whereas $b(N(P),p)$ also depends on the half-vector $\vec{\omega_h} \in \mathbb{R}^3$ as for different $\vec{\omega_h}$ different meso-facets become glints.
+
+
+To ensure coherent evaluation of both variables we have to create a discrete grid of random seeds in each of these dimensions and interpolate the evaluation between the vertices.
+%
+Therefore, we will first explore how to find a discretization that efficiently maps to a constant number of seeds for every level of anisotropy, then we will look into interpolation schemes for binomial distributions, and finally describe a fast approximation to generate these samples.
 
 
 \subsubsection{Discretization}
 \label{sec:discretization}
 
-To discretize the pixel footprint $P$, \textcite{deliot2023} split it into it's shape $\vec{p} \in \mathbb{R}^3$, and it's position $\vec{x}_{\vec{p}} \in \mathbb{R}^2$ on a shape dependent 2D mapping of the object's surface.
+To discretize the pixel footprint $P$, \textcite{deliot2023} split it into its shape $\vec{p} \in \mathbb{R}^3$, and its position $\vec{x}_{\vec{p}} \in \mathbb{R}^2$ on a shape-dependent 2D mapping of the object's surface.
 %
 This allows them to map arbitrarily anisotropic footprints to a constant number of texels and thus keep constant runtime.
 
@@ -34,9 +45,9 @@ We then calculate an Eigendecomposition of the symmetric matrix $M=J^\transposed
 %
 The orthogonal eigenvectors can then be interpreted as the major and minor axes $\vec{v_0}$ and $\vec{v_1}$ of the ellipse spanned on the object's surface by the perspective deformation, with the eigenvalues representing the squared lengths of these axes.
 %
-The resulting ellipse is the elliptical Gaussian filter \parencite[see][]{heckbert1989}.
+The resulting ellipse is the elliptical Gaussian pixel filter commonly used for anisotropic filtering \parencite[see][]{heckbert1989}.
 %
-\textcite{deliot2023} use this decomposition to extract following three dimensions:
+\textcite{deliot2023} use this decomposition to extract the following three dimensions:
 %
 \begin{description}
     \item[Orientation $\phi$\label{dim:phi}]
@@ -54,20 +65,23 @@ The resulting ellipse is the elliptical Gaussian filter \parencite[see][]{heckbe
     This is equivalent to the level of detail \textcite{zirr2016} use to discretize the pixel footprint.
 \end{description}
 %
-For a visualization of these dimensions see % TODO: \cref{fig:dimensions}.
+For a visualization of these dimensions see \cref{fig:dimensions}.
 
 
-The area $A(P)$ needed to count the number of meso-facets $N(P)$ in the footprint can thus be derived as:
+\input{figures/dimensions.tex}
+
+
+The area $A(P)$ of the pixel footprint parallelogram needed to count the number of meso-facets $N(P)$ in the footprint can thus be derived as:
 %
 \begin{equation}
 \label{eq:area}
     A(\vec{p})
-    = \norm{\vec{v_0}} \cdot \norm{\vec{v_1}}
-    = \vec{p}_r \cdot \vec{p}_s \cdot \vec{p}_s.
+    = 4 \cdot \norm{\vec{v_0}} \cdot \norm{\vec{v_1}}
+    = 4 \cdot \vec{p}_r \cdot \vec{p}_s \cdot \vec{p}_s.
 \end{equation}
 
 % TODO: Visualize the anisotropy compensating surface mapping
-Using these parameters we can also obtain the shape dependent surface mapping $\vec{x}_{\vec{p}}$:
+Using these parameters we can now obtain the shape-dependent surface mapping $\vec{x}_{\vec{p}}$:
 %
 \begin{equation}
 \label{eq:anisotropy-compensation}
@@ -82,8 +96,7 @@ To distribute discrete random seeds in these dimensions, \textcite{deliot2023} n
 \paragraph{Footprint Grid}
 \label{sec:footprint-grid}
 %
-% TODO: use hyperref[dim:aniso]{anisotropy dimension} instead of ref
-For the pixel footprint shape $\vec{p}$ they apply a logarithmic scale on the \ref{dim:aniso} and the \ref{dim:scale} and define an adaptive grid for the \ref{dim:phi}.
+For the pixel footprint shape $\vec{p}$ they apply a logarithmic scale to the \hyperref[dim:aniso]{anisotropy dimension $r$} and the \hyperref[dim:scale]{isotropic scale dimension $s$} and define an adaptive grid for the \hyperref[dim:phi]{orientation $\phi$}.
 %
 This adaptation is necessary because the $\phi$-dimension collapses when the footprint becomes isotropic ($r=1$), and the parametrization becomes more sensitive towards changes in $\phi$ with large anisotropy.
 %
@@ -96,7 +109,7 @@ As illustrated each cell in this grid is a heptahedron with 10 vertices, so a na
 To minimize these costs, \textcite{deliot2023} reduce the vertices of each cell by further splitting it up until they arrive at the simplest possible cell shape in this space, the tetrahedron.
 
 
-They do so by firstly triangulating the base pentagon on the $\phi r$\nobreakdash-plane and subsequently dividing the resulting three prisms into three tetrahedra each.
+They do so by first triangulating the base pentagon on the $\phi r$\nobreakdash-plane and subsequently dividing the resulting three prisms into three tetrahedra each.
 
 
 In practice this can be efficiently implemented by initially testing against two hyperplanes to find the prism containing $\vec{p}$ and then performing another two nested hyperplane tests:
@@ -104,7 +117,7 @@ In practice this can be efficiently implemented by initially testing against two
 The first splits the prism into a pyramid and a tetrahedron and the second cuts the pyramid in half to finally obtain the tetrahedron including $\vec{p}$.
 
 
-One may notice that in the special case where the angular dimension collapses, the cell looses one face and becomes hexahedral, though this does not fundamentally alter our discretization process:
+One may notice that in the special case where the angular dimension collapses, the cell loses one face and becomes hexahedral, though this does not fundamentally alter our discretization process:
 %
 Instead of dividing the cell into three prisms we can then just divide it into two and the following steps remain unchanged.
 
@@ -121,7 +134,7 @@ For each of the vertices we calculate the anisotropy compensated surface positio
 
 \input{figures/surface-grid.tex}
 
-Instead of simply relying on square grids to discretize these two-dimensional spaces, \textcite{deliot2023} again chose simplex grid cells, not only to reduce the vertex count from 4 to 3, but also because it alters the appearance of the glint shapes which become hexagonal.
+Instead of simply relying on square grids to discretize these two-dimensional spaces, \textcite{deliot2023} again chose simplex grid cells, not only to reduce the vertex count from 4 to 3 but also because it alters the appearance of the glint shapes which become hexagonal.
 %
 % TODO: Visualize different glint shapes
 This, they believe to be a more natural choice as it reproduces the round shapes often encountered in nature better than a square grid does \parencite{deliot2023}.
@@ -132,7 +145,7 @@ Such simplex grids have previously been explored, among others, by \textcite{per
 
 It is important to slightly scale the surface grid, as too small grid sizes lead to high frequency glints, which after the Nyquist-Shannon sampling theorem lead to aliasing and thus unwanted flickering.
 %
-\textcite{deliot2023} found a factor of $1.5$ to be sufficient, and we incorporate it early in the discretization process by scaling the UV screen-space derivatives by a user defined \emph{screen-space scale} variable.
+\textcite{deliot2023} found a factor of $1.5$ to be sufficient, and we incorporate it early in the discretization process by scaling the UV screen-space derivatives by a user-defined \emph{screen-space scale} variable.
 
 
 \paragraph{Half-Vector Grid}
@@ -149,7 +162,7 @@ Therefore, the orthographic projection of $\vec{\omega_h}$ onto the tangent plan
 %
 Thereby they allow for low meso-facet roughness to reduce the angular lifespan of a glint, which simulates rough surfaces being more sensitive to changes in the half-vector because the meso-facet normals are more widely distributed.
 %
-The orthographic projection further has a similar effect than the adaptive angular grid used to discretize the footprint shape: 
+The orthographic projection further has a similar effect to the adaptive angular grid used to discretize the footprint shape: 
 %
 The grid becomes less dense for steep half-vectors and more seeds are distributed between shallow half-vectors of the same angles.
 %
@@ -159,11 +172,11 @@ This emulates the vanishing angular dimension of flat meso-facets.
 They also considered using simplex grids in this space but found the performance gain to be negligible due to the added complexity.
 
 
-\textcite{zirr2016} use a similar discretization approach in their paper by applying a paraboloid mapping to the half-vector, but also integrate the size of the light cone into their step size.
+\textcite{zirr2016} use a similar discretization approach in their paper by applying a paraboloid mapping to the half-vector but also integrating the size of the light cone into their step size.
 
 
 \paragraph{Summary}
 %
 Using these three nested discretization processes \textcite{deliot2023} result in $4\times3$ different meso-facet counts $N_{ij}$, one for each of the three vertices of the simplex cells of the four anisotropy compensating mappings $\vec{x}_{\hat{p_0}}, \vec{x}_{\hat{p_1}}, \vec{x}_{\hat{p_2}}, \vec{x}_{\hat{p_3}}$ belonging to the four vertices of the tetrahedron containing the footprint shape $\vec{p}$. 
 %
-For each of theses meso-facet counts the binomial $b(N_{ij}, p)$ is then evaluated four times, once for each half-vector seed.
+For each of these meso-facet counts the binomial $b(N_{ij}, p)$ is then evaluated four times, once for each half-vector seed.

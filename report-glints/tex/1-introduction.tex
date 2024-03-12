@@ -21,7 +21,7 @@ Therefore, \textcite{zirr2016} estimate particle counts stochastically to approx
 % Problems:
 %   - unstable performance (anisotropic filtering)
 %   - incorrect blending
-However, their method introduces two drawbacks: Firstly, they perform anisotropic filtering impacting performance for highly anisotropic surfaces negatively, secondly their blending method does not preserve the correct statistics between consecutive levels of detail and thus produces artifacts.
+However, their method introduces two drawbacks: Firstly, they perform anisotropic filtering impacting performance for highly anisotropic surfaces negatively, secondly, their blending method does not preserve the correct statistics between consecutive levels of detail and thus produces artifacts.
 
 % Solution
 % Main improvements:
@@ -31,7 +31,7 @@ In the following, we will present our implementation of the method proposed by \
 
 Similarly to \textcite{zirr2016}, \textcite{deliot2023} base their solution on the discrete microfacet model of \textcite{jakob2014} and count reflecting facets stochastically.
 % 
-They therefore relax physical constraints like energy conservation, but preserve following two requirements essential for a visually plausible glint renderer:
+They therefore relax physical constraints like energy conservation, but preserve the following two requirements essential for a visually plausible glint renderer:
 %
 \begin{description}
     \item[Convergence\label{req:convergence}] With high facet density the result must converge into a smooth microfacet model.

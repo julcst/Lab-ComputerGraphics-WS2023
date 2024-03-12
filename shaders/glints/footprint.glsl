@@ -37,8 +37,8 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     mat2 J = transpose(mat2(duvdx, duvdy)); // ? This may not be necessary
 
     // mat2 Jinv = inverse(J); // ? This may not be necessary
-    // Make J symmetric
-    // M = (J^{-1})^T J^{-1}
+    // // Make J symmetric
+    // // M = (J^{-1})^T J^{-1}
     // mat2 M = Jinv * transpose(Jinv);
     mat2 M = transpose(J) * J; // without inverse
 
@@ -58,11 +58,11 @@ Footprint calcPixelFootprint(vec2 uv, float scale) {
     float L1 = mid - dist;
     float L2 = mid + dist;
 
-    // Eigenvectors
+    // // Eigenvectors
     // vec2 ev1 = normalize(vec2(L1 - d, c)); // major
     // vec2 ev2 = normalize(vec2(L2 - d, c)); // minor
 
-    // Eigenvalues
+    // // Eigenvalues
     // float ew1 = 1.0 / sqrt(L1); // majorLength
 	// float ew2 = 1.0 / sqrt(L2); // minorLength
 

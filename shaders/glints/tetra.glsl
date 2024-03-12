@@ -71,32 +71,38 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase, vec3 p) {
 			if (map01(lodLerp, 1.0 - anisoLerp, 1.0) > thetaLerp) {
 				tetra.p0 = a; tetra.p1 = e; tetra.p2 = d; tetra.p3 = f;
                 tetra.P0 = A; tetra.P1 = E; tetra.P2 = D; tetra.P3 = F;
+                GDEBUG_branch(getColor(0));
             // Right-down tetrahedron feca
             } else {
 				tetra.p0 = f; tetra.p1 = e; tetra.p2 = c; tetra.p3 = a;
                 tetra.P0 = F; tetra.P1 = E; tetra.P2 = C; tetra.P3 = A;
+                GDEBUG_branch(getColor(1));
 			}
         // Lower tetrahedron bace
 		} else {
 			tetra.p0 = b; tetra.p1 = a; tetra.p2 = c; tetra.p3 = e;
             tetra.P0 = B; tetra.P1 = A; tetra.P2 = C; tetra.P3 = E;
+            GDEBUG_branch(getColor(2));
 		}
-        /*// Upper pyramid acdef -> cut along plane ace
-        if (!calcPlaneSide(p, a, c, e)) {
-            // Left-up tetrahedron aedf -> cut along plane aef
-			if (calcPlaneSide(p, a, e, f)) {
-				tetra.p0 = a; tetra.p1 = e; tetra.p2 = d; tetra.p3 = f;
-                tetra.P0 = A; tetra.P1 = E; tetra.P2 = D; tetra.P3 = F;
-            // Right-down tetrahedron feca
-            } else {
-				tetra.p0 = f; tetra.p1 = e; tetra.p2 = c; tetra.p3 = a;
-                tetra.P0 = F; tetra.P1 = E; tetra.P2 = C; tetra.P3 = A;
-			}
-        // Lower tetrahedron bace
-		} else {
-			tetra.p0 = b; tetra.p1 = a; tetra.p2 = c; tetra.p3 = e;
-            tetra.P0 = B; tetra.P1 = A; tetra.P2 = C; tetra.P3 = E;
-		}*/
+        // // Upper pyramid acdef -> cut along plane ace
+        // if (calcPlaneSide(p, a, c, e)) {
+        //     // Left-up tetrahedron aedf -> cut along plane aef
+		// 	if (calcPlaneSide(p, a, e, f)) {
+		// 		tetra.p0 = a; tetra.p1 = e; tetra.p2 = d; tetra.p3 = f;
+        //         tetra.P0 = A; tetra.P1 = E; tetra.P2 = D; tetra.P3 = F;
+        //         GDEBUG_branch(getColor(0));
+        //     // Right-down tetrahedron feca
+        //     } else {
+		// 		tetra.p0 = f; tetra.p1 = e; tetra.p2 = c; tetra.p3 = a;
+        //         tetra.P0 = F; tetra.P1 = E; tetra.P2 = C; tetra.P3 = A;
+        //         GDEBUG_branch(getColor(1));
+		// 	}
+        // // Lower tetrahedron bace
+		// } else {
+		// 	tetra.p0 = b; tetra.p1 = a; tetra.p2 = c; tetra.p3 = e;
+        //     tetra.P0 = B; tetra.P1 = A; tetra.P2 = C; tetra.P3 = E;
+        //     GDEBUG_branch(getColor(2));
+		// }
     //////////////////// Normal Case ////////////////////
     } else { 
 
@@ -137,15 +143,18 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase, vec3 p) {
                 if (map01(lodLerp, 1.0 - anisoLerp, 1.0) > map01(thetaLerp * 2.0, 0.0, anisoLerp)) {
                     tetra.p0 = a; tetra.p1 = f; tetra.p2 = h; tetra.p3 = g;
                     tetra.P0 = A; tetra.P1 = F; tetra.P2 = H; tetra.P3 = G;
+                    GDEBUG_branch(getColor(3));
                 // Tetrahedron cahg
                 } else {
                     tetra.p0 = c; tetra.p1 = a; tetra.p2 = h; tetra.p3 = g;
                     tetra.P0 = C; tetra.P1 = A; tetra.P2 = H; tetra.P3 = G;
+                    GDEBUG_branch(getColor(4));
                 }
             // Tetrahedron bacg
             } else {
                 tetra.p0 = b; tetra.p1 = a; tetra.p2 = c; tetra.p3 = g;
                 tetra.P0 = B; tetra.P1 = A; tetra.P2 = C; tetra.P3 = G;
+                GDEBUG_branch(getColor(5));
             }
         // Prism bcdghi
         } else if (1.0 - ((thetaLerp - 0.5) * 2.0) > anisoLerp) {
@@ -155,33 +164,39 @@ Tetrahedron getTetrahedron(Heptahedron hepta, bool centerCase, vec3 p) {
                 if (map01(lodLerp, 0.0, 1.0 - anisoLerp) > map01(thetaLerp, 0.5 - (1.0 - anisoLerp) * 0.5, 0.5 + (1.0 - anisoLerp) * 0.5)) {
                     tetra.p0 = b; tetra.p1 = g; tetra.p2 = i; tetra.p3 = c;
                     tetra.P0 = B; tetra.P1 = G; tetra.P2 = I; tetra.P3 = C;
+                    GDEBUG_branch(getColor(6));
                 // Tetrahedron dbci
                 } else {
                     tetra.p0 = d; tetra.p1 = b; tetra.p2 = c; tetra.p3 = i;
                     tetra.P0 = D; tetra.P1 = B; tetra.P2 = C; tetra.P3 = I;
+                    GDEBUG_branch(getColor(7));
                 }
             // Tetrahedron cghi
             } else {
                 tetra.p0 = c; tetra.p1 = g; tetra.p2 = h; tetra.p3 = i;
                 tetra.P0 = C; tetra.P1 = G; tetra.P2 = H; tetra.P3 = I;
+                GDEBUG_branch(getColor(8));
             }
         // Prism cdehij
         } else {
             // Upper pyramid cehij
             if (lodLerp > 1.0 - anisoLerp) {
                 // Tetrahedron cjhi
-                if (map01(lodLerp, 1.0 - anisoLerp, 1.0) > map01(thetaLerp * 2.0, 1.0 - anisoLerp, 1.0)) {
+                if (map01(lodLerp, 1.0 - anisoLerp, 1.0) > map01((thetaLerp - 0.5) * 2.0, 1.0 - anisoLerp, 1.0)) {
                     tetra.p0 = c; tetra.p1 = j; tetra.p2 = h; tetra.p3 = i;
                     tetra.P0 = C; tetra.P1 = J; tetra.P2 = H; tetra.P3 = I;
+                    GDEBUG_branch(getColor(9));
                 // Tetrahedron eicj
                 } else {
                     tetra.p0 = e; tetra.p1 = i; tetra.p2 = c; tetra.p3 = j;
                     tetra.P0 = E; tetra.P1 = I; tetra.P2 = C; tetra.P3 = J;
+                    GDEBUG_branch(getColor(10));
                 }
             // Tetrahedron deci
             } else {
                 tetra.p0 = d; tetra.p1 = e; tetra.p2 = c; tetra.p3 = i;
                 tetra.P0 = D; tetra.P1 = E; tetra.P2 = C; tetra.P3 = I;
+                GDEBUG_branch(getColor(11));
             }
         }
     }
@@ -197,10 +212,18 @@ Tetrahedron tetrifyFootprint(Heptahedron hepta, Footprint foot, bool centerCase)
     // This fixes almost all artifacts in the center case
     hepta.thetaWeight = centerCase ? hepta.thetaWeight * hepta.anisoWeight : hepta.thetaWeight;
 
-    // Footprint paranetrization relative
+    // Footprint parametrization relative
     vec3 P = vec3(hepta.thetaWeight, hepta.anisoWeight, hepta.lodWeight);
 
     // Calculate barycentric weights
     tetra.weights = calcBarycentrics(P, tetra.P0, tetra.P1, tetra.P2, tetra.P3);
+
+    // Account for center case
+    if (centerCase) {
+        if (tetra.p0.y == 1.0) tetra.p0.x = 0.0;
+        if (tetra.p1.y == 1.0) tetra.p1.x = 0.0;
+        if (tetra.p2.y == 1.0) tetra.p2.x = 0.0;
+        if (tetra.p3.y == 1.0) tetra.p3.x = 0.0;
+    }
     return tetra;
 }

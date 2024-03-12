@@ -1,11 +1,22 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-Each layer is parametrized by a three-component complex index of refraction $\eta + i \kappa$, a scalar/two-component roughness $\alpha$, a scalar depth $h$, a three-component absorption cross-section $\sigma_a$, a three-component scattering cross-section $\sigma_s$ and a phase function anisotropy factor $g$. 
+\textbf{Implementation.} We implemented the presented layered BRDF for the isotropic and the anisotropic case in GLSL fragment shaders. Therefore, we wrote our own C++ OpenGL real-time rendering engine. Some features of our engine are:
+\begin{itemize}
+    \item obj model loading
+    \item saving/loading scenes and material presets
+    \item easy switching between shaders and models
+    \item loading cubemaps
+\end{itemize}
+Our implementation of the layered BRDF does not rely on precomputation, instead we just use the Fresnel term as an approximation of FGD. Furthermore, we limited the number of layers to 4 (could be increased of course) and did not implement the doubling algorithm, which is not really a limitation. For each layer $\eta$, $\kappa$ and $\alpha$ can also be textured. The anisotropic shader is using a two-component vector for the variance. In our engine are currently two modes of lighting possible: a directional light or image based lighting (IBL). For IBL in the layered shaders we are using Monte Carlo integration with importance sampling as described in Section \ref{sec:anisotropic_interfaces}. The hammersley sequence is used for generating low-discrepancy points in order to sample the VNDF.
 
 %
 
-A lot of the desired goals mentioned in Section \ref{sec:introduction} are actually fulfilled by the presented model and our implementation of it:
+Each layer is parametrized by a three-component complex index of refraction $\eta + i \kappa$, a scalar/two-component roughness $\alpha$, a scalar depth $h$, a three-component absorption cross-section $\sigma_a$, a three-component scattering cross-section $\sigma_s$ and a phase function anisotropy factor $g$.\\
+
+%
+
+\noindent\textbf{Results.} A lot of the desired goals mentioned in Section \ref{sec:introduction} are actually fulfilled by the presented model and our implementation of it:
 \begin{itemize}
     \item the model is physically based because of using the microfacet model following the GGX distribution and because it tries to approximate the physical light transport
     \item it supports an arbitrary number of layers
@@ -28,7 +39,7 @@ In Figure ... we show a white furnace test. It can be seen that because of just 
 
 %
 
-\textit{Performance.} All results are computed on an 8 core Intel i7-1165G7 with 16 GB of RAM and an integrated Mesa Intel Xe Graphics GPU. Render times are reported in Figure ... . It can be seen, as expected, that the runtime is linear in the number of layers, as during evaluating the adding-doubling algorithm we iterate over all layers. Our implementation was written with readability in mind instead of performance optimization. Therefore, the render times could probably be decreased.
+\textit{Performance.} All results are computed on an 8 core Intel i7-1165G7 with 16 GB of RAM and an integrated Mesa Intel Xe Graphics GPU measured using OpenGL timer queries. Render times are reported in Figure ... compared to GGX BRDF. It can be seen, as expected, that the runtime is linear in the number of layers, as during evaluating the adding-doubling algorithm we iterate over all layers. Our implementation was written with readability in mind instead of performance optimization. Therefore, the render times could probably be decreased.
 
 %
 

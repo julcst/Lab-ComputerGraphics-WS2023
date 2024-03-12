@@ -351,15 +351,3 @@ For IBL $N$ light samples of the environment map can be drawn to approximate $\i
     l = \max{\frac{1}{2} \log_2{\left(\frac{\Omega_s}{\Omega_t}\right)},0}
 \end{equation}
 where $\Omega_s$ is the solid angle of the sample and $\Omega_t$ is the solid angle of a texel at mipmap level 0.
-
-\subsection{Implementation}
-\label{sec:implementation}
-
-We implemented the presented layered BRDF for the isotropic and the anisotropic case. Therefore, we wrote our own OpenGL real-time rendering engine. Some features of our engine are:
-\begin{itemize}
-    \item obj model loading
-    \item saving/loading scenes and material presets
-    \item easy switching between shaders and models
-    \item loading cubemaps
-\end{itemize}
-Our implementation of the layered BRDF does not rely on precomputation, instead we just use the Fresnel term as an approximation of FGD. Furthermore, we limited the number of layers to 4 (could be increased of course) and did not implement the doubling algorithm, which is not really a limitation. For each layer $\eta$, $\kappa$ and $\alpha$ can also be textured. The anisotropic shader is using a two-component vector for the variance. In our engine are currently two modes of lighting possible: a directional light or image based lighting (IBL). For IBL in the layered shaders we are using Monte Carlo integration with importance sampling as described in Section \ref{sec:anisotropic_interfaces}. The hammersley sequence is used for generating low-discrepancy points in order to sample the VNDF.

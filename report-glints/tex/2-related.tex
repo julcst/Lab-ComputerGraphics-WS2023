@@ -13,22 +13,22 @@ There are two important families of offline algorithms, which differ in their re
 %
 They show that random sampling or classical filtering is not adequate to efficiently approximate the complex BRDF implied by the mesoscopic details, and instead derive it by analytically integrating the NDF over the pixel footprint.
 %
-This representation is able to capture the appearance of various different surfaces, like scratches, bumps, flakes and more, by the use of specialized normal maps.
+This representation is able to capture the appearance of various different surfaces, like scratches, bumps, flakes, and more, by the use of specialized normal maps.
 
-On the other hand this level of control may not be necessary, as it can be sufficient to approximate the mesoscopic structure of a surface as consisting of normally distributed facets when visible structure does not exist. 
+On the other hand, this level of control may not be necessary, as it can be sufficient to approximate the mesoscopic structure of a surface as consisting of normally distributed facets when visible structure does not exist. 
 %
 Thus, the concurrent work of \textcite{jakob2014} follows a procedural approach by placing discrete reflecting particles on the surface and performing a consistent hierarchical 4D position-normal search to obtain the number of reflecting particles inside a pixel footprint without ever explicitly generating them.
 
-Various improvements were made on both of these approaches we will not further explore.
+Various improvements were made to both of these approaches we will not further explore.
 
 \subsection{Real-Time Approaches}
 \label{sec:related-realtime}
 %
-There are very fast empirical methods like the sparkle shader by \textcite{wang2016} that aim to imitate glint-like phenomena, but since these are not physically based, we will exclude them from consideration.
+There are very fast empirical methods like the sparkle shader by \textcite{wang2016} that aim to imitate glint-like phenomena, but since these are not physically motivated, we will exclude them from consideration.
 
-For normal-mapped micro-details, \textcite{olano2010, dupuy2013} approximate the pixel footprint NDF using the first two moments of the displacement gradients, but this does not reproduce glinty BRDFs accurately like the offline approach of \textcite{yan2014}.
+For normal-mapped micro-details,\textcite{olano2010, dupuy2013} approximate the pixel footprint NDF using the first two moments of the displacement gradients, but this does not reproduce glinty BRDFs accurately like the offline approach of \textcite{yan2014}.
 %
-To our knowledge no such normal-mapped glint renderer achieves real-time yet.
+To our knowledge, no such normal-mapped glint renderer achieves real-time yet.
 
 On the other hand, several procedural methods reach responsive frame times:
 
@@ -36,13 +36,13 @@ On the other hand, several procedural methods reach responsive frame times:
 %
 However, they relax the physical constraints by estimating the counting process stochastically.
 %
-Although they manage to simulate anisotropic facets and different sized light sources they were not able to incorporate the industry-standard Trowbridge-Reitz (GGX) BRDF \parencite{trowbridge1975, walter2007}.
+Although they manage to simulate anisotropic facets and different-sized light sources they were not able to incorporate the industry-standard Trowbridge-Reitz (GGX) BRDF \parencite{trowbridge1975, walter2007}.
 %
 In addition, their method suffers from blending artifacts and increased cost for anisotropic surfaces.
 
 Similarly, \textcite{wang2020} count reflecting microfacets in real-time by precomputing a probability function for the microfacet distribution and pre-filtering an environment map.
 %
-Thus, they are able to preserve energy conservation and utilize image based lighting.
+Thus, they are able to preserve energy conservation and utilize image-based lighting.
 
 \textcite{chermain2020a} use a slightly different approach constructing pixel footprint NDFs from marginal distributions.
 

@@ -27,7 +27,7 @@ Therefore, we will compare two different blending approaches.
 \paragraph{Linear Blending}
 \label{sec:blending-linear}
 %
-\textcite{zirr2016} linearly blend the results of evaluations of the binomial distribution between different levels of detail, to obtain a glint count for intermediate level footprint sizes.
+\textcite{zirr2016} linearly blend the results of evaluations of the binomial distribution between different levels of detail, to obtain a glint count for intermediate-level footprint sizes.
 %
 In the one-dimensional case with one weight $w$ and two edges $N_0$ and $N_1$, such that $N=w \, N_0 + (1-w) \, N_1$ this equals:
 %
@@ -60,7 +60,7 @@ In the one-dimensional case with one weight $w$ and two edges $N_0$ and $N_1$, s
 %
 but can be extended analogical to more dimensions.
 %
-This is a special case of the Poisson binomial distribution with equal probabilities and one can easily observe that it equals the truly blended binomial distribution $b(N, p)$ in expectation, variance and probability function as illustrated in \cref{fig:blending-distributed}.
+This is a special case of the Poisson binomial distribution with equal probabilities and one can easily observe that it equals the truly blended binomial distribution $b(N, p)$ in expectation, variance, and probability function as illustrated in \cref{fig:blending-distributed}.
 
 Intuitively the equivalence can be interpreted in the following manner:
 %
@@ -76,6 +76,7 @@ As this blending method prevents artifacts, we choose it to blend the discrete s
 \end{equation}
 %
 Nevertheless, \textcite{deliot2023} decided not to use distributed blending in the surface domain in their implementation but rely on linear blending, which gives the individual facets a blurrier appearance and prevents some aliasing.
+%
+We implemented both variants and let the user decide.
 
-% TODO: check
-% One may further notice that we do not explicitly blend the meso-facet count $N(P)$ as this is also assumed to be binomial distributed, but as we 
+One may further notice that we do not correctly blend the likewise randomly distributed meso-facet count $N(P)$ but as this is an intermediate variable we do not observe visible artifacts.

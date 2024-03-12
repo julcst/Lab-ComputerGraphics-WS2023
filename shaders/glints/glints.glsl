@@ -16,7 +16,7 @@
 // Note: Sample per halfvector-space vertex
 float sampleAngularBinom(float N, float pOneSuccess, float mu, float sigma, vec2 slope, vec2 rand) {
     // Randomize the slope
-    vec2 randomizedSlope = slope + rand * 4096;
+    vec2 randomizedSlope = slope + rand * 4096;// TODO: make hashing better
 
     // Now discretize the slope plane into a grid and calculate the bilinear weights
     uvec2 slopeCoord = uvec2(floor(randomizedSlope));
@@ -197,7 +197,7 @@ GDEBUG_uvGrid(checkerboard(uv, 100.0));
     float sampleD = sampleGridPoint(gridSeedD, tetra.p3, tetra.weights.w, slope, uv, D, p);
 
     // The samples are then summed together
-    float DP = (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);// * 0.25; // Why 0.25?
+    float DP = (sampleA + sampleB + sampleC + sampleD) * (Dmax / microfacetRoughness);
 
 //GDEBUG0(vec3(D / DP));
     return DP;

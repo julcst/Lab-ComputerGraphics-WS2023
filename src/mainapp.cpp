@@ -264,6 +264,8 @@ void MainApp::buildImGui() {
             }
             ImGui::Separator();
             Util::combo("Debug mode", &obj.material.debug, Config::LAYERED_DEBUG_MODES);
+            ImGui::Separator();
+            ImGui::SliderInt("IBL Sample Count", (int*)&obj.material.iblSampleCount, 1, 512);
         } else if (obj.shaderIdx == Config::ShaderType::LAYER_ANISO) {
             for(unsigned int l = 0; l < obj.material.layerCount; l++) {
                 ImGui::PushID(l);

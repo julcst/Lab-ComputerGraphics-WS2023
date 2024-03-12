@@ -9,19 +9,18 @@ in VertexData {
 };
 out vec3 fragColor;
 
-vec3 debugX = vec3(0.0);
-
 #include "layered/common.glsl"
 #include "shared/uniforms.glsl"
 #include "shared/debug.glsl"
 #include "shared/tangentspace.glsl"
+#include "shared/lowdiscrepancysequence.glsl"
 
 /*
 * Implementation of
 * Belcour, Laurent. "Efficient rendering of layered materials using an atomic decomposition with statistical operators." ACM Transactions on Graphics 37.4 (2018): 1.
 */
 
-/////////// helper functions ///////////
+/////////// helper functions for texture lookups and uniform data handling///////////
 
 
 
@@ -87,9 +86,8 @@ void fillLayerMaterialArrays(vec2 texCoords, uint _layerCount, out vec3 _layerEt
     _layerSigmaS[0] = vec3(0.0);
     _layerG[0] = 0.0;
     //fill with data from uniforms or textures
-    //TODO: texture lookup
     for(int i = 0; i < int(_layerCount); i++) {
-        _layerEta[i+1] = getLayerEta(i, texCoords);
+        _layerEta[i+1] = max(getLayerEta(i, texCoords), 0.0002);
         _layerKappa[i+1] = getLayerKappa(i, texCoords);
         _layerAlpha[i+1] = clamp(getLayerAlpha(i, texCoords), 0.0001, 1);
         _layerDepth[i+1] = getLayerDepth(i);
@@ -108,7 +106,7 @@ void fillLayerMaterialArrays(vec2 texCoords, uint _layerCount, out vec3 _layerEt
 /////////// implementation ///////////
 
 /**
- * 
+ * datastructure to hold the statistics of a BSDF lobe
  */
 struct BsdfLobe {
     vec3 energy; //e
@@ -129,8 +127,8 @@ struct BsdfLobe {
  * @param layerSigmaA
  * @param layerSigmaS
  * @param layerG
- * @param BsdfLobe
- * @param valid_lobes
+ * @param BsdfLobe output of evaluated statistics
+ * @param valid_lobes output of the number of layers that produce a lobe
  */
 void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS + 1], vec3 layerKappa[MAX_LAYERS + 1], float layerAlpha[MAX_LAYERS + 1], float layerDepth[MAX_LAYERS + 1], vec3 layerSigmaA[MAX_LAYERS + 1], vec3 layerSigmaS[MAX_LAYERS + 1], float layerG[MAX_LAYERS + 1], out BsdfLobe lobes[MAX_LAYERS], out uint valid_lobes){
     valid_lobes = 0u;
@@ -184,14 +182,13 @@ void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS +
         float J12 = 1.0;
         float J21 = 1.0;
 
-        //TODO implement doubling
-
-        //check if thin slab/interface or participating media/vloume
+        //check if interface or participating media
         if(depth > 0.0){
+            /* volume absorption and scattering, from the paper Section 4.3 and 4.4*/
+
             //mean doesn't change
             cosTheta_T = cosTheta_I;
 
-            /* volume absorption and scattering, from the paper Section 4.3 and 4.4*/
             //energy
             vec3 sigma_t = sigma_a + sigma_s;
             energy_transmitted_12 = (vec3(1.0) + (sigma_s * depth) / cosTheta_T) * exp(-(sigma_t * depth) / cosTheta_T); //from paper, equation 15 and 22
@@ -200,7 +197,7 @@ void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS +
             sigma_transmitted_12 = gToVariance(g) * average(sigma_s)/average(sigma_t); //from paper, equation 24
             sigma_transmitted_21 = sigma_transmitted_12;
         }else{
-            /* off-specular transmission, from the paper Section 4.2 */
+            //compute cosTheta_T using Snell's law
             float sinTheta_I = sqrt(1.0 - pow(cosTheta_I,2));
             float sinTheta_T = sinTheta_I / n12;
             if(sinTheta_T <= 1.0){
@@ -217,12 +214,8 @@ void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS +
             bool transmissive = cosTheta_T > 0.0 && isZero(kappaT);
             if(transmissive){
                 //from paper section 4.3, equation 13
-                //TODO: check if equation from paper or equation from supplemental code works better
                 sigma_transmitted_12 = roughnessToVariance(alpha * s(n12, cosTheta_I, cosTheta_T));
                 sigma_transmitted_21 = roughnessToVariance(alpha * s(1.0/n12, cosTheta_T, cosTheta_I));
-                
-                //sigma_transmitted_12 = roughnessToVariance(alpha * 0.5f * abs(n12 - 1.0)/(n12));
-                //sigma_transmitted_21 = roughnessToVariance(alpha * 0.5f * abs(1.0/n12 - 1.0)/(1.0/n12));
                 
                 //from paper supplemental code, layered_forward.cpp line 171
                 J12 = (cosTheta_T/cosTheta_I) * n12;
@@ -232,7 +225,7 @@ void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS +
             /* reflectance and transmittance terms for energy */
             //evaluate FGD using modified roughness accounting for top layers
             float alpha_r = varianceToRoughness(sigma_transmitted_0i + sigma_reflected_12); //from paper section 4.1, equation 9
-            //vec3 FGD = evalFGD(N, L, V, alpha_r, etaI, kappaI, etaT, kappaT); //from paper section 4.1, equation 2
+            //approximation of FGD using just the Fresnel term
             vec3 FGD = evalFresnel(cosTheta_I, etaI, kappaI, etaT, kappaT); //TODO: check if FDG or just F
             energy_reflected_12 = FGD; //from paper section 4.1, equation 7 / section 5.1
             energy_transmitted_12 = 1.0 - FGD; //from paper section 4.2, equation 11 / section 5.1
@@ -244,9 +237,6 @@ void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS +
                 energy_transmitted_21 = vec3(0.0);
                 energy_transmitted_21 = vec3(0.0);
             }
-
-            //TODO: Total Internal Reflection using the decoupling approximation
-
         }
 
         //adding algorithm
@@ -262,7 +252,7 @@ void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS +
             ri0 = (energy_transmitted_21 * energy_reflected_i0 * energy_transmitted_12) / denom; //from paper section 5.1, equation 30
             t0i = (energy_transmitted_0i * energy_transmitted_12) / denom; //from paper section 5.1, equation 31
             ti0 = (energy_transmitted_21 * energy_transmitted_i0) / denom; //from paper section 5.1, equation 29
-            Rr = (energy_reflected_12 * energy_reflected_i0) / denom;
+            Rr = (energy_reflected_12 * energy_reflected_i0) / denom; //used in multiple scattering equations on variances
         }
 
         vec3 e_R0i = energy_reflected_0i + r0i;
@@ -300,7 +290,6 @@ void addingDoubling(float cosThetaI, uint layerCount, vec3 layerEta[MAX_LAYERS +
         if(avg_r0i > 0.0) {
             lobes[lobeIndexOfLayer_i].energy = r0i;
             lobes[lobeIndexOfLayer_i].mean = cosTheta_I;
-            //TODO: check why this equation
             lobes[lobeIndexOfLayer_i].variance = (sigma_transmitted_i0 + sigma_transmitted_0i + Ji0 * (sigma_reflected_12 + avg_Rr * sigma_reflected_i0));
         } else {
             lobes[lobeIndexOfLayer_i].energy = vec3(0.0);
@@ -341,19 +330,28 @@ void main() {
     }
 
     mat3 worldToTangent = calcWorldToTangentMatrix(worldNormal, worldTangent);
-
+    
+    // Normal vector in world space
+    vec3 N_world = worldNormal;
     // Normal vector in tangent space
-    vec3 N = vec3(0.0, 0.0, 1.0);
+    vec3 N_local = vec3(0.0, 0.0, 1.0);
+    //View vector in world space
+    vec3 V_world = normalize(uCameraPosition - worldPosition);
     // View vector in tangent space
-    vec3 V = worldToTangent * normalize(uCameraPosition - worldPosition);
+    vec3 V_local = worldToTangent * V_world;
+    // Light vector in world space
+    vec3 L_world = uLightDir;
     // Light vector in tangent space
-    vec3 L = worldToTangent * uLightDir;
+    vec3 L_local = worldToTangent * L_world;
     // H is the half vector between L and V
-    vec3 H = normalize(V + L);
+    vec3 H_world = normalize(V_world + L_world);
+    vec3 H_local = normalize(V_local + L_local);
 
+    //array of lobe statistics
     BsdfLobe lobes[MAX_LAYERS]; 
     uint valid_lobes = 0u;
-
+    
+    //arrays storing the layer parameters
     vec3 layerEta[MAX_LAYERS + 1];
     vec3 layerKappa[MAX_LAYERS + 1];
     float layerAlpha[MAX_LAYERS + 1];
@@ -364,35 +362,90 @@ void main() {
 
     fillLayerMaterialArrays(uv, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG);
 
-    float cosThetaI = max(dot(N, L), 0.0);
-
-    addingDoubling(cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
- 
     //eval LayeredBRDF
-    vec3 BRDF = vec3(0.0);
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
+    vec3 I = vec3(0.0);
     float debug_D[MAX_LAYERS];
     float debug_G[MAX_LAYERS];
+    vec3 lighting = vec3(0.0);
 
-    for(int i = 0; i < int(valid_lobes); i++){
-        if(!isZero(lobes[i].energy)){
-            float alpha = pow(varianceToRoughness(lobes[i].variance),2);
+    if(uUseCubemap){
+        //image based lighting using Monte Carlo integration
 
-            float G =  G2_ggx_aniso(V, L, alpha, alpha);
-            float D = D_ggx_aniso(H, alpha, alpha);
+        //evaluate adding-doubling algorithm
+        float cosThetaI = max(dot(N_local, V_local), 0.0);
+        addingDoubling(cosThetaI, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
 
-            BRDF += (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
+        for(uint s = 0u; s < uIBLSampleCount; s++){
+            //hammersley sequence to generate low-discrepancy points
+            vec2 U = hammersley(s, uIBLSampleCount);
+            for(int i = 0; i < int(valid_lobes); i++){
+                if(!isZero(lobes[i].energy)){
+                    float alpha = pow(varianceToRoughness(lobes[i].variance), 2.0);
 
-            debug_D[i] = D;
-            debug_G[i] = G;
+                    //implementation following Eric Heitz, Sampling the GGX Distribution of Visible Normals, Journal of Computer Graphics Techniques (JCGT), vol. 7, no. 4, 1-13, 2018
+                    H_local = sampleGGXVNDF(V_local, alpha, alpha, U.x, U.y);
+                    L_local = normalize(2.0 * dot(V_local, H_local) * H_local - V_local);
+                    L_world = transpose(worldToTangent) * L_local;
+
+
+                    //eval mipmap level (implementation following https://learnopengl.com/PBR/IBL/Specular-IBL)
+                    float D = D_ggx_aniso(H_local, alpha, alpha);
+                    float pdf = (D * dot(N_local, H_local) / (4.0 * dot(H_local, V_local))) + 0.0001; 
+
+                    ivec2 resolution = textureSize(cubemap, 0); // resolution of source cubemap (per face)
+                    float saTexel  = 4.0 * PI / (6.0 * resolution.x * resolution.y);
+                    float saSample = 1.0 / (float(uIBLSampleCount) * pdf + 0.0001);
+
+                    float mipLevel = max(0.5 * log2(saSample / saTexel) + 1.0, 0.0); 
+
+                    vec3 lightSample = textureLod(cubemap, L_world, mipLevel).rgb;
+
+                    I += lightSample * ((lobes[i].energy * G2_ggx_aniso(V_local, L_local, alpha, alpha)) / G1_ggx_aniso(V_local, alpha, alpha));
+                }
+            }
         }
+
+        lighting = (I/uIBLSampleCount);
+    } else {
+        //directional light
+
+        float NdotV = V_local.z; //dot(N_local, V_local);
+        float NdotL = L_local.z; //dot(N_local, L_local);
+        float NdotH = H_local.z; //dot(N_local, H_local);
+        float NcdotV = max(NdotV, 0.0);
+        float NcdotL = max(NdotL, 0.0);
+        float NcdotH = max(NdotH, 0.0);
+
+        //evaluate adding-doubling algorithm
+        addingDoubling(NcdotL, uLayerCount, layerEta, layerKappa, layerAlpha, layerDepth, layerSigmaA, layerSigmaS, layerG, lobes, valid_lobes);
+        
+        for(int i = 0; i < int(valid_lobes); i++){
+            if(!isZero(lobes[i].energy)){
+                float alpha = pow(varianceToRoughness(lobes[i].variance), 2.0);
+                
+                float G =  G2_ggx_aniso(V_local, L_local, alpha, alpha);
+                float D = D_ggx_aniso(H_local, alpha, alpha);
+
+                vec3 I_n = (lobes[i].energy * D * G) / (4.0 * NdotL * NdotV + 0.0001);
+                if (any(isnan(I_n))) I_n = vec3(0.0);
+
+                I += I_n;
+
+                debug_D[i] = D;
+                debug_G[i] = G;
+            }
+        }
+
+        lighting = I * uLightColor * NcdotL;
     }
-
-    vec3 lighting = BRDF * uLightColor * NdotL;
-
+    
     RENDER_VIEW(lighting);
-    DEBUG_VIEW(1, BRDF);
+
+
+
+    /////// For Debugging ///////
+
+    DEBUG_VIEW(1, I);
 
     DEBUG_VIEW(2, lobes[0].energy);
     DEBUG_VIEW(3, vec3(debug_D[0]));
@@ -418,6 +471,7 @@ void main() {
 
 
     //DEBUG F 
+    float cosThetaI = max(dot(N_local, L_local), 0.0);
     vec3 etaI = layerEta[0];
     vec3 kappaI = layerKappa[0];
     vec3 etaT = layerEta[1];
@@ -438,8 +492,4 @@ void main() {
     kappaT = layerKappa[3];
     F = evalFresnel(cosThetaI, etaI, kappaI, etaT, kappaT);
     DEBUG_VIEW(19, F);
-
-    // nan/inf check
-    DEBUG_VIEW(20, debugX);
-
 }

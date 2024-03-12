@@ -92,7 +92,6 @@ const std::vector<std::string> LAYERED_DEBUG_MODES = {
     "Fresnel of layer 0",       // 17
     "Fresnel of layer 1",       // 18
     "Fresnel of layer 2",       // 19
-    "Debug",                    // 20
 };
 
 const std::vector<std::string> LAYERED_ANISO_DEBUG_MODES = {
@@ -116,7 +115,6 @@ const std::vector<std::string> LAYERED_ANISO_DEBUG_MODES = {
     "Fresnel of layer 0",       // 17
     "Fresnel of layer 1",       // 18
     "Fresnel of layer 2",       // 19
-    "Debug",                    // 20
 };
 
 const unsigned int MAX_LAYERS = 4;

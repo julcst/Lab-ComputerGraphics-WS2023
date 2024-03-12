@@ -427,15 +427,18 @@ void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, /*inout*/ float t
 			if (RemapTo01(lodLerp, 1.0 - ratioLerp, 1.0) > thetaBinLerp) // Left-up tetrahedron (a, e, d, f)
 			{
 				p0 = a; p1 = e; p2 = d; p3 = f;
+				GDEBUG_branch(getColor(0));
 			}
 			else // Right-down tetrahedron (f, e, c, a)
 			{
 				p0 = f; p1 = e; p2 = c; p3 = a;
+				GDEBUG_branch(getColor(1));
 			}
 		}
 		else // Lower tetrahedron (b, a, c, e)
 		{
 			p0 = b; p1 = a; p2 = c; p3 = e;
+			GDEBUG_branch(getColor(2));
 		}
 	}
 	else // NORMAL CASE
@@ -460,15 +463,18 @@ void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, /*inout*/ float t
 				if (RemapTo01(lodLerp, 1.0 - ratioLerp, 1.0) > RemapTo01(thetaBinLerp * 2.0, 0.0, ratioLerp)) // Left-up tetrahedron (a, f, h, g)
 				{
 					p0 = a; p1 = f; p2 = h; p3 = g;
+					GDEBUG_branch(getColor(3));
 				}
 				else // Right-down tetrahedron (c, a, h, g)
 				{
 					p0 = c; p1 = a; p2 = h; p3 = g;
+					GDEBUG_branch(getColor(4));
 				}
 			}
 			else // Lower tetrahedron (b, a, c, g)
 			{
 				p0 = b; p1 = a; p2 = c; p3 = g;
+				GDEBUG_branch(getColor(5));
 			}
 		}
 		else if (1.0 - ((thetaBinLerp - 0.5) * 2.0) > ratioLerp) // Prism B
@@ -478,15 +484,18 @@ void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, /*inout*/ float t
 				if (RemapTo01(lodLerp, 0.0, 1.0 - ratioLerp) > RemapTo01(thetaBinLerp, 0.5 - (1.0 - ratioLerp) * 0.5, 0.5 + (1.0 - ratioLerp) * 0.5)) // Left-up tetrahedron (b, g, i, c)
 				{
 					p0 = b; p1 = g; p2 = i; p3 = c;
+					GDEBUG_branch(getColor(6));
 				}
 				else // Right-down tetrahedron (d, b, c, i)
 				{
 					p0 = d; p1 = b; p2 = c; p3 = i;
+					GDEBUG_branch(getColor(7));
 				}
 			}
 			else // Upper tetrahedron (c, g, h, i)
 			{
 				p0 = c; p1 = g; p2 = h; p3 = i;
+				GDEBUG_branch(getColor(8));
 			}
 		}
 		else // Prism C
@@ -496,15 +505,18 @@ void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, /*inout*/ float t
 				if (RemapTo01(lodLerp, 1.0 - ratioLerp, 1.0) > RemapTo01((thetaBinLerp - 0.5) * 2.0, 1.0 - ratioLerp, 1.0)) // Left-up tetrahedron (c, j, h, i)
 				{
 					p0 = c; p1 = j; p2 = h; p3 = i;
+					GDEBUG_branch(getColor(9));
 				}
 				else // Right-down tetrahedron (e, i, c, j)
 				{
 					p0 = e; p1 = i; p2 = c; p3 = j;
+					GDEBUG_branch(getColor(10));
 				}
 			}
 			else // Lower tetrahedron (d, e, c, i)
 			{
 				p0 = d; p1 = e; p2 = c; p3 = i;
+				GDEBUG_branch(getColor(11));
 			}
 		}
 	}

@@ -163,15 +163,20 @@ set(SHADERS
 set(MODELS
     models/bunny.obj
     models/car.obj
+    models/christmas_ball.obj
+    models/chess_figure.obj
     models/cube.obj
     models/cylinder.obj
     models/donut.obj
     models/highpolysphere.obj
     models/icosphere.obj
+    models/mug.obj
     models/plane.obj
     models/polysphere.obj
     models/suzanne.obj
     models/uvsphere.obj
+    models/vase.obj
+    models/whale.obj
 )
 set(MATERIALS
     materials/debug.material

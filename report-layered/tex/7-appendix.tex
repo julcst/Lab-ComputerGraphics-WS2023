@@ -44,5 +44,96 @@ The normalized transmitted average variance can be simplified to:
     \sigma_{31}^T = J_{21} \sigma_{32}^T + \sigma_{21}^T + J_{21} \left(\sigma_{23}^R + \sigma_{21}^R\right) \left(\frac{r_{23} r_{21}}{1 - r_{23} r_{21}}\right)
 \end{equation}
 
-\section{Evaluation of the anisotropic layered BRDF}
+\break
+
+\section{Evaluation of the real-time usability of image based lighting of the anisotropic layered BRDF}
 \label{sec:appendix_b}
+
+\begin{figure}[hbt!]
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_a8.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_a16.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_a32.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_a64.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_a128.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_a256.png}
+    \end{subfigure}
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_b8.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_b16.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_b32.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_b64.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_b128.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_b256.png}
+    \end{subfigure}
+
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_c8.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_c16.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_c32.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_c64.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_c128.png}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_c256.png}
+    \end{subfigure}
+
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_d8.png}
+        \caption{8 samples}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_d16.png}
+        \caption{16 samples}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_d32.png}
+        \caption{32 samples}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_d64.png}
+        \caption{64 samples}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_d128.png}
+        \caption{128 samples}
+    \end{subfigure}\hfill
+    \begin{subfigure}{.16\linewidth}
+        \includegraphics[width=\linewidth]{performance_ibl_d256.png}
+        \caption{256 samples}
+    \end{subfigure}
+   \caption*{
+    The material consists of two layers, the roughness for the bottom layer is $\alpha_1=(0.001,0.001)$, the roughness of the top layer is changed:\\
+    First row: $\alpha_0 = (0.001,0.5)$\\
+    Second row: $\alpha_0 = (0.01,0.5)$\\
+    Third row: $\alpha_0 = (0.1,0.5)$\\
+    Forth row: $\alpha_0 = (0.5,0.5)$}
+\end{figure}

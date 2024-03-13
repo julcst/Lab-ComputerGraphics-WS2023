@@ -42,8 +42,8 @@ $\eta + i \kappa$ is the ratio of the complex indices of refraction of the two m
 
 When studying the outgoing distribution of directions of a GGX lobe orthographically projected to the $(x,y)$ plane it can be noticed that this results in approximately a circular shape (see Fig. \ref{fig:projective_space}). Using this assumption the mean can be parametrized with respect to $\begin{pmatrix} u & v \end{pmatrix} = \begin{pmatrix} \omega_x & \omega_y \end{pmatrix}$ of directions $\omega = \begin{pmatrix} \omega_x & \omega_y & \omega_z \end{pmatrix}$ and variance with just a scalar. This introduces some inaccuracy as GGX lobes are noticeably skewed at grazing angles, however as GGX lobes are only parametrized by an energy, incident direction and roughness, higher order statistics cannot be incorporated anyway.
 \begin{figure}[!htb]
-    \includegraphics[width = \columnwidth, keepaspectratio]{fromBelcour/projective_space_placeholder.png}
-    \caption{Statistical analysis in projective space}
+    \includegraphics[width = \columnwidth, keepaspectratio]{fromBelcour/projectivespace.png}
+    \caption{The statistical analysis is performed in a projective space as GGX lobes projected to the base plane can be approximated using a circular distribution. Image source: \textcite{belcour2018}}
     \label{fig:projective_space}
 \end{figure}
 
@@ -95,7 +95,7 @@ FGD can be precomputed parametrized by the elevation, roughness and complex inde
 
 %
 
-As the standard microfacet models like GGX do not account for multiple scattering energy conservation in not given. However, using a scaling factor incorporated in the FDG precomputation can compensate for the lost energy well \parencite[see e.g.][]{heitz2016,turquin2019}.
+As the standard microfacet models like GGX do not account for multiple scattering energy conservation is not given. However, using a scaling factor incorporated in the FGD precomputation can compensate well for the lost energy \parencite[see e.g.][]{heitz2016,turquin2019}.
 
 %
 
@@ -119,16 +119,22 @@ If the precomputation of the FGD texture is undesirable or saving the texture is
 \subsubsection{Refraction by a rough interface}
 \label{sec:rough_refraction}
 
-\textbf{Energy.} As a consequence of conservation of energy the transmitted energy has to be $1 - \FGD$\\
+\textbf{Energy.} As a consequence of conservation of energy the transmitted energy has to be $1 - \FGD$.\\
 
 \textbf{Mean.} Snell's law defines the refraction of the incident direction. However, \textcite{belcour2018} found that the mean of the refracted lobe is different from the refracted incident direction. For high roughnesses, at grazing angles and higher refractive indices ratios deviation increases. Nevertheless, the approximation only using the refracted incident direction is good enough.\\
 
-\textbf{Variance.} The refraction by a rough interface increases the variance depending on the roughness and bends light rays following Snell's law, leading to a scaling of the incident variance by the index of refraction ratio. The transmitted lobe can be approximated by a reflection from underneath the surface using a scaled roughness. \textcite{belcour2018} derived the following scaling factor:
+\textbf{Variance.} The refraction by a rough interface increases the variance depending on the roughness and bends light rays following Snell's law, leading to a scaling of the incident variance by the index of refraction ratio. The transmitted lobe can be approximated by a reflection from underneath the surface using a scaled roughness (see Figure \ref{fig:faketransmission}). 
+\textcite{belcour2018} derived the following scaling factor:
 
 \begin{equation}
     s = \frac{1}{2} \left( \frac{\eta_{12} \dotproduct{\omega_i}{n} + \dotproduct{\omega_t}{n}}{\dotproduct{\omega_t}{n}} \right)
 \end{equation}
-\\
+
+\begin{figure}[!htb]
+    \includegraphics[width = \columnwidth, keepaspectratio]{fromBelcour/fake_transmission.png}
+    \caption{Transmission can be approximated using a scaled reflection from underneath the interface. Image source: \textcite{belcour2018}}
+    \label{fig:faketransmission}
+\end{figure}
 
 \textbf{Summary.} The refraction by a rough surface of an incident energy $e_i$, mean $\mu_i$ and variance $\sigma_i$ is approximated by:
 \begin{equation} \label{eq:rough_refraction}
@@ -153,7 +159,7 @@ The effects of absorption and scattering are controlled by the depth $h$ of the 
 \end{equation}
 where $\frac{h}{\dotproduct{\omega_o}{n}}$ is the optical depth of the layer. The energy attenuation can be approximated by evaluating the attenuation only in the incident mean direction.\\
 
-\textit{Mean and Variance.} Even though the mean and variance are affected by absorption, \textcite{belcour2018} empirically found that for the approximation the impact can be ignored.\\
+\textit{Mean and Variance.} Even though the mean and variance are affected by absorption, \textcite{belcour2018} empirically found out that for the approximation the impact can be ignored.\\
 
 \noindent\textbf{Scattering.} There are many aspects of scattering possible to consider. Out-scattering reduces the radiance as light collides with particles inside the medium scattering it in different directions. In-scattering on the other hand increases the radiance as light from other directions entering the medium gets scattered in the evaluated direction. The phase function describes the angular distribution of the scattered radiance. The Henyey-Greenstein phase function has an anisotropy parameter $g$ to model the amount of back-scattering, where light is mostly scattered back towards the incident direction, and forward-scattering. The approach of \textcite{belcour2018} only considers optically thin homogenous media without emission, back-scattering and multiple scattering.\\
 
@@ -165,13 +171,13 @@ where $\frac{h}{\dotproduct{\omega_o}{n}}$ is the optical depth of the layer. Th
         L_s(t,\omega) &= \int_{\mathcal{S}} p(\omega_i, \omega) \exp{\left(-\frac{\sigma_t (h-t)}{\dotproduct{\omega_i}{n}}\right)} L_i(\omega_i) \,d\omega_i
     \end{aligned}
 \end{equation}
-where $L_s(t,\omega)$ is the source function defining how much radiance is added per differential distance, accounting all incident light over the Sphere $\mathcal{S}$, and $p(\omega_i, \omega)$ is the phase function.
+where $L_s(t,\omega)$ is the source function defining how much radiance is added per differential distance, accounting all incident light over the sphere $\mathcal{S}$, and $p(\omega_i, \omega)$ is the phase function.
 As for absorption only the mean incident direction will be evaluated resulting in the following approximation for the outgoing energy:
 \begin{equation}
     \int_{\Omega} L_o(\omega) \,d\omega \approx \sigma_s h \exp{\left(-\frac{\sigma_t t}{\dotproduct{\omega}{n}}\right)} \int_{\Omega} L_i(\omega) \,d\omega
 \end{equation}
 
-\textit{Mean.} For forward scattering, which is only accounted for in the approximation, the impact on the mean is negligible.\\
+\textit{Mean.} For forward-scattering, which is only accounted for in the approximation, the impact on the mean is negligible.\\
 
 \textit{Variance.} The width of the phase function increases the incident variance. Using the Henyey-Greenstein phase function \textcite{belcour2018} found a mapping from its anisotropy factor $g$ to GGX roughness in the linear variance space:
 \begin{equation}
@@ -190,11 +196,23 @@ As for absorption only the mean incident direction will be evaluated resulting i
 \subsection{Statistics of multiple layers}
 \label{sec:layered_statistics}
 
-In this section we will present the new adding-doubling method \textcite{belcour2018} introduced. It is used to evaluate multiple scattering in plane parallel media aggregating the infinite possible light paths within it. Applying it iteratively for each layer on the incident energy and variance the directional statistics of the individual layers get combined into an estimation of the reflection and transmission statistics of the stack of layers. As shown in Section \ref{sec:interface_statistics} the mean is approximated only using the reflected or refracted direction so the adding-doubling is not applied on it.
+In this section we will present the new adding-doubling method \textcite{belcour2018} introduced. It is used to evaluate multiple scattering in plane parallel media aggregating the infinite possible light paths within it. Applying it iteratively for each layer on the incident energy and variance, the directional statistics of the individual layers get combined into an estimation of the reflection and transmission statistics of the stack of layers (see Figure \ref{fig:addingdoubling} for an illustration). As shown in Section \ref{sec:interface_statistics} the mean is approximated only using the reflected or refracted direction so the adding-doubling is not applied on it.
+
+\begin{figure*}[h]
+    \includegraphics[width = \textwidth, keepaspectratio]{fromBelcour/addingdoubling.png}
+    \caption{An illustration how the presented method approximates light transport in layered materials. All possible light paths through a specific stack of layers is approximated by its statistics (leftmost). The atomic operators defined in Section \ref{sec:interface_statistics} are used to model light interactions with an interface (left). The adding-doubling method combines the statistics of all possible light paths between two interfaces (right). After iterating over all layers, the evaluated statistics can be used to instantiate BSDF lobes (rightmost). Image source: \textcite{belcour2018}.}
+    \label{fig:addingdoubling}
+\end{figure*}
 
 %
 
-\textbf{Adding-Doubling for Energy.} All operators defined in Section \ref{sec:interface_statistics} are affine transformations, therefore multiple scattering between two interfaces can be expressed using a discrete form. For that the reflection and transmission coefficients of radiance with respect to the propagation direction are needed. For example $r_{12}$ is the reflection coefficient of the interface for radiance propagating downward from medium 1 to medium 2. Within two layers all inter-reflections ($TR^+T$ paths) need to be considered when evaluating the light transport.
+\textbf{Adding-Doubling for Energy.} All operators defined in Section \ref{sec:interface_statistics} are affine transformations, therefore multiple scattering between two interfaces can be expressed using a discrete form. For that the reflection and transmission coefficients of radiance with respect to the propagation direction are needed. For example $r_{12}$ is the reflection coefficient of the interface for radiance propagating downward from medium 1 to medium 2 (see also Figure \ref{fig:coefficients}).
+\begin{figure}[!htb]
+    \includegraphics[width = \columnwidth, keepaspectratio]{fromBelcour/coefficients.png}
+    \caption{The reflectance $r$ and transmission $t$ coefficients of one interface (left) and a stack of two interfaces (right). $l_i^-$ denotes the incident light from above the interface and $l_i^+$ from underneath. Image source: \textcite{belcour2018}.}
+    \label{fig:coefficients}
+\end{figure}
+Within two layers all inter-reflections ($TR^+T$ paths) need to be considered when evaluating the light transport.
 
 %
 
@@ -214,7 +232,7 @@ The doubling algorithm duplicates a layer generating a virtual layer twice as th
 
 %
 
-The reflected and transmitted energy for each of the layers in the stack can be evaluated by the adding-doubling method using the terms describes in Section \ref{sec:interface_statistics}:
+The reflected and transmitted energy for each of the layers in the stack can be evaluated by the adding-doubling method using the terms described in Section \ref{sec:interface_statistics}:
 \begin{itemize}
     \item{
         Rough interface:
@@ -236,7 +254,7 @@ The reflected and transmitted energy for each of the layers in the stack can be 
     }
 \end{itemize}
 
-\textbf{Adding-Doubling for Variance.} As for adding-doubling for energy, the operators on variance defined in Section \ref{sec:interface_statistics} are affine transformations making the adding-doubling methodology applicable. For the approximation the variance of the average reflectance and transmission, being the variance of a weighted sum, is used. The property that the variance of a weighted sum of distributions is the weighted sum of the distributions individual variances allows the average reflected variance accounting for multiple scattering to be written as:
+\textbf{Adding-Doubling for Variance.} As for adding-doubling for energy, the operators on variance defined in Section \ref{sec:interface_statistics} are affine transformations making the adding-doubling methodology applicable. For the approximation the variance of the average reflectance and transmission, being the variance of a weighted sum, is used. The property, that the variance of a weighted sum of distributions is the weighted sum of the distributions individual variances, allows the average reflected variance accounting for multiple scattering to be written as:
 \begin{equation}
     \begin{aligned}
         \tilde{\sigma}_{13}^R = &r_{12} \sigma_{12}^R \\
@@ -342,11 +360,11 @@ The roughness used to fetch the texture should be $\min{\alpha_x, \alpha_y}$. Th
 
 %
 
-For \textit{image based lighting} (IBL) for anisotropic BRDF's there exists no real solution for pre-filtering environment maps so far. Therefore, the usage for real-time rendering of anisotropic layered materials is limited as Monte Carlo integration is needed. Monte Carlo integration with importance sampling estimates an integral $I = \int_\Omega f(x) \,dx$ drawing $N$ samples $x_i$ from a distribution $p(x)$ as follows:
+For \textit{image based lighting} (IBL) of anisotropic BRDF's there exists no real solution for pre-filtering environment maps so far. Therefore, the usage for real-time rendering of anisotropic layered materials is limited as Monte Carlo integration is needed. Monte Carlo integration with importance sampling estimates an integral $I = \int_\Omega f(x) \,dx$ drawing $N$ samples $x_i$ from a distribution $p(x)$ as follows:
 \begin{equation}
     I \approx \frac{1}{N} \sum_{i=1}^{N} \frac{f(x_i)}{p(x_i)}
 \end{equation}
-For IBL $N$ light samples of the environment map can be drawn to approximate $\int_{\Omega} L_i(\omega_i) \,d\omega_i$. Therefore, normals can be sampled from the VNDF of GGX \parencite{heitz2018}. Using them, the light direction can be computed to fetch the environment texture. To reduce the sample count needed, mipmaps for the environment map can be generated and depending on the PDF of the current sample the according mipmap level can be chosen \parencite{nguyen2007}. For a low PDF of a sample the probability of other generating samples in a similar direction is low, therefore the sample should account for a larger area of the environment map to provide a better approximation of the incident light, leading to a higher mipmap level. The mipmap level $l$ a sample should fetch is:
+For IBL $N$ light samples of the environment map can be drawn to approximate $\int_{\Omega} L_i(\omega_i) \,d\omega_i$. Therefore, normals can be sampled from the VNDF of GGX \parencite{heitz2018}. Using them, the light direction can be computed to fetch the environment texture. To reduce the sample count needed, mipmaps for the environment map can be generated and depending on the PDF of the current sample the according mipmap level can be chosen \parencite{nguyen2007}. For a low PDF of a sample the probability of other generating samples in a similar direction is low. Therefore, the sample should account for a larger area of the environment map to provide a better approximation of the incident light, leading to a higher mipmap level. The mipmap level $l$ a sample should fetch is:
 \begin{equation}
     l = \max{\frac{1}{2} \log_2{\left(\frac{\Omega_s}{\Omega_t}\right)},0}
 \end{equation}

@@ -39,7 +39,7 @@
             \onslide<6->\caption{Frosted car paint}
         \end{subfigure}
         \caption{Objects with layered surface structures.}
-        \label{fig:match}
+        \label{fig:layered_objects}
     \end{figure}
     %%%%%%%%%%%%%%%%%
     \note<2->{Hallo}
@@ -454,8 +454,18 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{BRDF for layered materials}
-    
+    \frametitle{BRDF}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item<1-> evaluate adding-doubling method with $e_i = 1$, $\mu_i = (\omega_{i_x},\omega_{i_y})$ and $\sigma_i = 0$ for $k$ layers
+        \item<2-> instantiate GGX lobes with $F = e_k$, $\omega_{i_k} = reflect(\mu_k)$ and $\alpha_k = f^{-1}(\sigma_k)$
+        \item<3-> {
+            weighted sum of GGX lobes:
+            \begin{equation*}
+                \rho(\omega_i, \omega_o) = \sum_{k=0}^{N} \frac{e_k G(\omega_{i_k}, \omega_o) D(\frac{\omega_{i_k}+\omega_o}{\left\lVert\omega_{i_k}+\omega_o\right\rVert })}{4 \dotproduct{\omega_{i_k}}{n} \dotproduct{\omega_o}{n}}
+            \end{equation*}
+        }
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -463,23 +473,38 @@
 
 \subsection{Anisotropic interfaces}
 
-\subsubsection{Insight}
-
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Anisotropic interfaces}
+    \begin{figure}
+        \begin{subfigure}[t]{0.32\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{fromBelcour/anisotropic_spherical.png}
+            \caption{Anisotropic GGX lobe.}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.32\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{fromBelcour/anisotropic_projected.png}
+            \caption{Projection to $(x,y)$ plane in tangent space}
+        \end{subfigure}
+        \caption{The distribution of projected anisotropic GGX lobes aligns with the axes of the tangent frame. Image source: \textcite{weier2020}}
+        \label{fig:anisotropic_projected}
+    \end{figure}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
 %---------------------------------------------------------
 
-\subsubsection{Image based lighting}
-
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Anisotropic interfaces}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item<1-> Approximation using elliptical distribution $\Rightarrow$ two-component vector for variance \parencite{weier2020}
+        \item<2-> rotated tangent vector fields for each layer $\Rightarrow$ covariance matrix for variance \parencite{yamaguchi2019}
+        \item<3-> precomputation of FGD needs more dimensions or extended split-sum approximation of \textcite{weier2020}
+        \item<4-> Monte Carlo integration for image based lighting
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -493,8 +518,16 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Implementation}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item<1-> C++ OpenGL real-time rendering engine
+        \item<1-> layer BRDF as GLSL fragment shaders
+        \item<2-> no precomputation $\Rightarrow$ Fresnel term as FGD approximation
+        \item<3-> layers can be textured
+        \item<4-> using two-component vectors for anisotropic case
+        \item<4-> image based light using Monte Carlo integration
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -504,8 +537,102 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Results}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item Physically based
+        \item Arbitrary number of layers
+        \item Multiple scattering
+        \item energy conservation
+        \item Texturing and importance sampling
+        \item none or little precomputation/storage needed
+        \item efficient to evaluate
+        \item accurate results
+    \end{itemize}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Materials possible to model}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{metal_foil.png}
+            \caption{Metal foil}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{metallic_paint.png}
+            \caption{Metallic paint}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{frosted_metal.png}
+            \caption{Frosted metal}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{rough_on_rough.png}
+            \caption{Rough on rough}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{clear_coat.png}
+            \caption{Clear coated}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{gold.png}
+            \caption{Gold coated}
+        \end{subfigure}
+        \caption{We are able to reproduce a variety of appearances with our implementation. All of them consist of two layers, a dielectric on top of a conductor, with varying roughnesses.}
+        \label{fig:possible_materials}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Textured layers}
+    \begin{figure}
+        \includegraphics[width = \textwidth, keepaspectratio]{christmas_balls.png}
+        \caption{$\eta$, $\kappa$, and $\alpha$ can be textured.}
+        \label{fig:textured_materials}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Comparison with reference}
+    \begin{figure}
+        \centering
+        \begin{subfigure}[t]{0.3\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{belcour_our_try_match.png}
+            \caption{Our implementation}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.3\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{fromBelcour/belcour_offline.png}
+            \caption{Offline model of \textcite{belcour2018}}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.3\textwidth}
+            \centering
+            \includegraphics[width = \textwidth, keepaspectratio]{fromBelcour/belcour_reference.png}
+            \caption{Reference \textcite{belcour2018} used}
+        \end{subfigure}
+        \caption{Our implementation results in a darker appearance but still closely matches the implementation of \textcite{belcour2018} and the reference they used. We used the Images of Figure 17 from \textcite{belcour2018}.}
+        \label{fig:match}
+    \end{figure}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -515,8 +642,26 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Performance compared to GGX}
+    \begin{figure}[!h]
+        \includesvg[width = 0.6\textwidth, keepaspectratio]{performance_plot.svg}
+        \caption{Render times of a full-screen plane with our implementation of the layered shader with two layers compared to the standard GGX shader. Evaluated for different window sizes.}
+        \label{fig:performance_ggx_comparison}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+    \note[item]{anisotropic IBL real-time}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Performance dependency on layer count}
+    \begin{figure}[!h]
+        \includesvg[width = 0.6\textwidth, keepaspectratio]{performance_layer_plot.svg}
+        \caption{Render times of a full-screen plane with our implementation of the layered shader for different numbers of layers at $1920\times1007$ window size.}
+        \label{fig:performance_layers}
+    \end{figure}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -530,8 +675,14 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Limitations of our implementation}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item FGD approximation
+        \item energy conservation
+        \item tangent frame rotation supported for anisotropic case
+        \item split sum approximation instead of Monte Carlo for isotropic case
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -541,8 +692,31 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Limitations of the model}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item accuracy decreases for high roughness values
+        \item{ inaccuracy at grazing angles
+            \begin{itemize}
+                \item GGX skewed
+                \item some color shifts not reproduced
+            \end{itemize}
+        }
+        \item all interfaces plane parallel and GGX
+        \item only forward scattering in participating media
+    \end{itemize}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+\section*{Conclusion}
+
+%---------------------------------------------------------
+\begin{frame}
+    \begin{figure}
+        \includegraphics[width = \textwidth, keepaspectratio]{teaser_v3.png}
+    \end{figure}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}

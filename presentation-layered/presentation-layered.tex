@@ -35,8 +35,8 @@
 \usepackage{setspace}                                       % Spacing between lines (MUST BE LOADED BEFORE hyperref)
 \usepackage[backend=biber,					% Backend
             bibencoding=utf8,				% File encoding (BibTex = ASCII, Biber = UTF8)
-            bibstyle=authoryear,		    % Reference style
-            citestyle=authoryear,           % Citation style
+            bibstyle=numeric,		    % Reference style
+            citestyle=numeric,           % Citation style
             bibwarn=true,                   % Enable warnings
             natbib=true,					% Natbib compatibility
             maxcitenames=2,					% Cite : > 2 name = et al.
@@ -59,7 +59,7 @@
 \usepackage{multirow}                                       % Multirow
 \usepackage{tikz}
 \usepackage{tikz-3dplot}
-\usepackage{svg}
+\usepackage[inkscapelatex=false]{svg}
 \usepackage{multimedia}
 
 
@@ -208,7 +208,7 @@
 
 \section*{Bibliography}
 
-\begin{frame}
+\begin{frame}[allowframebreaks]
     \printbibliography
 \end{frame}
 

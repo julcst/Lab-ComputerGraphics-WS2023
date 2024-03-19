@@ -6,7 +6,76 @@
 %---------------------------------------------------------
 \begin{frame}
     \frametitle{Motivation}
-    
+    \begin{figure}
+        \centering
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics<1->[width = \textwidth, keepaspectratio]{pexels-engin-akyurt-2478341.jpg}
+            \onslide<1->\caption{Glazed}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics<2->[width = \textwidth, keepaspectratio]{pexels-markus-spiske-214238.jpg}
+            \onslide<2->\caption{Frosted}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics<3->[width = \textwidth, keepaspectratio]{pexels-david-taylor-8222449.jpg}
+            \onslide<3->\caption{Paint}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics<4->[width = \textwidth, keepaspectratio]{pexels-charl-durand-6486239.jpg}
+            \onslide<4->\caption{Gold coated}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics<5->[width = \textwidth, keepaspectratio]{pexels-kelly-3065609.jpg}
+            \onslide<5->\caption{Car paint}
+        \end{subfigure}
+        \begin{subfigure}[t]{0.16\textwidth}
+            \centering
+            \includegraphics<6->[width = \textwidth, keepaspectratio]{pexels-andrii-kushniruk-15602567.jpg}
+            \onslide<6->\caption{Frosted car paint}
+        \end{subfigure}
+        \caption{Objects with layered surface structures.}
+        \label{fig:match}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%
+    \note<2->{Hallo}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Layered surfaces}
+    \begin{figure}
+        \begin{overprint}
+            \onslide<1>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{light_transport_only_layers.svg}
+            \onslide<2>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{light_transport_all.svg}
+        \end{overprint}
+        \caption{Light transport in plane parallel layers.}
+        \label{fig:plane_parallel_layers}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Goals}
+    \begin{itemize}
+        \item Physically based
+        \item Arbitrary number of layers
+        \item Multiple scattering
+        \item Energy conserving
+        \item Texturing
+        \item Importance Sampling
+        \item Little storage
+        \item Short precomputation
+        \item Efficient evaluation
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -17,7 +86,12 @@
 %---------------------------------------------------------
 \begin{frame}
     \frametitle{Related Work}
-    
+    \begin{itemize}
+        \item<1-> Specialized models \parencite*{hanrahan1996,jensen1999,ershov2001,wang2006}
+        \item<2-> Monte Carlo methods \parencite*{hanrahan1993,guo2018,gamboa2020,xia2020}
+        \item<3-> Simplified light transport models \parencite*{wilkie2007,elek2010}
+        \item<4-> Tabulated models \parencite*{jakob2014,zeltner2018}
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -31,8 +105,13 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Method overview}
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth, keepaspectratio]{fromBelcour/addingdoubling.png}
+        \caption{Method overview. Image source: \textcite{belcour2018}}
+        \label{fig:overview}
+    \end{figure}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -42,8 +121,41 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Statistics of an interface}
+    \begin{itemize}
+        \item<1-> bijective mapping between GGX parameters and directional statistics
+        \item<2-> {
+            \begin{minipage}{\linewidth}
+                \centering
+                \includegraphics[width = 0.4\textwidth, keepaspectratio]{fromBelcour/projectivespace.png}
+                \captionof{figure}{Projective space. Image source: \textcite{belcour2018}}
+            \end{minipage}
+        }
+    \end{itemize}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Statistics of an interface}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item<1-> Energy $e$, mean $\mu$, variance $\sigma$
+        \item <2-> Operators to approximate light transport interactions
+            \begin{itemize}
+                \item Reflection
+                \item Refraction
+                \item Absorption \& Scattering
+            \end{itemize}
+        \item<3-> Linear variance space: \medskip
+            \begin{itemize}
+                \setlength\itemsep{1em}
+                \item<3-> $\sigma = f(\alpha)$ \pause with $\sigma_{12} = f(\alpha_1) + f(\alpha_2)$
+                \item <4-> Mapping \parencite{belcour2018}: $f(\alpha) = \frac{\alpha^{1.1}}{1 - \alpha^{1.1}}$
+            \end{itemize}
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -53,8 +165,50 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Reflection by a rough surface}
+    \framesubtitle{Energy}
+    \textbf{Energy:}\\\bigskip
+    Albedo:
+    \begin{equation*}
+        \FGD = \int_\Omega \rho_{GGX}(\omega_i, \omega_o) \dotproduct{\omega_i}{n} \,d\omega_o
+    \end{equation*}
+    \pause
+    Rendering equation:
+    \begin{equation*}
+        L_o(\omega_o) = \int_{\Omega} \rho_{GGX}(\omega_i, \omega_o) L_i(\omega_i) \dotproduct{\omega_i}{n} \,d\omega_i 
+    \end{equation*}
+    \pause
+    Decoupling:
+    \begin{equation*}
+        \int_\Omega L_o(\omega_o) \,d\omega_o \simeq \FGD \times \int_\Omega L_i(\omega_i) \,d\omega_i
+    \end{equation*}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Reflection by a rough surface}
+    \framesubtitle{Mean \& Variance}
+    \textbf{Mean:} shift towards normal for high roughness, but negligible\\
+    \bigskip
+    \textbf{Variance:} increases but not linear w.r.t. roughness $\Rightarrow$ linear variance space
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+\begin{frame}
+    \frametitle{Reflection by a rough surface}
+    \framesubtitle{Summary}
+    \begin{equation*}
+        \begin{aligned}
+            e_r &= e_i \times \FGD\\
+            \mu_r &= \reflect(\mu_i)\\
+            \sigma_r &= \sigma_i + f(\alpha)
+        \end{aligned}
+    \end{equation*}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -64,8 +218,46 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Refraction by a rough interface}
+    \framesubtitle{Energy \& Mean}
+    \textbf{Energy:} Energy conservation: $1 - \FGD$\\\bigskip
+    \pause
+    \textbf{Mean:} refracted incident direction $\neq$ mean of refracted lobe, but good approximation
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Refraction by a rough interface}
+    \framesubtitle{Variance}
+    \textbf{Variance:}
+    \begin{figure}
+        \includegraphics[width = 0.35\textwidth, keepaspectratio]{fromBelcour/fake_transmission.png}
+        \caption{Transmission approximated using a scaled reflection from underneath. Image source: \textcite{belcour2018}}
+        \label{fig:faketransmission}
+    \end{figure}
+    \pause
+    \begin{equation*}
+        s = \frac{1}{2} \left( \frac{\eta_{12} \dotproduct{\omega_i}{n} + \dotproduct{\omega_t}{n}}{\dotproduct{\omega_t}{n}} \right)
+    \end{equation*}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Refraction by a rough interface}
+    \framesubtitle{Summary}
+    \begin{equation*}
+        \begin{aligned}
+            e_t &= e_i \times (1 - \FGD)\\
+            \mu_t &= \refract(\mu_i)\\
+            \sigma_t &= \frac{\sigma_i}{\eta_{12}} + f(s \times \alpha)
+        \end{aligned}
+    \end{equation*}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -75,43 +267,184 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Absorption}
+    \framesubtitle{Energy, mean \& variance}
+    $\sigma_t = \sigma_a + \sigma_s$\\\bigskip
+    \textbf{Energy:} Beer-Lambert's law: 
+    \begin{equation*}
+        L_o(\omega_o) = \exp{\left(-\sigma_t \frac{h}{\dotproduct{\omega_o}{n}}\right)} L_i(\omega_o)
+    \end{equation*} 
+    \\\bigskip
+    \pause
+    \textbf{Mean \& variance:} Impact of absorption negligible
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Scattering}
+    \framesubtitle{Energy}
+    \textbf{Energy:} amount of radiance scattered accounting for in- and out-scattering: 
+    \begin{equation*}
+        \begin{aligned}
+            L_o(\omega) &= \sigma_s \int_{0}^{h} \exp{\left(-\frac{\sigma_t t}{\dotproduct{\omega}{n}}\right)} L_s(t,\omega) \,dt \\
+            \text{with}\\
+            L_s(t,\omega) &= \int_{\mathcal{S}} p(\omega_i, \omega) \exp{\left(-\frac{\sigma_t (h-t)}{\dotproduct{\omega_i}{n}}\right)} L_i(\omega_i) \,d\omega_i
+        \end{aligned}
+    \end{equation*}
+    \\\bigskip
+    \pause
+    Approximation:
+    \begin{equation*}
+        \int_{\Omega} L_o(\omega) \,d\omega \approx \sigma_s h \exp{\left(-\frac{\sigma_t t}{\dotproduct{\omega}{n}}\right)} \int_{\Omega} L_i(\omega) \,d\omega
+    \end{equation*}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Scattering}
+    \framesubtitle{Mean \& variance}
+    \textbf{Mean:} Approximation only accounts forward scattering $\Rightarrow$ impact on mean negligible\\\bigskip
+    \textbf{Variance:} increases w.r.t. width of phase function\\\bigskip
+    Mapping from Henyey-Greenstein phase function anisotropy factor $g$ to variance \parencite{belcour2018}:
+    \begin{equation*}
+        \sigma_g = \left(\frac{1 - g}{g}\right)^{0.8} \frac{1}{1+g}
+    \end{equation*}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Absorption \& Scattering}
+    \framesubtitle{Summary}
+    \begin{equation*}
+        \begin{aligned}
+            e_t &= e_i \times \left[ \left(1 +  \frac{\sigma_s h}{\dotproduct{\omega_o}{n}}\right) \times \exp{\left(-\frac{\sigma_t h}{\dotproduct{\omega_o}{n}}\right)} \right]\\
+            \mu_t &= \mu_i\\
+            \sigma_t &= \sigma_i + \sigma_g \times \frac{\sigma_s}{\sigma_t}
+        \end{aligned}
+    \end{equation*}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Table of Contents}
+    \setcounter{tocdepth}{2}
+    \tableofcontents[currentsection,currentsubsection,subsectionstyle=show/shaded/hide]
 \end{frame}
 %---------------------------------------------------------
 
 \subsection{Statistics of multiple layers}
 
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Table of Contents}
+    \setcounter{tocdepth}{2}
+    \tableofcontents[currentsection,currentsubsection,subsectionstyle=show/shaded/hide]
+\end{frame}
+%---------------------------------------------------------
+
 \subsubsection{Overview}
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Adding-doubling method}
+    \begin{figure}
+        \begin{overprint}
+            \onslide<1>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{adding_doubling_0.svg}
+            \onslide<2>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{adding_doubling_1.svg}
+            \onslide<3>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{adding_doubling_2.svg}
+            \onslide<4>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{adding_doubling_3.svg}
+            \onslide<5>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{adding_doubling_4.svg}
+            \onslide<6>\centering\includesvg[width = 0.7\textwidth, keepaspectratio]{adding_doubling_5.svg}
+        \end{overprint}
+        \label{fig:addingdoubling}
+    \end{figure}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
 %---------------------------------------------------------
 
-\subsubsection{Adding-doubling on energy}
+\subsubsection{Adding-doubling for energy}
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Radiance coefficients}
+    Reflection and transmission coefficients:
+    \begin{figure}
+        \centering
+        \includegraphics[width = 0.7\textwidth, keepaspectratio]{fromBelcour/coefficients.png}
+        \caption{Reflection and transmission coefficients. Image source: \textcite{belcour2018}}
+        \label{fig:overview}
+    \end{figure}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
 %---------------------------------------------------------
 
-\subsubsection{Adding-doubling on variance}
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Multiple scattering between two interfaces}
+    Account for all $TR^+T$ paths between two interfaces:
+    \begin{equation*}
+        r_{13} = r_{12} + \sum_{k=0}^{\infty} t_{12} r_{23}^{k+1} r_{21}^{k} t_{21} 
+    \end{equation*}
+    \\\bigskip
+    \pause
+    Closed form of this arithmetic series:
+    \begin{equation*}
+        r_{13} = r_{12} + \frac{t_{12} r_{23} t_{21}}{1 - r_{23} r_{21}}
+    \end{equation*}
+    \\\bigskip
+    \pause
+    Similar forms for $r_{31}$, $t_{13}$ and $t_{31}$
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
-    
+    \frametitle{Adding-doubling for energy}
+    \begin{itemize}
+        \item<1-> iteratively evaluate $r_{13}$, $r_{31}$, $t_{13}$ and $t_{31}$ \bigskip
+        \item<2->{ 
+            use statistical operators as coefficients, e.g. for a rough interface:
+            \begin{equation*}
+                \begin{aligned}
+                    r_{12} &= r_{21} = \FGD\\
+                    t_{12} &= t_{21} = 1-\FGD
+                \end{aligned}
+            \end{equation*}
+            \bigskip
+        }
+        \item<3-> doubling: virtual layer twice the depth
+    \end{itemize}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Notes}
+\end{frame}
+%---------------------------------------------------------
+
+\subsubsection{Adding-doubling for variance}
+
+%---------------------------------------------------------
+\begin{frame}
+    \frametitle{Adding-doubling for variance}
+    \begin{itemize}
+        \item similar to adding-doubling for energy, using average energy\bigskip
+        \item scaling by energy\bigskip
+        \item build on property: the variance of a weighted sum is the weighted sum of the variances
+    \end{itemize}
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}
 \end{frame}
@@ -121,7 +454,7 @@
 
 %---------------------------------------------------------
 \begin{frame}
-    \frametitle{Title}
+    \frametitle{BRDF for layered materials}
     
     %%%%%%%%%%%%%%%%%
     \note[item]{Notes}

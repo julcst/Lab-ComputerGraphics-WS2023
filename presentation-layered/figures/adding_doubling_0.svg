@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="3840"
+   height="1690.2419"
+   viewBox="0 0 1016 447.20985"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   sodipodi:docname="adding_doubling_0.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.22627417"
+     inkscape:cx="1730.2019"
+     inkscape:cy="457.4097"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true">
+    <inkscape:grid
+       id="grid16"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient13"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop13" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop14" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient10"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop11" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop12" />
+    </linearGradient>
+    <linearGradient
+       id="swatch10"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop10" />
+    </linearGradient>
+    <rect
+       x="79.077583"
+       y="944.20911"
+       width="403.29568"
+       height="111.47669"
+       id="rect23" />
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <rect
+       x="79.077583"
+       y="944.20911"
+       width="403.29568"
+       height="111.47669"
+       id="rect23-3" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient10"
+       id="linearGradient12"
+       x1="71.237335"
+       y1="952.28351"
+       x2="126.32692"
+       y2="952.28351"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient13"
+       id="linearGradient14"
+       x1="80.242126"
+       y1="952.28351"
+       x2="117.32213"
+       y2="952.28351"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       inkscape:label="Flatten Transparency"
+       inkscape:menu="Fill and Transparency"
+       inkscape:menu-tooltip="Adds a white opaque background"
+       style="color-interpolation-filters:sRGB"
+       id="filter15"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feComposite
+         in2="SourceGraphic"
+         operator="arithmetic"
+         k4="1"
+         result="result1"
+         id="feComposite14"
+         k1="0"
+         k2="0"
+         k3="0" />
+      <feMerge
+         id="feMerge15">
+        <feMergeNode
+           in="result1"
+           id="feMergeNode14" />
+        <feMergeNode
+           in="SourceGraphic"
+           id="feMergeNode15" />
+      </feMerge>
+    </filter>
+    <rect
+       x="79.077583"
+       y="944.20911"
+       width="403.29568"
+       height="111.47669"
+       id="rect23-7" />
+    <filter
+       inkscape:label="Flatten Transparency"
+       inkscape:menu="Fill and Transparency"
+       inkscape:menu-tooltip="Adds a white opaque background"
+       style="color-interpolation-filters:sRGB"
+       id="filter15-5"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feComposite
+         in2="SourceGraphic"
+         operator="arithmetic"
+         k4="1"
+         result="result1"
+         id="feComposite14-3"
+         k1="0"
+         k2="0"
+         k3="0" />
+      <feMerge
+         id="feMerge15-5">
+        <feMergeNode
+           in="result1"
+           id="feMergeNode14-6" />
+        <feMergeNode
+           in="SourceGraphic"
+           id="feMergeNode15-2" />
+      </feMerge>
+    </filter>
+    <rect
+       x="79.077583"
+       y="944.20911"
+       width="403.29568"
+       height="111.47669"
+       id="rect23-7-3" />
+    <filter
+       inkscape:label="Flatten Transparency"
+       inkscape:menu="Fill and Transparency"
+       inkscape:menu-tooltip="Adds a white opaque background"
+       style="color-interpolation-filters:sRGB"
+       id="filter15-5-6"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feComposite
+         in2="SourceGraphic"
+         operator="arithmetic"
+         k4="1"
+         result="result1"
+         id="feComposite14-3-0"
+         k1="0"
+         k2="0"
+         k3="0" />
+      <feMerge
+         id="feMerge15-5-6">
+        <feMergeNode
+           in="result1"
+           id="feMergeNode14-6-2" />
+        <feMergeNode
+           in="SourceGraphic"
+           id="feMergeNode15-2-6" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:1.3844"
+       id="rect2"
+       width="1016"
+       height="447.20984"
+       x="0"
+       y="0" />
+    <rect
+       style="fill:#ebb8d8;fill-opacity:0.488449;stroke:none;stroke-width:1.57473"
+       id="rect1-3"
+       width="1016"
+       height="128.71233"
+       x="-1.5000001e-06"
+       y="285.53012" />
+    <rect
+       style="fill:#ebe1b8;fill-opacity:0.488449;stroke:none;stroke-width:0.789073"
+       id="rect1-2"
+       width="1016"
+       height="32.317867"
+       x="-1.5000001e-06"
+       y="414.89197" />
+    <rect
+       style="fill:#b8e2eb;fill-opacity:0.488449;stroke:none;stroke-width:1.57473"
+       id="rect1"
+       width="1016"
+       height="128.71233"
+       x="0"
+       y="159.24953" />
+    <path
+       style="display:inline;fill:#b0b0b0;fill-opacity:0.488449;stroke:#000000;stroke-width:4.865;stroke-dasharray:none;stroke-opacity:1"
+       d="M 0,159.24876 H 1016"
+       id="path3" />
+    <path
+       style="display:inline;fill:#b0b0b0;fill-opacity:0.488449;stroke:#000000;stroke-width:4.865;stroke-dasharray:none;stroke-opacity:1"
+       d="M -3e-6,416.67342 H 1016"
+       id="path3-1-7" />
+    <text
+       xml:space="preserve"
+       transform="matrix(1.9432445,0,0,1.9432445,-144.46361,-1430.5721)"
+       id="text23-2-9"
+       style="white-space:pre;shape-inside:url(#rect23-7-3);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:18.0096;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter15-5-6)"><tspan
+         x="79.078125"
+         y="955.12749"
+         id="tspan1"> Interface 3 </tspan></text>
+    <path
+       style="fill:#9ede0a;fill-opacity:0.488449;stroke:#fedd35;stroke-width:4.665;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)"
+       d="M 100.31476,13.054757 213.29686,146.60177"
+       id="path4" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;fill-opacity:0.488449;stroke:#d0017d;stroke-width:4.665;stroke-dasharray:none;stroke-opacity:1"
+       x="27.936424"
+       y="262.76349"
+       id="text22"><tspan
+         sodipodi:role="line"
+         id="tspan22"
+         style="stroke-width:4.665"
+         x="27.936424"
+         y="262.76349" /></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(1.9432445,0,0,1.9432445,-144.46361,-1687.9968)"
+       id="text23"
+       style="white-space:pre;shape-inside:url(#rect23);display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:18.0096;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter15)"><tspan
+         x="79.078125"
+         y="955.12749"
+         id="tspan2"> Interface 1 </tspan></text>
+    <path
+       style="display:inline;fill:#b0b0b0;fill-opacity:0.488449;stroke:#000000;stroke-width:4.865;stroke-dasharray:none;stroke-opacity:1"
+       d="M 0,287.96108 H 1016"
+       id="path3-1" />
+    <text
+       xml:space="preserve"
+       transform="matrix(1.9432445,0,0,1.9432445,-144.46361,-1559.2845)"
+       id="text23-2"
+       style="white-space:pre;shape-inside:url(#rect23-7);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:18.0096;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter15-5)"><tspan
+         x="79.078125"
+         y="955.12749"
+         id="tspan3"> Interface 2 </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:27.3731px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:41.0812;stroke-dasharray:none;stroke-opacity:1"
+       x="80.88916"
+       y="38.415543"
+       id="text24"><tspan
+         sodipodi:role="line"
+         id="tspan24"
+         style="stroke-width:41.0812"
+         x="80.88916"
+         y="38.415543">L<tspan
+   style="font-size:17.7925px;baseline-shift:sub;stroke-width:41.0812"
+   id="tspan25">i</tspan></tspan></text>
+  </g>
+</svg>

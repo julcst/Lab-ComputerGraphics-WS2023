@@ -1,0 +1,219 @@
+\documentclass[english, aspectratio=169, xcolor={dvipsnames}]{beamer}        % Document type
+\RequirePackage[l2tabu, orthodox]{nag}                      % Detect deprecated packages, commands, etc.
+\usepackage[all,error]{onlyamsmath}                         % Error on deprecated math commands like $$ $$.
+\AtBeginDocument{\catcode`$=3 }                             % Workaround for tikz
+\usepackage{fixmath}                                        % Fix non ISO behaviour with capital greek letters
+%\usepackage{refcheck}                                       % Display warning on unused references
+%\ignoreunlbld                                               % Ignore equations in refcheck
+
+\usepackage{lipsum}                                         % Generate random text (ONLY FOR TEST PURPOSES)
+
+% --- Mathematical packages ---
+\usepackage{amsmath}                                        % Math
+\usepackage{amsthm}                                         % Theorems and proofs
+\usepackage{amssymb}                                        % Math symbols
+\usepackage{bm}												% Bold math
+\usepackage[per-mode=fraction,
+            exponent-product=\cdot,
+            separate-uncertainty=true
+           ]{siunitx}                                       % Physical units
+%\usepackage{mathtools}                                      % Math tools
+
+
+% --- Typographical packages ---
+% - Bases -
+\usepackage[utf8]{inputenc}                                 % UTF-8 Encoding
+\usepackage[T1]{fontenc}                                    % Font encoding
+\usepackage{babel}                                          % Translation
+\usepackage[babel]{csquotes}                                % Quotes
+\usepackage{comment}                                        % Comments
+% - Font -
+\usepackage{newtxtext,newtxmath}                            % Times font
+\usepackage{microtype}                                      % Typographical improvements
+\usepackage{ellipsis}                                       % Whitespace correction
+% - Shape -
+\usepackage{setspace}                                       % Spacing between lines (MUST BE LOADED BEFORE hyperref)
+\usepackage[backend=biber,					% Backend
+            bibencoding=utf8,				% File encoding (BibTex = ASCII, Biber = UTF8)
+            bibstyle=numeric,		    % Reference style
+            citestyle=numeric,           % Citation style
+            bibwarn=true,                   % Enable warnings
+            natbib=true,					% Natbib compatibility
+            maxcitenames=2,					% Cite : > 2 name = et al.
+            maxbibnames=99,					% Bib  : show all names
+            sortcites=true,					% Sorting
+            block=space,					% Space between citations
+            giveninits=true,				% Compress first names
+            uniquename=init,				% Compatible with 'giveninits=true'
+            isbn=false,                     % Disable ISBN
+            doi=false                       % Disable DOI
+           ]{biblatex}
+%\usepackage{abstract}                                      % Abstract
+
+% --- Graphical packages ---
+\usepackage{float}                                          % float environment settings
+\usepackage{graphicx}                                       % Figures
+\usepackage{caption}                                        % Figures and captions
+\usepackage{subcaption}                                     % Figures and captions (side-by-side)
+\usepackage{booktabs}                                       % Improved tables
+\usepackage{multirow}                                       % Multirow
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage[inkscapelatex=false]{svg}
+\usepackage{multimedia}
+\usepackage{pgfplots}
+
+
+\usepackage{pbox}
+% Disable underfull box warnings when breaking URLs
+\usepackage{etoolbox}
+\apptocmd{\sloppy}{\hbadness 10000\relax}{}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% presentation settings
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor*{structure}{bg=white,fg=black}
+\setbeamertemplate{navigation symbols}{}
+
+\setbeameroption{hide notes} % Only slides
+%\setbeameroption{show only notes} % Only notes
+%\setbeameroption{show notes on second screen=right} % Both
+
+
+% \setbeamercolor*{palette primary}{use=structure,fg=white,bg=structure.fg}
+% \setbeamercolor*{palette secondary}{use=structure,fg=white,bg=structure.fg!75}
+% \setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=structure.fg!50!black}
+% \setbeamercolor*{palette quaternary}{fg=white,bg=black}
+
+% \setbeamercolor{section in toc}{fg=black,bg=white}
+% \setbeamercolor{alerted text}{use=structure,fg=structure.fg!50!black!80!black}
+% \setbeamercolor{frametitle}{bg=black,fg=white}
+
+% \setbeamercolor{titlelike}{parent=palette primary,fg=structure.fg!50!black}
+% \setbeamercolor{frametitle}{bg=gray!10!white,fg=black}
+
+% \setbeamercolor*{titlelike}{parent=palette primary}
+
+% \setbeamercolor{block title example}{bg=black,fg=white}
+
+% \usepackage{times,url}
+
+% \setbeamertemplate{footline}[frame number]
+% \setbeamertemplate{footline}[frame number]{}
+
+%\setbeamertemplate{footline}{}
+
+\setbeamertemplate{headline}
+ {
+   \leavevmode%
+   \hbox{%
+   \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,left]{title in head/foot}%
+     \usebeamerfont{title in head/foot} \hspace*{2ex} \insertsection \ifx\insertsubsection\empty\else$\,\blacktriangleright$ \insertsubsection\fi \ifx\insertsubsubsection\empty\else$\,\blacktriangleright$ \insertsubsubsection\fi
+   \end{beamercolorbox}%
+   }
+   \vskip0pt%
+ }
+
+\setbeamertemplate{footline}
+ {
+   \leavevmode%
+   \hbox{%
+   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+     %\usebeamerfont{author in head/foot}\insertshortauthor
+   \end{beamercolorbox}%
+   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+     %\usebeamerfont{title in head/foot}\insertshorttitle
+   \end{beamercolorbox}%
+   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+     \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+   \end{beamercolorbox}}%
+   \vskip0pt%
+ }
+
+ \setbeamercolor{boxcolor}{fg=white,bg=black}
+
+ \defbeamertemplate*{title page}{customized}[1][]
+ {
+    \begin{center}
+        \inserttitlegraphic\par
+        \bigskip
+        \begin{beamercolorbox}[wd=\textwidth,ht=10ex,dp=1ex]{boxcolor}
+            \begin{center}
+              \usebeamerfont{title}\inserttitle\par
+              \usebeamerfont{subtitle}\insertsubtitle\par
+            \end{center}
+        \end{beamercolorbox}
+        \bigskip
+        \usebeamerfont{author}\insertauthor\par
+        \tiny{Matr. Nr.: \matrNr}\par
+        \small{\usebeamerfont{date}\insertdate}\par
+    \end{center}
+ }
+
+
+%------------------------------------------------------------
+%The next block of commands puts the table of contents at the 
+%beginning of each section and highlights the current section:
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \setcounter{tocdepth}{2}
+    \tableofcontents[currentsection,subsectionstyle=show/show/hide]
+  \end{frame}
+}
+%------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title[Layered Materials]{Real-Time Rendering of Layered Materials using a Statistical Framework}
+\subtitle{Project Group Presentation}
+
+\author{Robin Tim Landsgesell}
+\newcommand{\matrNr}{3255524}
+
+\titlegraphic{\includegraphics[width=\textwidth]{teaser_v3.png}}
+
+\date{March 26, 2024}
+
+
+% The literature file
+\addbibresource{tex/literature.bib}
+
+
+\input{tex/macros}
+
+
+\graphicspath{{./figures/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+    \frametitle{Table of Contents}
+    \setcounter{tocdepth}{1}
+    \tableofcontents
+\end{frame}
+
+\input{tex/content}
+
+\section*{Bibliography}
+
+\begin{frame}[allowframebreaks]
+    \printbibliography
+\end{frame}
+
+\end{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -27,20 +27,123 @@ Each layer is parametrized by a three-component complex index of refraction $\et
     \item the model can be evaluated in real-time
 \end{itemize}
 
-However, there are some limitations of the general accuracy and regarding the effects the model is able to reproduce. Still, the model is able to convincingly reproduce a variety of complex layered materials. For instance metal foil, metallic paint, frosted metal and clear coating (see Figure ...). Figure ... shows the separation of a layered material and the composed result, detailing how the layers are affected by each other. The scene shown in Figure ... illustrates how the model can be used to represent complex materials using textures for the index of refraction and roughness. Furthermore, Figure ... shows a comparison  between our implementation, the implementation of \textcite{belcour2018} and the reference Belcour used. Effects of absorption and scattering in participating media can be seen in Figure ... . The impact of anisotropy is illustrated in Figure ... .
+However, there are some limitations of the general accuracy and regarding the effects the model is able to reproduce. Still, the model is able to convincingly reproduce a variety of complex layered materials. For instance metal foil, metallic paint, frosted metal, clear coating and gold coating, see Figure \ref{fig:possible_materials}. 
+
+\begin{figure}[!h]
+    \includegraphics[width = \columnwidth, keepaspectratio]{christmas_balls.png}
+    \caption{Textured layers.}
+    \label{fig:textured_materials}
+\end{figure}
+
+The scene shown in Figure \ref{fig:textured_materials} illustrates how the model can be used to represent complex materials using textures for the index of refraction and roughness. Furthermore, Figure \ref{fig:match} shows a comparison  between our implementation, the offline implementation of \textcite{belcour2018} and the reference Belcour used. One can see that, apart from missing energy conservation resulting in a darker appearance and slight differences in the environment map, our implementation closely matches both of them. Effects of absorption in participating media can be seen in Figure \ref{fig:absorption}.
+
+\begin{figure}[!h]
+    \centering
+    \begin{subfigure}[t]{0.3\columnwidth}
+        \centering
+        \includegraphics[width = \columnwidth, keepaspectratio]{belcour_our_try_match.png}
+        \caption{Our implementation}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\columnwidth}
+        \centering
+        \includegraphics[width = \columnwidth, keepaspectratio]{fromBelcour/belcour_offline.png}
+        \caption{Offline model of \textcite{belcour2018}}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\columnwidth}
+        \centering
+        \includegraphics[width = \columnwidth, keepaspectratio]{fromBelcour/belcour_reference.png}
+        \caption{Reference \textcite{belcour2018} used}
+    \end{subfigure}
+    \caption{Our implementation results in a darker appearance but still closely matches the implementation of \textcite{belcour2018} and the reference they used. We used the Images of Figure 17 from \textcite{belcour2018}.}
+    \label{fig:match}
+\end{figure}
+
+\begin{figure}[!h]
+    \includegraphics[width = \columnwidth, keepaspectratio]{absorption_effects.png}
+    \caption{Effects of absorption in participating media, leading to angle dependent saturation, can be reproduced with our implementation.}
+    \label{fig:absorption}
+\end{figure}
 
 %
 
-For comparison, we tested using different approximations for FGD. The visual and runtime difference is presented in Figure ... . It can be seen, that using ... is more efficient while the visual impact is negligible.
+In Figure \ref{fig:white_furnace} we show a white furnace test. It demonstrates that because of just using the Fresnel term as an approximation for FGD instead of incorporating some sort of method to account for multiple scattering and because the GGX BRDF itself is not energy conserving, our implementation is not energy conserving.
+
+\begin{figure}[!h]
+    \centering
+    \begin{subfigure}[t]{0.47\columnwidth}
+        \centering
+        \includegraphics[width = \columnwidth, keepaspectratio]{white_furnace_a.png}
+        \caption{$\alpha_0=0.001$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.47\columnwidth}
+        \centering
+        \includegraphics[width = \columnwidth, keepaspectratio]{white_furnace_b.png}
+        \caption{$\alpha_0=1.0$}
+    \end{subfigure}
+    \caption{White-furnace test for a three layer configuration: $\eta_0 = 1.3$, $\eta_1=1.1$, $\eta_2=0.0$, $\kappa_2 = 1.0$, $\alpha_1=0.001$, $\alpha_2=0.001$ }
+    \label{fig:white_furnace}
+\end{figure}
 
 %
 
-In Figure ... we show a white furnace test. It can be seen that because of just using the Fresnel term as an approximation for FGD instead of incorporating some sort of method to account for multiple scattering our implementation is not energy conserving. However, if for higher $\eta$ values it converges to an energy conserving model.
+\textit{Performance.} All results are computed on an 8 core Intel i7-1165G7 with 16 GB of RAM and an integrated Mesa Intel Xe Graphics GPU measured using OpenGL timer queries. Render times compared to the standard GGX shader are reported in Figure \ref{fig:performance_ggx_comparison}. It can be seen, that our layered shader is on average approximately 2.9 times slower, however it converges to approximately 10ms per frame for $1920\times1080$, thus it is fast enough for real-time usage.
+
+\begin{figure}[!h]
+    \includesvg[width = \columnwidth, keepaspectratio]{performance_plot.svg}
+    \caption{Render times of a full-screen plane with our implementation of the layered shader with two layers compared to the standard GGX shader. Evaluated for different window sizes.}
+    \label{fig:performance_ggx_comparison}
+\end{figure}
+
+Figure \ref{fig:performance_layers} shows, as expected, that the runtime is linear in the number of layers, as during evaluating the adding-doubling algorithm we iterate over all layers. Our implementation was written with readability in mind instead of performance optimization. Therefore, the render times could probably be decreased.
+
+\begin{figure}[!h]
+    \includesvg[width = \columnwidth, keepaspectratio]{performance_layer_plot.svg}
+    \caption{Render times of a full-screen plane with our implementation of the layered shader for different numbers of layers at $1920\times1007$ window size.}
+    \label{fig:performance_layers}
+\end{figure}
 
 %
 
-\textit{Performance.} All results are computed on an 8 core Intel i7-1165G7 with 16 GB of RAM and an integrated Mesa Intel Xe Graphics GPU measured using OpenGL timer queries. Render times are reported in Figure ... compared to GGX BRDF. It can be seen, as expected, that the runtime is linear in the number of layers, as during evaluating the adding-doubling algorithm we iterate over all layers. Our implementation was written with readability in mind instead of performance optimization. Therefore, the render times could probably be decreased.
+In Figure \ref{fig:performance_ibl} a comparison of sample counts and render times is displayed for image based lighting using Monte Carlo integration of the anisotropic layered BRDF. This shows the limited usability of the anisotropic shader for real-time applications, as the needed sample counts for visually pleasing results are too high. The resulting images can be seen in Appendix \ref{sec:appendix_b}. 
 
-%
+\begin{figure}[!h]
+    \includesvg[width = \columnwidth, keepaspectratio]{performance_ibl_plot.svg}
+    \caption{Render times of a sphere with our implementation of the anisotropic layered shader using image based lighting. Evaluated for different numbers of samples with different roughness values at $800\times800$ window size. The material consists of two layers, the roughness of the top layer is changed, the roughness for the bottom layer is $\alpha_1=(0.001,0.001)$}.
+    \label{fig:performance_ibl}
+\end{figure}
 
-In Figure ... a comparison of sample counts and render times is displayed for image based lighting using Monte Carlo integration of the anisotropic layered BRDF.
+\begin{figure*}
+    \centering
+    \begin{subfigure}[t]{0.16\textwidth}
+        \centering
+        \includegraphics[width = \textwidth, keepaspectratio]{metal_foil.png}
+        \caption{Metal foil}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.16\textwidth}
+        \centering
+        \includegraphics[width = \textwidth, keepaspectratio]{metallic_paint.png}
+        \caption{Metallic paint}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.16\textwidth}
+        \centering
+        \includegraphics[width = \textwidth, keepaspectratio]{frosted_metal.png}
+        \caption{Frosted metal}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.16\textwidth}
+        \centering
+        \includegraphics[width = \textwidth, keepaspectratio]{rough_on_rough.png}
+        \caption{Rough on rough}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.16\textwidth}
+        \centering
+        \includegraphics[width = \textwidth, keepaspectratio]{clear_coat.png}
+        \caption{Clear coated}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.16\textwidth}
+        \centering
+        \includegraphics[width = \textwidth, keepaspectratio]{gold.png}
+        \caption{Gold coated}
+    \end{subfigure}
+    \caption{We are able to reproduce a variety of appearances with our implementation. All of them consist of two layers, a dielectric on top of a conductor, with varying roughnesses.}
+    \label{fig:possible_materials}
+\end{figure*}

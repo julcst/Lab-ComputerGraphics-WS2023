@@ -165,7 +165,7 @@ void Object::render(std::vector<Mesh>& meshes, std::vector<Program>& shaders, Un
     modelMat = glm::translate(modelMat, translation);
     modelMat = glm::scale(modelMat, glm::vec3(scale));
     modelMat = glm::rotate(modelMat, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-    float yangle = rotate ? rotation.y + time : rotation.y;
+    float yangle = rotate ? rotation.y + time *0.25 : rotation.y;
     modelMat = glm::rotate(modelMat, yangle, glm::vec3(0.0f, 1.0f, 0.0f));
     modelMat = glm::rotate(modelMat, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 

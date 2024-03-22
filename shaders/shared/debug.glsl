@@ -1,5 +1,7 @@
 #line 2 103
-#if 1 // Enable or disable debug macros
+#define DEBUG // Enable debug macros
+
+#ifdef DEBUG
 #define RENDER_VIEW(c) if (uDebug == 0U) fragColor = c
 #define DEBUG_VIEW(i, v) if (uDebug == uint(i)) fragColor = v
 #else
@@ -39,6 +41,15 @@
 #define GDEBUG_H(v) DEBUG_VIEW(29, v)
 #define GDEBUG_p(v) DEBUG_VIEW(30, v)
 #define GDEBUG_branch(v) DEBUG_VIEW(31, v)
+#define GDEBUG_uv0(v) DEBUG_VIEW(32, v)
+#define GDEBUG_uv1(v) DEBUG_VIEW(33, v)
+#define GDEBUG_uv2(v) DEBUG_VIEW(34, v)
+#define GDEBUG_uv3(v) DEBUG_VIEW(35, v)
+#define GDEBUG_tetraSeeds(v) DEBUG_VIEW(36, v)
+#define GDEBUG_comp0(v) DEBUG_VIEW(37, v)
+#define GDEBUG_comp1(v) DEBUG_VIEW(38, v)
+#define GDEBUG_comp2(v) DEBUG_VIEW(39, v)
+#define GDEBUG_comp3(v) DEBUG_VIEW(40, v)
 
 /**
  * Interprets angle as hue and converts it to RGB.
@@ -134,3 +145,8 @@ vec3 checkBarycentrics(vec4 bary) {
 }
 vec3 checkBarycentrics(vec3 bary) { return checkBarycentrics(vec4(bary, 0.0)); }
 vec3 checkBarycentrics(vec2 bary) { return checkBarycentrics(vec4(bary, 0.0, 0.0)); }
+
+
+vec3 uvdebug(vec2 uv, float steps) {
+    return (checkerboard(uv, steps) * 0.5 + 0.25);
+}

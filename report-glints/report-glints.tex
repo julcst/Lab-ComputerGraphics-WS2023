@@ -86,6 +86,23 @@
 \usetikzlibrary{patterns,shapes.arrows}
 \pgfplotsset{compat=newest}
 
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz/]
+\tikzset{%
+        external/system call={%
+            pdflatex %
+                \tikzexternalcheckshellescape %
+                -halt-on-error %
+                -interaction=batchmode %
+                -output-directory="build" %
+                -jobname "\image" %
+                "\texsource"%
+        },
+        /pgf/images/include external/.code={%
+            \includegraphics{build/#1}%
+        },%
+    }
+
 
 \usepackage{pbox}
 % Disable under full box warnings when breaking URLs

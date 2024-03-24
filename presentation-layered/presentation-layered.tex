@@ -18,6 +18,7 @@
             separate-uncertainty=true
            ]{siunitx}                                       % Physical units
 %\usepackage{mathtools}                                      % Math tools
+\usepackage{cancel}
 
 
 % --- Typographical packages ---
@@ -35,8 +36,8 @@
 \usepackage{setspace}                                       % Spacing between lines (MUST BE LOADED BEFORE hyperref)
 \usepackage[backend=biber,					% Backend
             bibencoding=utf8,				% File encoding (BibTex = ASCII, Biber = UTF8)
-            bibstyle=numeric,		    % Reference style
-            citestyle=numeric,           % Citation style
+            bibstyle=authoryear,		    % Reference style
+            citestyle=authoryear,           % Citation style
             bibwarn=true,                   % Enable warnings
             natbib=true,					% Natbib compatibility
             maxcitenames=2,					% Cite : > 2 name = et al.
@@ -159,14 +160,15 @@
 %The next block of commands puts the table of contents at the 
 %beginning of each section and highlights the current section:
 
-\AtBeginSection[]
-{
-  \begin{frame}
-    \frametitle{Table of Contents}
-    \setcounter{tocdepth}{2}
-    \tableofcontents[currentsection,subsectionstyle=show/show/hide]
-  \end{frame}
-}
+%\AtBeginSection[]
+%{
+%  \begin{frame}
+%    \frametitle{Table of Contents}
+%    \setcounter{tocdepth}{2}
+%    \tableofcontents[currentsection,subsectionstyle=show/show/hide]
+%  \end{frame}
+%}
+
 %------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,11 +201,11 @@
     \titlepage
 \end{frame}
 
-\begin{frame}
-    \frametitle{Table of Contents}
-    \setcounter{tocdepth}{1}
-    \tableofcontents
-\end{frame}
+%\begin{frame}
+%    \frametitle{Table of Contents}
+%    \setcounter{tocdepth}{1}
+%    \tableofcontents
+%\end{frame}
 
 \input{tex/content}
 

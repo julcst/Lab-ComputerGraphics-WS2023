@@ -305,31 +305,56 @@ void UnpackFloatParallel4(vec4 inputFloat, out vec4 a, out vec4 b)
 //=======================================================================================
 // GLINTS TEST NOVEMBER 2022
 //=======================================================================================
-/*void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, out vec4 outGaussian, out vec2 slopeLerp)
-{
-	ivec2 size = uGlint2023NoiseMapSize.rr;
-	vec2 slope2 = abs(slope) / uMicrofacetRoughness;
-	slope2 = slope2 + (slopeRandOffset * size);
-	slopeLerp = fract(slope2);
-	ivec2 slopeCoord = ivec2(floor(slope2)) % size;
+// /*void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, out vec4 outGaussian, out vec2 slopeLerp)
+// {
+// 	ivec2 size = uGlint2023NoiseMapSize.rr;
+// 	vec2 slope2 = abs(slope) / uMicrofacetRoughness;
+// 	slope2 = slope2 + (slopeRandOffset * size);
+// 	slopeLerp = fract(slope2);
+// 	ivec2 slopeCoord = ivec2(floor(slope2)) % size;
 
-	vec4 packedRead = uGlint2023NoiseMap[slopeCoord];
-	UnpackFloatParallel4(packedRead, outUniform, outGaussian);
-}*/
+// 	vec4 packedRead = uGlint2023NoiseMap[slopeCoord];
+// 	UnpackFloatParallel4(packedRead, outUniform, outGaussian);
+// }*/
 
+// void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, out vec4 outGaussian, out vec2 slopeLerp) {
+// 	ivec2 size = ivec2(4096);
+// 	vec2 slope2 = abs(slope) / uMicrofacetRoughness;
+// GDEBUG_slope(vec3(slope2, 0.0));
+// 	slope2 = slope2 + (slopeRandOffset * size);
+// 	slopeLerp = fract(slope2);
+// GDEBUG_slopeLerp(vec3(slopeLerp, 0.0));
+// 	ivec2 slopeCoord = ivec2(floor(slope2)) % size;
+// 	uvec2 uSlopeCoord = uvec2(slopeCoord);
+
+// 	outUniform = pcg4dFloat(uvec4(uSlopeCoord.xy, uSlopeCoord.yx + 4096U));
+// 	outGaussian = pcg4dFloat(uvec4(uSlopeCoord.yx + 8192U, uSlopeCoord.xy + 16384U));
+// }
+
+// Good randomization
 void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, out vec4 outGaussian, out vec2 slopeLerp) {
-	ivec2 size = ivec2(4096);
 	vec2 slope2 = abs(slope) / uMicrofacetRoughness;
 GDEBUG_slope(vec3(slope2, 0.0));
-	slope2 = slope2 + (slopeRandOffset * size);
+	slope2 += slopeRandOffset;
 	slopeLerp = fract(slope2);
 GDEBUG_slopeLerp(vec3(slopeLerp, 0.0));
-	ivec2 slopeCoord = ivec2(floor(slope2)) % size;
-	uvec2 uSlopeCoord = uvec2(slopeCoord);
+	uvec2 uSlopeCoord = uvec2(slope2);
 
-	outUniform = pcg4dFloat(uvec4(uSlopeCoord.xy, uSlopeCoord.yx + 4096U));
-	outGaussian = pcg4dFloat(uvec4(uSlopeCoord.yx + 8192U, slope.xy + 16384U));
+	outUniform = pcg4dFloat(uvec4(uSlopeCoord.xy, floatBitsToUint(slopeRandOffset) + 4096U));
+	outGaussian = pcg4dFloat(uvec4(floatBitsToUint(slopeRandOffset) + 8192U, uSlopeCoord.xy + 16384U));
 }
+
+// // No randomization -> artifacts
+// void CustomRand4Texture(vec2 slope, vec2 slopeRandOffset, out vec4 outUniform, out vec4 outGaussian, out vec2 slopeLerp) {
+// 	vec2 slope2 = abs(slope) / uMicrofacetRoughness;
+// GDEBUG_slope(vec3(slope2, 0.0));
+// 	slopeLerp = fract(slope2);
+// GDEBUG_slopeLerp(vec3(slopeLerp, 0.0));
+// 	uvec2 uSlopeCoord = uvec2(slope2);
+
+// 	outUniform = pcg4dFloat(uvec4(uSlopeCoord.xy, floatBitsToUint(slopeRandOffset) + 4096U));
+// 	outGaussian = pcg4dFloat(uvec4(floatBitsToUint(slopeRandOffset) + 8192U, uSlopeCoord.xy + 16384U));
+// }
 
 // This performs  4x binomial Samples per call
 // This is called 3x per vertex of the tetrahedron (uv triangle)
@@ -524,6 +549,17 @@ void GetAnisoCorrectingGridTetrahedron(bool centerSpecialCase, /*inout*/ float t
 	return;
 }
 
+vec2 compensateUV(vec2 uv, float theta, float aniso, float iso) {
+    // Compensate for orientation
+    uv = vec2(cos(theta) * uv.x + sin(theta) * uv.y,
+              cos(theta) * uv.y - sin(theta) * uv.x);
+	// Compensate for isotropic scale
+    uv /= iso;
+    // Compensate for anisotropic stretch
+    uv.y /= aniso;
+    return uv;
+}
+
 float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, vec2 uv, vec2 duvdx, vec2 duvdy)
 {
 	// ACCURATE PIXEL FOOTPRINT ELLIPSE
@@ -570,6 +606,15 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 	float thetaBin1 = thetaBin0 + thetaGrid / 2.0;
 	float thetaBinLerp = Remap(theta, thetaBin0, thetaBin1, 0.0, 1.0);
 	thetaBin0 = thetaBin0 <= 0.0 ? 180.0 + thetaBin0 : thetaBin0;
+
+float pr = mix(ratio0, ratio1, ratioLerp);
+float ps = mix(lod0, lod1, lodLerp);
+float pphilerp = (ratio0 == 1.0) ? Remap01To(thetaBinLerp, 0.0, ratioLerp) : thetaBinLerp;
+float pphi = mix(thetaBin0, thetaBin1, pphilerp) * DEG2RAD;
+GDEBUG_uv0(uvdebug(uv, 10.0));
+GDEBUG_uv1(uvdebug(compensateUV(uv, pphi, 1.0, 1.0), 10.0));
+GDEBUG_uv2(uvdebug(compensateUV(uv, pphi, 1.0, ps), 500.0));
+GDEBUG_uv3(uvdebug(compensateUV(uv, pphi, pr, ps), 500.0));
 
 	// TETRAHEDRONIZATION OF ROTATION + RATIO + LOD GRID
 	bool centerSpecialCase = (ratio0 == 1.0);
@@ -623,14 +668,23 @@ float SampleGlints2023NDF(vec3 localHalfVector, float targetNDF, float maxNDF, v
 
 	// SAMPLE GLINT GRIDS
 	uint gridSeedA = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraA.z]), mod(thetaBins[iTetraA.x], 360), ratios[iTetraA.y])) * 4294967296.0);
-	GDEBUG_seedA(vec3(float(gridSeedA) / 4294967296.0));
 	uint gridSeedB = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraB.z]), mod(thetaBins[iTetraB.x], 360), ratios[iTetraB.y])) * 4294967296.0);
 	uint gridSeedC = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraC.z]), mod(thetaBins[iTetraC.x], 360), ratios[iTetraC.y])) * 4294967296.0);
 	uint gridSeedD = asuint(HashWithoutSine13(vec3(log2(divLods[iTetraD.z]), mod(thetaBins[iTetraD.x], 360), ratios[iTetraD.y])) * 4294967296.0);
+
+	GDEBUG_seedA(vec3(float(gridSeedA) / 4294967296.0));
+	GDEBUG_tetraSeeds(pcg4dFloat(uvec4(gridSeedA, gridSeedB, gridSeedC, gridSeedD)).rgb);
+
 	float sampleA = SampleGlintGridSimplex(uvRotA / divLods[iTetraA.z] / vec2(1.0, ratios[iTetraA.y]), gridSeedA, slope, ratios[iTetraA.y] * footprintAreas[iTetraA.z], rescaledTargetNDF, tetraBarycentricWeights.x);
 	float sampleB = SampleGlintGridSimplex(uvRotB / divLods[iTetraB.z] / vec2(1.0, ratios[iTetraB.y]), gridSeedB, slope, ratios[iTetraB.y] * footprintAreas[iTetraB.z], rescaledTargetNDF, tetraBarycentricWeights.y);
 	float sampleC = SampleGlintGridSimplex(uvRotC / divLods[iTetraC.z] / vec2(1.0, ratios[iTetraC.y]), gridSeedC, slope, ratios[iTetraC.y] * footprintAreas[iTetraC.z], rescaledTargetNDF, tetraBarycentricWeights.z);
 	float sampleD = SampleGlintGridSimplex(uvRotD / divLods[iTetraD.z] / vec2(1.0, ratios[iTetraD.y]), gridSeedD, slope, ratios[iTetraD.y] * footprintAreas[iTetraD.z], rescaledTargetNDF, tetraBarycentricWeights.w);
+
 	GDEBUG_uvGridCompensated(checkerboard(uvRotD / divLods[iTetraD.z] / vec2(1.0, ratios[iTetraD.y])));
+	GDEBUG_comp0(checkerboard(uvRotA / divLods[iTetraA.z] / vec2(1.0, ratios[iTetraA.y])));
+	GDEBUG_comp1(checkerboard(uvRotB / divLods[iTetraB.z] / vec2(1.0, ratios[iTetraB.y])));
+	GDEBUG_comp2(checkerboard(uvRotC / divLods[iTetraC.z] / vec2(1.0, ratios[iTetraC.y])));
+	GDEBUG_comp3(checkerboard(uvRotD / divLods[iTetraD.z] / vec2(1.0, ratios[iTetraD.y])));
+
 	return (sampleA + sampleB + sampleC + sampleD) * (1.0 / uMicrofacetRoughness) * maxNDF;
 }

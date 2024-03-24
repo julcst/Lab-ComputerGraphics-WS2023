@@ -69,6 +69,15 @@ const std::vector<std::string> GLINTS_DEBUG_MODES = {
     "H",                // 29
     "p",                // 30
     "branch",           // 31
+    "uv0",              // 32
+    "uv1",              // 33
+    "uv2",              // 34
+    "uv3",              // 35
+    "tetraSeeds",       // 36
+    "comp0",            // 37
+    "comp1",            // 38
+    "comp2",            // 39
+    "comp3",            // 40
 };
 
 const std::vector<std::string> LAYERED_DEBUG_MODES = {

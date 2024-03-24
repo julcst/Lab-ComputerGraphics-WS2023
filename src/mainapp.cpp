@@ -38,7 +38,7 @@ const float FOCAL_LENGTH = 4.0f / tan(FOV);
 
 MainApp::MainApp() :
     App(WIDTH, HEIGHT),
-    cam(0.0f, 0.0f, 5.0f, 3.0f, 50.0f),
+    cam(0.0f, 0.0f, 5.0f, 1.0f, 50.0f),
     scene{.lightDir = normalize(vec3(1.0f)), .skyColor = vec3(0.1f, 0.3f, 0.6f), .focalLength = FOCAL_LENGTH},
     ub0(0, scene), ub1(1) {
 
@@ -191,14 +191,19 @@ void MainApp::buildImGui() {
             ImGui::SliderFloat("Alpha X", &obj.material.alphaX, 0.0f, 1.0f);
             ImGui::SliderFloat("Alpha Y", &obj.material.alphaY, 0.0f, 1.0f);
             ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
-        } else if (obj.shaderIdx == Config::ShaderType::GLINTS || obj.shaderIdx == Config::ShaderType::GLINTS_REF || obj.shaderIdx == Config::ShaderType::GLINTS_AMBIENT) {
+        } else if (obj.shaderIdx == Config::ShaderType::GLINTS || obj.shaderIdx == Config::ShaderType::GLINTS_REF || obj.shaderIdx == Config::ShaderType::GLINTS_AMBIENT || obj.shaderIdx == Config::ShaderType::GLINTS_ANISO) {
             ImGui::ColorEdit3("Albedo", value_ptr(obj.material.albedo), ImGuiColorEditFlags_Float);
-            ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.001f, 1.0f);
+            if (obj.shaderIdx == Config::ShaderType::GLINTS_ANISO) {
+                ImGui::SliderFloat("Alpha X", &obj.material.alphaX, 0.001f, 1.0f);
+                ImGui::SliderFloat("Alpha Y", &obj.material.alphaY, 0.001f, 1.0f);
+            } else {
+                ImGui::SliderFloat("Roughness", &obj.material.roughness, 0.001f, 1.0f);
+            }
             ImGui::SliderFloat("Metallic", &obj.material.metallic, 0.0f, 1.0f);
             ImGui::SliderFloat("Screen Space Scale", &obj.material.screenSpaceScale, 1.0f, 10.0f);
             ImGui::SliderFloat("Log Mesofacet Density", &obj.material.logMicrofacetDensity, 1.0f, 50.0f);
             ImGui::SliderFloat("Density Randomization", &obj.material.densityRandomization, 0.0f, 10.0f);
-            ImGui::SliderFloat("Mesofacet Roughness", &obj.material.microfacetRoughness, 0.001f, 1.0f);
+            ImGui::SliderFloat("Mesofacet Roughness", &obj.material.microfacetRoughness, 0.001f, 0.999f);
             Util::combo("Debug mode", &obj.material.debug, Config::GLINTS_DEBUG_MODES);
             Util::flagCheckbox("Enable Surface Domain Linear Blending", &obj.material.flags, 0);
             ImGui::BeginDisabled(obj.shaderIdx != Config::ShaderType::GLINTS_REF);

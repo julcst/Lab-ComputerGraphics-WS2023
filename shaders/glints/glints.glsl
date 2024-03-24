@@ -14,17 +14,15 @@
 
 // ! This is executed 4*3=12 times per pixel (for each corner of the uv triangle of the vertex of the tetrahedron)
 // Note: Sample per halfvector-space vertex
-float sampleAngularBinom(float N, float pOneSuccess, float mu, float sigma, vec2 slope, vec2 rand) {
-    // Randomize the slope
-    vec2 randomizedSlope = slope + rand * 4096;// TODO: make hashing better
-
+float sampleAngularBinom(float N, float pOneSuccess, float mu, float sigma, vec2 slope, uvec2 rand) {
     // Now discretize the slope plane into a grid and calculate the bilinear weights
-    uvec2 slopeCoord = uvec2(floor(randomizedSlope));
-    vec2 slopeWeight = fract(randomizedSlope);
+    slope += mapf(rand);
+    uvec2 slopeCoord = uvec2(floor(slope));
+    vec2 slopeWeight = fract(slope);
 
     // Draw 2 random numbers (A and B) per slope grid point
-    vec4 randA = hash4f(uvec4(slopeCoord.xy, slopeCoord.yx + 19U)); // primes for better hashing
-	vec4 randB = hash4f(uvec4(slopeCoord.yx + 47U, slopeCoord.xy + 101U));
+    vec4 randA = hash4f(uvec4(slopeCoord.xy, rand.yx + 19U)); // primes for better hashing
+	vec4 randB = hash4f(uvec4(slopeCoord.yx + 47U, rand.xy + 101U));
 
 GDEBUG_slopeLerp(vec3(slopeWeight, 0.0));
 
@@ -55,12 +53,12 @@ float sampleFootprint(uint seed, float area, float weight, vec2 slope, vec2 uv, 
 GDEBUG_uvTriangles(weights);
 
     // Draw random numbers per triangle vertex
-    vec3 randA = hash3f(uvec3(mapu(a), seed));
-    vec3 randB = hash3f(uvec3(mapu(b), seed));
-    vec3 randC = hash3f(uvec3(mapu(c), seed));
+    uvec3 randA = hash3u(uvec3(mapu(a), seed));
+    uvec3 randB = hash3u(uvec3(mapu(b), seed));
+    uvec3 randC = hash3u(uvec3(mapu(c), seed));
 
     // Randomize the logarithmic microfacet density per vertex
-    vec3 logDensityRand = clamp(sampleNormal(uLogMicrofacetDensity, uDensityRandomization, vec3(randA.x, randB.x, randC.x)), 0.0, 50.0);
+    vec3 logDensityRand = clamp(sampleNormal(uLogMicrofacetDensity, uDensityRandomization, mapf(uvec3(randA.x, randB.x, randC.x))), 0.0, 50.0);
     vec3 density = exp(logDensityRand);
     // NP is the number of discrete microfacets in the weighted pixel footprint per vertex
     vec3 NP = max(vec3(0.0), area * density);
@@ -87,6 +85,17 @@ GDEBUG_baryCheck2(checkBarycentrics(weights));
     // Interpolate the samples using the barycentric coordinates
     // NOTE: This is not the distributed binomial law because we sample the same binomial distribution thrice with different NP
     return dot(samples, uEnableSurfaceDomainLinearBlending ? weights : vec3(1.0)); 
+}
+
+vec2 compensateUV(vec2 uv, float theta, float aniso, float iso) {
+    // Compensate for orientation
+    uv = vec2(cos(theta) * uv.x + sin(theta) * uv.y,
+              cos(theta) * uv.y - sin(theta) * uv.x);
+    // Compensate for anisotropic stretch
+    uv.y /= aniso;
+    // Compensate for isotropic scale
+    uv /= iso;
+    return uv;
 }
 
 // ! This is executed 4 times per pixel (for each vertex of the tetrahedron)
@@ -136,6 +145,11 @@ GDEBUG_theta(angleToRGB(foot.theta));
 GDEBUG_aniso(vec3(1.0 / foot.aniso));
 GDEBUG_lod(vec3(foot.lod) * 300.0);
 
+GDEBUG_uv0(checkerboard(uv, 100.0));
+GDEBUG_uv1(checkerboard(compensateUV(uv, foot.theta, 1.0, 1.0), 100.0));
+GDEBUG_uv2(checkerboard(compensateUV(uv, foot.theta, 1.0, foot.lod), 100.0));
+GDEBUG_uv3(checkerboard(compensateUV(uv, foot.theta, foot.aniso, foot.lod), 100.0));
+
     // The footprint can now be parametrized into three dimensions which are
     // logarithmic area (or LOD) + major/minor ratio (or anisotropy) + orientation
     // We define a grid on each of these dimensions to obtain a 3D Heptahedron that contains the footprint
@@ -175,6 +189,7 @@ GDEBUG_baryCheck3(checkBarycentrics(tetra.weights));
     uint gridSeedD = seed(mapu(tetra.p3));
 
 GDEBUG_seedA(vec3(mapf(gridSeedA)));
+GDEBUG_tetraSeeds(hash4f(uvec4(gridSeedA, gridSeedB, gridSeedC, gridSeedD)).rgb);
 
     // p is the probability of a microfacet being reflecting
     float p = microfacetRoughness * D / Dmax;

@@ -37,11 +37,11 @@
         \label{fig:layered_objects}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{Warum layered material?}
-    \note[item]{Microfacet model mit spekularem und diffusem Anteil nicht genug}
-    \note[item]{Menge an modellierbaren Objekte erweitern \click}
-    \note[item]{Glasierte\click, mattierte\click, bemalte\click, vergoldete\click, Auto Lacke\click\click}
-    \note[item]{Haut, Blätter, nasse Oberflächen}
+    \note[item]{First of all, \textbf{why} do we want to render layered materials.}
+    \note[item]{Well, the surface of many \textbf{man-made} objects consist of layered structures which result in complex appearances.}
+    \note[item]{For example objects that have been \textbf{glazed} \click, or \textbf{frosted} \click. Surfaces that are \textbf{painted} \click or \textbf{gold coated} \click. Or for instance objects that have been \textbf{lacquered}, like cars\click}
+    \note[item]{Additionally, many \textbf{biological structures} like \textbf{skin} or \textbf{leaves} consist of layered materials.}
+    \note[item]{Now let's define layered materials a bit more formal. \click}
 \end{frame}
 %---------------------------------------------------------
 
@@ -57,10 +57,11 @@
         \label{fig:plane_parallel_layers}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{Layered materials sind planparallele Medien durch raue Schnittstellen verbunden}
-    \note[item]{Annahme, dass dicker als Wellenlängen sich bares Licht um geometrische Optik anzuwenden}
-    \note[item]{\click Komplexe Pfade die das Licht durch die Schichten nehmen kann}
-    \note[item]{Beliebige Anzahl Layer}
+    \note[item]{Layered materials are a \textbf{stack of plane parallel media} which are \textbf{separated by rough interfaces}.}
+    \note[item]{In order to be able to use \textbf{geometric optics} to describe the light transport in such structures we assume that the layers are \textbf{thicker than the wavelengths} of visible light. \click}
+    \note[item]{If we take a look at the \textbf{paths} that the light for a specific incident direction can take, we can see that because of \textbf{multiple reflections and transmissions inside} the stack of layers the light transport can be \textbf{very intricate}.}
+    \note[item]{Especially if we allow an \textbf{arbitrary number of layers}.}
+    \note[item]{Therefore, modelling the light transport in layered materials is \textbf{complex problem}.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -70,16 +71,19 @@
     \begin{equation*}
         \rho(\omega_i, \omega_o) = \frac{F(\omega_i,h) G(\omega_i,\omega_o) D(h)}{4 \dotproduct{\omega_i}{n} \dotproduct{\omega_o}{n}}
     \end{equation*}
-    \pause
     \begin{itemize}
-        \item $\rho$ microfacet BRDF
-        \item $\omega_i$ incident direction / $\omega_o$ outgoing direction
-        \item $h$ half-vector, $n$ normal
-        \item $\dotproduct{}{}$ dot product
-        \item $F$ Fresnel term
-        \item $G$ shadowing-masking function
-        \item $D$ normal distribution function
+        \item<1-> $\rho$ microfacet BRDF
+        \item<2-> $F$ Fresnel term
+        \item<2-> $G$ shadowing-masking function
+        \item<2-> $D$ normal distribution function
+        \item<3-> $\omega_i$ incident direction / $\omega_o$ outgoing direction
+        \item<3-> $h$ half-vector, $n$ normal
+        \item<3-> $\dotproduct{}{}$ dot product
     \end{itemize}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{In physically based rendering, typically a \textbf{microfacet model} is used. Consisting of a \textbf{diffuse and a specular component} this is able to reproduce many appealing surfaces, but this is \textbf{not enough} to model layered materials.}
+    \note[item]{\click On the slide you can see how the \textbf{BRDF of a microfacet model} is defined by the \textbf{Fresnel} term F, the \textbf{shadow-masking} function G and the \textbf{normal distribution} function D, for example GGX.}
+    \note[item]{\click For \textbf{notation} we will use omega i for the incident direction and omega o for the outgoing direction, with h for the half-vector.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -98,9 +102,9 @@
         \item Efficient evaluation
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{einige Ziele für ein Modell für layered materials}
-    \note[item]{physikalisch begründet, ..., Mehrfachstreuung, Energie-erhaltend, ...}
-    \note[item]{Viele verwandte Arbeiten beschränken sich auf eine Teilmenge der Ziele}
+    \note[item]{These are the \textbf{desirable goals} for a model for layered materials.}
+    \note[item]{It should be \textbf{physically based}, allow an \textbf{arbitrary number of layers}, account for \textbf{multiple scattering}. Of course, it also should be \textbf{energy conserving}, support \textbf{texturing} and \textbf{importance sampling}. Additionally, as little as possible \textbf{storage} and \textbf{precomputation} should be required and at best it should be \textbf{efficient to evaluate} so that it can be used for real-time applications.}
+    \note[item]{There have been \textbf{several previous works} to the one we present today by Belcour. However, these only \textbf{achieved a sub set} of these goals.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -126,14 +130,9 @@
         \caption{Results of specialized models.}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{Beispielsweise Modelle für eine bestimmte Layer-Konfiguration}
-    \note[item]{Nur Alterung von Metallen, nasse Materialien, Farbe mit einer Beschichtung, Blätter}
-    \note[item]{\click Beliebige Layer, dafür simplifizierter Lichttransport, ignorieren von bestimmten Pfad-Gruppen}
-    \note[item]{effizient aber ungenau}
-    \note[item]{\click Modelle die mit Monte Carlo den Lichttransport approximieren}
-    \note[item]{beliebige Layer, akkurat, sehr komplexe Strukturen, aber nicht effiziente Auswertung}
-    \note[item]{\click Modelle die auf Vorberechnungen bauen und die Reflektanz Funktionen abspeichern}
-    \note[item]{Eingeschränkt, da jedes Material vorberechnet werden muss und der Speicherbedarf nicht beschränkt ist}
+    \note[item]{For example there are \textbf{specialized models} which only allow a \textbf{specific layer configuration}.}
+    \note[item]{Like the model by \textbf{Jensen et al for wet surfaces} or the one by \textbf{Ershov et al for car paints} consisting of two layers. Other models limited themselves to reproduce the \textbf{weathering of metals} or only \textbf{leaves}.}
+    \note[item]{If we want to allow for an \textbf{arbitrary number of layers} and therefore a \textbf{more general model}, there are approaches that use a \textbf{simplified light transport}.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -157,14 +156,9 @@
         \caption{Results of simplified light transport models.}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{Beispielsweise Modelle für eine bestimmte Layer-Konfiguration}
-    \note[item]{Nur Alterung von Metallen, nasse Materialien, Farbe mit einer Beschichtung, Blätter}
-    \note[item]{\click Beliebige Layer, dafür simplifizierter Lichttransport, ignorieren von bestimmten Pfad-Gruppen}
-    \note[item]{effizient aber ungenau}
-    \note[item]{\click Modelle die mit Monte Carlo den Lichttransport approximieren}
-    \note[item]{beliebige Layer, akkurat, sehr komplexe Strukturen, aber nicht effiziente Auswertung}
-    \note[item]{\click Modelle die auf Vorberechnungen bauen und die Reflektanz Funktionen abspeichern}
-    \note[item]{Eingeschränkt, da jedes Material vorberechnet werden muss und der Speicherbedarf nicht beschränkt ist}
+    \note[item]{These models for example \textbf{simply ignore specific light path groups}. The most popular one is the model of \textbf{Weidlich and Wilkie} and its real-time optimized version of \textbf{Elek}.}
+    \note[item]{This approach makes them \textbf{efficient while allowing} an arbitrary number of layers, however they can be \textbf{very inaccurate}.}
+    \note[item]{The \textbf{most accurate models} are the ones that use \textbf{Monte Carlo methods} to approximate the light transport.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -183,14 +177,7 @@
         \caption{Results of Monte Carlo models.}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{Beispielsweise Modelle für eine bestimmte Layer-Konfiguration}
-    \note[item]{Nur Alterung von Metallen, nasse Materialien, Farbe mit einer Beschichtung, Blätter}
-    \note[item]{\click Beliebige Layer, dafür simplifizierter Lichttransport, ignorieren von bestimmten Pfad-Gruppen}
-    \note[item]{effizient aber ungenau}
-    \note[item]{\click Modelle die mit Monte Carlo den Lichttransport approximieren}
-    \note[item]{beliebige Layer, akkurat, sehr komplexe Strukturen, aber nicht effiziente Auswertung}
-    \note[item]{\click Modelle die auf Vorberechnungen bauen und die Reflektanz Funktionen abspeichern}
-    \note[item]{Eingeschränkt, da jedes Material vorberechnet werden muss und der Speicherbedarf nicht beschränkt ist}
+    \note[item]{Those models allow for an \textbf{arbitrary number} of layers and can model \textbf{very complex structures very accurately}. The biggest disadvantage of them is that the evaluation because of Monte Carlo is \textbf{not very efficient} and therefore they aren't useable for real-time rendering.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -209,14 +196,8 @@
         \caption{Results of tabulated models.}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{Beispielsweise Modelle für eine bestimmte Layer-Konfiguration}
-    \note[item]{Nur Alterung von Metallen, nasse Materialien, Farbe mit einer Beschichtung, Blätter}
-    \note[item]{\click Beliebige Layer, dafür simplifizierter Lichttransport, ignorieren von bestimmten Pfad-Gruppen}
-    \note[item]{effizient aber ungenau}
-    \note[item]{\click Modelle die mit Monte Carlo den Lichttransport approximieren}
-    \note[item]{beliebige Layer, akkurat, sehr komplexe Strukturen, aber nicht effiziente Auswertung}
-    \note[item]{\click Modelle die auf Vorberechnungen bauen und die Reflektanz Funktionen abspeichern}
-    \note[item]{Eingeschränkt, da jedes Material vorberechnet werden muss und der Speicherbedarf nicht beschränkt ist}
+    \note[item]{A different approach is to \textbf{rely on precomputation and storing} the calculated reflectance function.}
+    \note[item]{Though, this results in a \textbf{great limitation of the usability}, as \textbf{each material} needs to be precomputed and the storage requirement is \textbf{not limited}. So one material could take even up to multiple gigabyte.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -229,6 +210,8 @@
     \frametitle{Table of Contents}
     \setcounter{tocdepth}{2}
     \tableofcontents[currentsection,subsectionstyle=show/show/hide]
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Now I will describe the \textbf{approach of Belcour}, which we implemented, in detail.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -248,7 +231,9 @@
         }
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Belcour uses a \textbf{statistical framework for approximating the light transport} in layered materials.}
+    \note[item]{The main insight is that a \textbf{bijective mapping} between the GGX parameters and the directional statistics of a GGX lobe exists. \click}
+    \note[item]{This can be seen when we take a look at the \textbf{illustration} on the slide. If we \textbf{study the GGX lobe} for a specific incident direction omega i, we can see, that if the lobe is \textbf{projected} on to the base plane, it has a circular shape. Therefore, we can use a \textbf{circular distribution} and the statistics of this distribution in order to approximate the associated GGX lobe.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -262,7 +247,10 @@
         \label{fig:overview}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Using this insight the \textbf{light transport inside a stack} of layers can be \textbf{described by a set of statistics}.}
+    \note[item]{First we need so-called \textbf{atomic operators} to describe how the statics are changed by a light transport \textbf{interaction} with a rough interface, for example by a reflection.}
+    \note[item]{Using the \textbf{adding-doubling method}, the combined reflected and transmitted statistics of a stack of \textbf{two interfaces} can be evaluated.}
+    \note[item]{\textbf{Iteratively} applying this method on the whole stack of layers a vector of statistics can be computed which then can be used to \textbf{instantiate multiple GGX lobes} which approximate the appearance of the material.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -282,7 +270,8 @@
             \end{itemize}
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{The \textbf{statistics used} to describe a GGX lobe are the \textbf{energy, the mean and the variance}. \click For better \textbf{readability} we will omit the square for the variance \click}
+    \note[item]{In the next section we will \textbf{introduce the operators} to approximate the following light transport interactions: reflection and refraction as well as the effects of absorption and scattering in participating media.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -301,6 +290,11 @@
         \item<3-> $\sigma = f(\alpha)$ \pause with $\sigma_{12} = f(\alpha_1) + f(\alpha_2)$
         \item <4-> Mapping \parencite{belcour2018}: $f(\alpha) = \frac{\alpha^{1.1}}{1 - \alpha^{1.1}}$
     \end{itemize}
+    %%%%%%%%%%%%%%%%%
+    \note[item]{In order to be able to track the variance correctly \textbf{Belcour introduced the linear variance space}.}
+    \note[item]{This comes from the \textbf{fact}, that the reflection by a rough interface \textbf{increases the variance}, but this increase is not linear \textbf{with respect to the GGX roughness}. \click But we want to be able to track the variance for \textbf{multiple bounces in a linear manner}. \click}
+    \note[item]{Therefor, a \textbf{mapping} from GGX roughness to variance is need so that for two bounces the following \textbf{property} holds. \click}
+    \note[item]{Belcour \textbf{empirically} found the following mapping, which is pretty accurate at least for low to moderate roughnesses.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -326,7 +320,11 @@
         \FGD = \int_\Omega \rho_{GGX}(\omega_i, \omega_o) \dotproduct{\omega_i}{n} \,d\omega_o
     \end{equation*}
     %%%%%%%%%%%%%%%%%
-    \note[item]{energy conservation}
+    \note[item]{Now we will describe the \textbf{first operator} for the reflection by rough interface. We begin by looking at the \textbf{effect on the energy}.}
+    \note[item]{Starting with the \textbf{rendering equation} we want to \textbf{decouple} the integral over the incoming light from the rest. So the \textbf{outgoing radiance} can be approximated like this. \click}
+    \note[item]{The remaining \textbf{FGD} term describes the \textbf{albedo} of the surface. It is the factor that we use to change the incoming energy.}
+    \note[item]{FGD can be \textbf{precomputed and stored}. While precomputation a scaling factor to account for multiple scattering can be incorporated in order to get an \textbf{energy conserving} model.}
+    \note[item]{If precomputation is unwanted, it can also be \textbf{approximated} only using the Fresnel term.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -338,7 +336,8 @@
     \bigskip
     \textbf{Variance:} increases but not linear w.r.t. roughness $\Rightarrow$ linear variance space
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{For higher roughness values the mean gets \textbf{shifted towards the normal}, but for the approximation this impact is negligible.}
+    \note[item]{As said earlier the \textbf{variance} increases, however not with respect to GGX roughness, that's why we use the mapping of the roughness to use a linear transformation.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -356,7 +355,7 @@
         \raisebox{-25mm}{\includesvg[width = 0.3\textwidth]{operator_reflection.svg}}
     \end{tabular}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{To \textbf{summarize} the first operator on how the statistics get affected by reflection, is described by these terms. For example the incident energy is multiplied by FGD.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -381,7 +380,8 @@
         \end{column}
     \end{columns}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{The \textbf{next operator} is refraction. Because of \textbf{energy conservation} the transmitted energy needs to be 1 - FGD. \click}
+    \note[item]{For the mean the following can be observed. Looking at the \textbf{illustration} on the right, you can see that the \textbf{refracted incident direction} does not \textbf{align} with the \textbf{mean of the transmitted lobe}. However, just using the refracted incident direction is a good \textbf{approximation}.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -400,7 +400,8 @@
         s = \frac{1}{2} \left( \frac{\eta_{12} \dotproduct{\omega_i}{n} + \dotproduct{\omega_t}{n}}{\dotproduct{\omega_t}{n}} \right)
     \end{equation*}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Looking at the effect on the \textbf{variance}. It can be seen, that the refracted lobe can be approximated using a \textbf{scaled reflection from underneath} the interface. Therfore, the \textbf{black} incident direction, will be flipped underneath the interface and \textbf{scaled by the index of refraction} resulting in the \textbf{green} direction which  will be used for the reflection. For this \textbf{reflection a scaled roughness} will be used to get the blue distribution.\click}
+    \note[item]{Belcour empirically found the following scaling factor for the roughness.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -419,7 +420,7 @@
         \raisebox{-15mm}{\includesvg[width = 0.25\textwidth]{operator_refraction.svg}}
     \end{tabular}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Again, here you can see the operator \textbf{summarized}. For variance for example the incident variance is scaled by the ratio of the indices of refraction because of \textbf{Snell's law} and then the scaled and mapped roughness is added as I just explained.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -448,7 +449,10 @@
         \end{column}
     \end{columns}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Now we will take a look at the \textbf{effects of absorption and scattering} in participating media on the statistics. The effects are \textbf{parametrized} by the absorption cross-section sigma a and scattering cross-section sigma s, which result in the \textbf{transmittance} sigma t. We will treat absorption and scattering \textbf{separately} and begin with absorption.}
+    \note[item]{The \textbf{attenuation} of the radiance is described by \textbf{Beer-Lamerts law}.}
+    \note[item]{h is the \textbf{depth} of the layer. This fraction is the \textbf{length of the path} that the light takes through the medium.\click}
+    \note[item]{There is some impact of absorption on the \textbf{mean and variance}, but this is negligible for the approximation.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -481,7 +485,8 @@
         \end{column}
     \end{columns}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{For scattering, the \textbf{amount of radiance scattered accounting for in and out scattering} is described by these equations. We \textbf{integrate over all points} along the path through the medium and for each of these points we \textbf{integrate the incoming radiance} weighted by the \textbf{phase function p}. \click}
+    \note[item]{If we now only account for \textbf{forward scattering} and also only evaluate it for the \textbf{mean direction of the incoming light}, those two \textbf{exponential functions cancel} out mostly as well as \textbf{p}, so there is no more the \textbf{dependence on t} and the integral over \textbf{h collapses} to simply the factor h. So the effect on the energy can be \textbf{approximated} using this term.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -505,7 +510,9 @@
         \end{column}
     \end{columns}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{For the \textbf{mean}, the impact is negligible as we only account for forward scattering. \click}
+    \note[item]{The variance increases with respect to the \textbf{width of the phase function}. On the right, you can see an illustration of the \textbf{Henyey-Greenstein} phase function which is manly forward scattering. \click}
+    \note[item]{Belcour empirically found this \textbf{mapping} from the anisotropy factor g of the Henyey-Greenstein phase function to variance.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -521,7 +528,7 @@
         \end{aligned}
     \end{equation*}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{To summarize, these terms describe the \textbf{combined effects} of absorption and scattering.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -530,6 +537,8 @@
     \frametitle{Table of Contents}
     \setcounter{tocdepth}{2}
     \tableofcontents[currentsection,currentsubsection,subsectionstyle=show/shaded/hide]
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Until now we only looked at a \textbf{single interface} and the operators describing the atomic interactions with it.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -540,6 +549,8 @@
     \frametitle{Table of Contents}
     \setcounter{tocdepth}{2}
     \tableofcontents[currentsection,currentsubsection,subsectionstyle=show/shaded/hide]
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Next we want to use these operators to describe the \textbf{cumulative statistics} within a stack of layers.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -561,7 +572,13 @@
     \end{figure}
     \onslide<7->{\centering Evaluated for energy and variance. Impact on mean negligible.}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{To do this, Belcour introduced the \textbf{adding doubling method} to account for multiple scattering. How this works I will describe now. If we have this stack of layers with a given incident light direction, we start by only looking at the \textbf{fist two interfaces}.\click}
+    \note[item]{As seen earlier the \textbf{paths} light can take between them is complex.\click}
+    \note[item]{So we use the \textbf{operators} defined in the previous section to summarize the paths using their reflected and transmitted \textbf{statistics}.\click}
+    \note[item]{Now the first two interfaces will be treated as a \textbf{combined virtual interface} above the next interface. \click}
+    \note[item]{The \textbf{transmitted statisitcs} of the first two interfaces will be used as the \textbf{incident} for the next iteration. And again the \textbf{operators} will be used to describe the light interactions.\click}
+    \note[item]{\textbf{Iteratively} applied on all layers, always \textbf{reusing} the already combined statistics, we get a \textbf{vector} of reflected and transmitted statistics which summarizes the light transport inside the whole stack of layers.\click}
+    \note[item]{The adding doubling method will be \textbf{separately} applied on energy and variance and as the impact on the \textbf{mean is negligible} as seen in the previous section, it will be ignored.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -575,10 +592,10 @@
         \centering
         \includegraphics[width = 0.7\textwidth, keepaspectratio]{fromBelcour/coefficients.png}
         \caption{Reflection and transmission coefficients. Image source: \textcite{belcour2018}}
-        \label{fig:overview}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{Rechts: Summe aller interaktionen der zwei interfaces}
+    \note[item]{Starting with adding doubling \textbf{for energy}, we need the reflection and transmission \textbf{coefficients} of an interface. For the \textbf{notation}: r stand for reflection and t for transmission. The \textbf{order} of the numbers in the index denotes the \textbf{direction} of the light. For example r12 is the coefficient for a reflection of light coming from medium 1 towards medium 2.}
+    \note[item]{On the \textbf{right} you can see the coefficients for a stack of two interfaces, which stand for the \textbf{sum of all interactions} between the two interfaces.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -610,7 +627,10 @@
         \end{column}
     \end{columns}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{The coefficient r13 accounting for \textbf{multiple scattering} inside two interfaces can be \textbf{calculated} using this term.}
+    \note[item]{The good thing about this is, that the \textbf{geometric series} has a closed form and therefore this equation can be simplified to this \click}
+    \note[item]{This now can be \textbf{evaluated efficiently}. \click}
+    \note[item]{\textbf{Similar forms} can be derived for the other direction and transmission.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -623,8 +643,8 @@
             use statistical operators as coefficients, e.g. for a rough interface:
             \begin{equation*}
                 \begin{aligned}
-                    r_{12} &= r_{21} = \FGD\\
-                    t_{12} &= t_{21} = 1-\FGD
+                    r_{23} &= r_{32} = \FGD\\
+                    t_{23} &= t_{32} = 1-\FGD
                 \end{aligned}
             \end{equation*}
             \bigskip
@@ -632,7 +652,9 @@
         \item<3-> doubling: virtual layer twice the depth
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{\textbf{Iteratively} evaluating the coefficients for all interfaces of the stack of layers and always \textbf{reusing} the previously calculated coefficients of the combined interfaces above, we get the statistics for the energy for the whole stack.\click}
+    \note[item]{For the \textbf{coefficients} of the \textbf{currently} evaluated interface we use the \textbf{operators} defined in the previous section. So for example FGD as the reflection coefficient.\click}
+    \note[item]{The \textbf{doubling} step can be used to duplicate a layer of a small depth to create a layer of an \textbf{arbitrary depth}.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -647,7 +669,8 @@
         \item build on property: the variance of a weighted sum is the weighted sum of the variances
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{The adding-doubling method \textbf{for variance} is similar to the one for energy. However, the variance needs to be \textbf{scaled by the energy}. For this the \textbf{average} energy is used.}
+    \note[item]{It is build upon the \textbf{property} that the variance of a weighted sum is the weighed sum of the individual variances.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -670,7 +693,9 @@
         }
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Using the adding-doubling method, with \textbf{initial values} of energy as 1, mean as the projected incident direction and a variance of 0, evaluated for all k layers we get a \textbf{vector of statistics}.\click}
+    \note[item]{Using them we can \textbf{instantiate k GGX lobes} with the kth energy as the Fresnel term, the reflected kth mean as the incident direction and the inverse mapped variance as the roughness.\click}
+    \note[item]{Therefore, the \textbf{resulting BRDF} is a weighted sum of GGX lobes which accurately approximated the appearance of the layered material.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -686,7 +711,7 @@
         \item Henyey-Greenstein anisotropy factor $g$
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{The individual layer are \textbf{parametrized} by a complex index of refraction, roughness, depth, absorption and scattering cross-scetion as well as the anisotropy factor g of the phase function}
 \end{frame}
 %---------------------------------------------------------
 
@@ -710,7 +735,7 @@
         \label{fig:anisotropic_projected}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Until now we only looked at \textbf{isotropic interfaces}. However, the approach can be \textbf{extended} to support anisotropic interfaces. This is possible because if we project an anisotropic GGX lobe to the base plane in the \textbf{tangent space}, it can be approximated using an \textbf{elliptical distribution} and this distribution \textbf{aligns} with the axes of the tangent frame.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -725,7 +750,10 @@
         \item<4-> Monte Carlo integration for image based lighting
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Using this insight, the variance can be tracked using a two component \textbf{vector} instead of a scalar.\click}
+    \note[item]{To also allow \textbf{rotated} tangent vector fields for the individual layers, \textbf{covariance} matrices can be used.\click}
+    \note[item]{If \textbf{FGD} should be precomputed, is need more dimensions or an \textbf{extended split sum approximation} that Weier and Belcour introduced can be used, which scales the direction where the textures should be fetched.\click}
+    \note[item]{As no \textbf{pre-filtering} of environment maps exists for the anisotropic case, we need to use \textbf{Monte Carlo integration} for image based lighting.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -734,6 +762,8 @@
     \frametitle{Table of Contents}
     \setcounter{tocdepth}{2}
     \tableofcontents[currentsection,subsectionstyle=show/show/hide]
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Now we described \textbf{all parts of the model} of Belcour.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -746,6 +776,8 @@
     \frametitle{Table of Contents}
     \setcounter{tocdepth}{2}
     \tableofcontents[currentsection,subsectionstyle=show/show/hide]
+    %%%%%%%%%%%%%%%%%
+    \note[item]{Next we will present our implementation of it.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -764,7 +796,12 @@
         \item<4-> image based light using Monte Carlo integration
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{C++ OpenGL real-time rendering engine.}
+    \note[item]{GLSL fragment shaders}
+    \note[item]{precomputation}
+    \note[item]{textured}
+    \note[item]{vectors for anisotropic}
+    \note[item]{Monte Carlo}
 \end{frame}
 %---------------------------------------------------------
 
@@ -809,7 +846,7 @@
         \label{fig:possible_materials}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Here you can see that our implementation is capable of reproducing a lot of different appearances using two layers with varying roughnesses.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -822,7 +859,7 @@
         \label{fig:textured_materials}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{If using textures for the index of refraction and/or the roughness even more complex surfaces can be modeled.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -850,7 +887,7 @@
         \label{fig:match}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{On the left you can see our implementation and for \textbf{comparison} in the middle is the offline implementation of Belcour and on the right the reference Belcour used. Apart from a \textbf{darker appearance} because of \textbf{missing energy conservation} and some slight differences of the \textbf{exposure and scaling} of the environment map our implementation still matches the references closely.}
 \end{frame}
 %---------------------------------------------------------
 
@@ -873,7 +910,8 @@
         \label{fig:white_furnace}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Not energy conserving, FGD approximation}
+    \note[item]{white furnace test}
 \end{frame}
 %---------------------------------------------------------
 
@@ -888,7 +926,9 @@
         \label{fig:performance_ggx_comparison}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Performance compared to GGX different window sizes}
+    \note[item]{average 2.8 times slower}
+    \note[item]{Full HD 10ms real time}
     \note[item]{anisotropic IBL real-time}
 \end{frame}
 %---------------------------------------------------------
@@ -902,7 +942,7 @@
         \label{fig:performance_layers}
     \end{figure}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{As expected linear dependence on layer count, because of loop in adding doubling}
 \end{frame}
 %---------------------------------------------------------
 
@@ -913,7 +953,10 @@
         \movie[width=0.8\textwidth]{\includegraphics[width=0.8\textwidth]{demo.png}}{figures/demo.mp4}
     \end{center}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Live Demo}
+    \note[item]{Start 1 Layer}
+    \note[item]{Add layer underneath, change roughnesses}
+    \note[item]{Add another, kappa textured, change roughnesses}
 \end{frame}
 %---------------------------------------------------------
 
@@ -932,7 +975,8 @@
         \item accurate results
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{The model of Belcour fulfills the goals I mentioned in the beginnig}
+    \note[item]{Physically based, Arbitrary number of layers, Multiple scattering, energy conservation if incorporated, Texturing and importance sampling, none or little precomputation/storage needed, efficient to evaluate, accurate results}
 \end{frame}
 %---------------------------------------------------------
 
@@ -953,7 +997,8 @@
         \item split sum approximation instead of Monte Carlo for isotropic case
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Limitations of our implementation}
+    \note[item]{FGD approximation, energy conservation, tangent frame rotation supported for anisotropic case, split sum approximation instead of Monte Carlo for isotropic case}
 \end{frame}
 %---------------------------------------------------------
 
@@ -983,7 +1028,11 @@
         }
     \end{itemize}
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
+    \note[item]{Limitations of the model in general.}
+    \note[item]{inaccurate for high roughness values}
+    \note[item]{inaccurate for grazing angles, skewed and color shifts}
+    \note[item]{plane parallel and GGX, extension introduced more recently}
+    \note[item]{forward scattering, extension more recently}
 \end{frame}
 %---------------------------------------------------------
 
@@ -1001,6 +1050,5 @@
     \bigskip
     \centering\usebeamerfont{author}\insertauthor
     %%%%%%%%%%%%%%%%%
-    \note[item]{}
 \end{frame}
 %---------------------------------------------------------

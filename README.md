@@ -1,6 +1,6 @@
 # Lab-ComputerGraphics-WS2023
 
-A real-time renderer for layered materials (based on the papers [^1][^2][^3]) and glinty materials (based on paper [^4])
+A real-time implementation of layered materials[^1][^2][^3] and glinty materials[^4] in OpenGL.
 
 ## Layered Materials[^1][^2][^3] (implementation by Robin Landsgesell)
 ![](report-layered/figures/christmas_balls.png)
